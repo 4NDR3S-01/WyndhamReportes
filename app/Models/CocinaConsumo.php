@@ -40,8 +40,8 @@ class CocinaConsumo extends Model
         return $this->belongsTo(CocinaProducto::class, 'producto_id');
     }
 
-    public static function generarHash(string $fecha, int $productoId, string $servicio, ?string $concepto): string
+    public static function generarHash(int $archivoId, int $numeroFila): string
     {
-        return hash('sha256', implode('|', [$fecha, $productoId, mb_strtolower($servicio), mb_strtolower(trim($concepto ?? ''))]));
+        return hash('sha256', implode('|', [$archivoId, $numeroFila]));
     }
 }

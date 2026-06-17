@@ -187,9 +187,9 @@ class ReportesCocina extends Page
             ->get();
 
         return $fechas->map(function ($f) {
-            $total = (float) \App\Models\CocinaConsumo::query()
+            $registros = (int) \App\Models\CocinaConsumo::query()
                 ->whereBetween('fecha', [$f->inicio, $f->fin])
-                ->sum('cantidad');
+                ->count();
             $productos = (int) \App\Models\CocinaConsumo::query()
                 ->whereBetween('fecha', [$f->inicio, $f->fin])
                 ->distinct('producto_id')
@@ -198,7 +198,7 @@ class ReportesCocina extends Page
             return (object) [
                 'inicio' => $f->inicio,
                 'fin' => $f->fin,
-                'total' => $total,
+                'total' => $registros,
                 'productos' => $productos,
             ];
         });

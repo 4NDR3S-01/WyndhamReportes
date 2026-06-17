@@ -56,9 +56,22 @@ class ProcesadorArchivoConsumo
 
                 $datos = $resultado['datos'];
                 $producto = $this->resolverProducto($datos);
-                $hash = CocinaConsumo::generarHash($datos['fecha'], $producto->id, $datos['servicio'], $datos['concepto']);
+
+                $hash = CocinaConsumo::generarHash($archivo->id, $numeroFila);
 
                 if (CocinaConsumo::query()->where('hash_unico', $hash)->exists()) {
+                    $duplicadas++;
+                    continue;
+                }
+
+                $yaExiste = CocinaConsumo::query()
+                    ->where('fecha', $datos['fecha'])
+                    ->where('producto_id', $producto->id)
+                    ->where('servicio', $datos['servicio'])
+                    ->where('concepto', $datos['concepto'])
+                    ->exists();
+
+                if ($yaExiste) {
                     $duplicadas++;
                     continue;
                 }

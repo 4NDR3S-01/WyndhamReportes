@@ -17,9 +17,9 @@ class CocinaStatsWidget extends BaseWidget
 
         $ultimaFecha = CocinaConsumo::query()->max('fecha') ?: now()->toDateString();
 
-        $consumoUltimaFecha = (float) CocinaConsumo::query()
+        $registrosUltimaFecha = (int) CocinaConsumo::query()
             ->whereDate('fecha', $ultimaFecha)
-            ->sum('cantidad');
+            ->count();
 
         $productosUltimaFecha = (int) CocinaConsumo::query()
             ->whereDate('fecha', $ultimaFecha)
@@ -42,7 +42,7 @@ class CocinaStatsWidget extends BaseWidget
                 ->color('success'),
 
             Stat::make('Ultimo dia registrado', Carbon::parse($ultimaFecha)->format('d/m/Y'))
-                ->description(number_format($consumoUltimaFecha, 2, ',', '.') . ' consumido')
+                ->description(number_format($registrosUltimaFecha, 0, ',', '.') . ' registros')
                 ->descriptionIcon('heroicon-o-calendar-days')
                 ->color('warning'),
 

@@ -31,19 +31,24 @@ class CocinaProductosChartWidget extends ChartWidget
             ->limit(10)
             ->get();
 
+        $colors = ['#0ea5e9', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#f97316', '#84cc16', '#6366f1'];
+
+        $datasets = [];
+        foreach ($productos as $i => $item) {
+            $nombre = $item->producto?->nombre ?? 'Sin nombre';
+            $unidad = mb_strtolower($item->producto?->unidad_medida ?? '-');
+
+            $datasets[] = [
+                'label' => $nombre . ' (' . $unidad . ')',
+                'data' => [(float) $item->total],
+                'backgroundColor' => $colors[$i % count($colors)],
+                'borderColor' => $colors[$i % count($colors)],
+            ];
+        }
+
         return [
-            'datasets' => [
-                [
-                    'label' => 'Cantidad consumida',
-                    'data' => $productos->pluck('total')->toArray(),
-                    'backgroundColor' => '#0ea5e9',
-                    'borderColor' => '#0284c7',
-                ],
-            ],
-            'labels' => $productos->map(fn ($item) =>
-                ($item->producto?->nombre ?? 'Sin nombre')
-                . ' (' . mb_strtolower($item->producto?->unidad_medida ?? '-') . ')'
-            )->toArray(),
+            'datasets' => $datasets,
+            'labels' => ['Total consumido'],
         ];
     }
 }

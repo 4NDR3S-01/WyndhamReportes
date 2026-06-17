@@ -71,7 +71,7 @@
                             <tr class="border-b border-gray-100 bg-gray-50 dark:border-gray-800 dark:bg-gray-950/40">
                                 <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Semana</th>
                                 <th class="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Productos</th>
-                                <th class="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Total consumido</th>
+                                <th class="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Registros</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -81,7 +81,7 @@
                                         {{ \Carbon\Carbon::parse($semana->inicio)->format('d/m') }} – {{ \Carbon\Carbon::parse($semana->fin)->format('d/m/Y') }}
                                     </td>
                                     <td class="px-5 py-3 text-right text-sm text-gray-700 dark:text-gray-300">{{ $semana->productos }}</td>
-                                    <td class="px-5 py-3 text-right text-sm font-semibold text-gray-950 dark:text-white">{{ number_format($semana->total, 2, ',', '.') }}</td>
+                                    <td class="px-5 py-3 text-right text-sm font-semibold text-gray-950 dark:text-white">{{ number_format($semana->total, 0, ',', '.') }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
