@@ -34,6 +34,19 @@ class CocinaConsumoDiarioWidget extends ChartWidget
         return ['todos' => 'Todos los productos'] + $productos;
     }
 
+    private function buildMapaConsumo(callable $queryModifier): array
+    {
+        $query = CocinaConsumo::query();
+        $queryModifier($query);
+
+        $mapa = [];
+        foreach ($query->selectRaw("fecha, SUM(cantidad) as total")->groupBy('fecha')->get() as $c) {
+            $mapa[Carbon::parse($c->fecha)->format('Y-m-d')] = (float) $c->total;
+        }
+
+        return $mapa;
+    }
+
     protected function getData(): array
     {
         $diasRaw = CocinaConsumo::query()
@@ -41,21 +54,22 @@ class CocinaConsumoDiarioWidget extends ChartWidget
             ->orderBy('fecha')
             ->pluck('fecha');
 
-        $dias = $diasRaw->map(fn ($f) => Carbon::parse($f)->format('Y-m-d'));
-        $labels = $diasRaw->map(fn ($f) => Carbon::parse($f)->format('d/m'))->toArray();
+        $labels = [];
+        $dias = [];
+        foreach ($diasRaw as $f) {
+            $key = Carbon::parse($f)->format('Y-m-d');
+            $dias[] = $key;
+            $labels[] = Carbon::parse($f)->format('d/m');
+        }
 
         if ($this->filter && $this->filter !== 'todos') {
             $producto = CocinaProducto::query()->find($this->filter);
+            $mapa = $this->buildMapaConsumo(fn ($q) => $q->where('producto_id', $this->filter));
 
-            $consumos = CocinaConsumo::query()
-                ->where('producto_id', $this->filter)
-                ->selectRaw("fecha, SUM(cantidad) as total")
-                ->groupBy('fecha')
-                ->orderBy('fecha')
-                ->get()
-                ->keyBy(fn ($c) => Carbon::parse($c->fecha)->format('Y-m-d'));
-
-            $data = $dias->map(fn ($f) => $consumos->has($f) ? (float) $consumos[$f]->total : null)->values()->toArray();
+            $data = [];
+            foreach ($dias as $f) {
+                $data[] = $mapa[$f] ?? null;
+            }
 
             return [
                 'datasets' => [
@@ -80,10 +94,7 @@ class CocinaConsumoDiarioWidget extends ChartWidget
             ->pluck('producto_id');
 
         if ($topIds->isEmpty()) {
-            return [
-                'datasets' => [],
-                'labels' => $labels,
-            ];
+            return ['datasets' => [], 'labels' => $labels];
         }
 
         $productos = CocinaProducto::query()->whereIn('id', $topIds)->get()->keyBy('id');
@@ -92,16 +103,12 @@ class CocinaConsumoDiarioWidget extends ChartWidget
         $datasets = [];
         foreach ($topIds as $i => $pid) {
             $p = $productos->get($pid);
+            $mapa = $this->buildMapaConsumo(fn ($q) => $q->where('producto_id', $pid));
 
-            $consumos = CocinaConsumo::query()
-                ->where('producto_id', $pid)
-                ->selectRaw("fecha, SUM(cantidad) as total")
-                ->groupBy('fecha')
-                ->orderBy('fecha')
-                ->get()
-                ->keyBy(fn ($c) => Carbon::parse($c->fecha)->format('Y-m-d'));
-
-            $data = $dias->map(fn ($f) => $consumos->has($f) ? (float) $consumos[$f]->total : null)->values()->toArray();
+            $data = [];
+            foreach ($dias as $f) {
+                $data[] = $mapa[$f] ?? null;
+            }
 
             $datasets[] = [
                 'label' => $p?->nombre ?? 'Producto ' . $pid,
