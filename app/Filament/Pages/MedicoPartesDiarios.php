@@ -14,7 +14,7 @@ use Illuminate\Support\Collection;
 
 class MedicoPartesDiarios extends Page
 {
-    protected static string|BackedEnum|null $navigationIcon = null;
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-list';
     protected static string|\UnitEnum|null $navigationGroup = 'Medico';
     protected static ?string $navigationLabel = 'Partes diarios';
     protected static ?string $title = 'Partes diarios';

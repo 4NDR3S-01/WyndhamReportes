@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 
 class MedicoPacientes extends Page
 {
-    protected static string|BackedEnum|null $navigationIcon = null;
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-users';
     protected static string|\UnitEnum|null $navigationGroup = 'Medico';
     protected static ?string $navigationLabel = 'Pacientes y colaboradores';
     protected static ?string $title = 'Pacientes y colaboradores';

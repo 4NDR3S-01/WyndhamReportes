@@ -12,7 +12,7 @@ use Illuminate\Support\Collection;
 
 class MedicoInventario extends Page
 {
-    protected static string|BackedEnum|null $navigationIcon = null;
+    protected static string|\BackedEnum|null $navigationIcon = \Filament\Support\Icons\Heroicon::OutlinedArchiveBox;
     protected static string|\UnitEnum|null $navigationGroup = 'Medico';
     protected static ?string $navigationLabel = 'Inventario';
     protected static ?string $title = 'Inventario medico';

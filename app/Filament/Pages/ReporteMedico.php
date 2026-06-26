@@ -18,7 +18,7 @@ class ReporteMedico extends Page
 {
     use WithFileUploads;
 
-    protected static string|BackedEnum|null $navigationIcon = null;
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-cloud-arrow-up';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Medico';
 

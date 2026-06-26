@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class MedicoProductos extends Page
 {
-    protected static string|BackedEnum|null $navigationIcon = null;
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-beaker';
     protected static string|\UnitEnum|null $navigationGroup = 'Medico';
     protected static ?string $navigationLabel = 'Medicinas y equipos';
     protected static ?string $title = 'Medicinas y equipos';

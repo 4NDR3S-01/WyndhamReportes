@@ -12,7 +12,7 @@ use Illuminate\Support\Collection;
 
 class Medico extends Page
 {
-    protected static string|BackedEnum|null $navigationIcon = null;
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-presentation-chart-line';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Medico';
 

@@ -11,7 +11,7 @@ use Illuminate\Support\Collection;
 
 class MedicoCatalogos extends Page
 {
-    protected static string|BackedEnum|null $navigationIcon = null;
+    protected static string|\BackedEnum|null $navigationIcon = \Filament\Support\Icons\Heroicon::OutlinedCircleStack;
     protected static string|\UnitEnum|null $navigationGroup = 'Medico';
     protected static ?string $navigationLabel = 'Base medica';
     protected static ?string $title = 'Base medica';

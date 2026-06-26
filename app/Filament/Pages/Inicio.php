@@ -14,11 +14,11 @@ class Inicio extends Page
 {
     protected static string $routePath = '/';
 
-    protected static ?string $title = 'Wyndham Reportes';
+    protected static ?string $title = '';
 
     protected static ?string $navigationLabel = 'Inicio';
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedHome;
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedHome;
 
     protected static ?int $navigationSort = -1;
 

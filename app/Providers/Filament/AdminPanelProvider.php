@@ -19,6 +19,10 @@ use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\View\PanelsRenderHook;
+use Filament\Navigation\MenuItem;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Route;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -31,15 +35,16 @@ class AdminPanelProvider extends PanelProvider
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->login()
             ->colors([
-                'primary' => Color::Sky,
+                'primary' => Color::hex('#0B3B60'),
             ])
+            ->brandLogo(asset('images/logo.png'))
+            ->brandLogoHeight('2rem')
+            ->favicon(asset('images/logo_wyndham-manta.jpg'))
             ->navigationGroups([
                 NavigationGroup::make('Cocina')
-                    ->icon(Heroicon::OutlinedCake)
                     ->collapsible()
                     ->collapsed(),
                 NavigationGroup::make('Medico')
-                    ->icon(Heroicon::OutlinedHeart)
                     ->collapsible()
                     ->collapsed(),
             ])
@@ -51,6 +56,82 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
                 AccountWidget::class,
+            ])
+            ->renderHook(
+                PanelsRenderHook::HEAD_END,
+                fn (): string => Route::currentRouteName() === 'filament.admin.auth.login' ? Blade::render('<style>
+                    body {
+                        /* Redujimos la capa oscura para que la imagen se vea más brillante y clara */
+                        background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2)), url("/images/portada.png") !important;
+                        background-size: cover !important;
+                        background-position: center !important;
+                        background-repeat: no-repeat !important;
+                        background-attachment: fixed !important;
+                    }
+                    /* Hacemos el fondo del contenedor transparente para que se vea la imagen */
+                    .fi-simple-layout {
+                        background-color: transparent !important;
+                    }
+                    /* Estilo Glassmorphism (Vidrio Esmerilado Blanco) para máxima legibilidad */
+                    .fi-simple-main {
+                        background-color: rgba(255, 255, 255, 0.75) !important; 
+                        backdrop-filter: blur(16px) !important;
+                        -webkit-backdrop-filter: blur(16px) !important;
+                        border-radius: 1.5rem !important;
+                        padding: 2.5rem !important;
+                        box-shadow: 
+                            0 20px 40px -10px rgba(0, 0, 0, 0.3),
+                            inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+                        border: 1px solid rgba(255, 255, 255, 0.4) !important;
+                    }
+                    /* Asegurar que el título y los textos se vean oscuros y nítidos */
+                    .fi-simple-main h2, .fi-simple-main label, .fi-simple-main .text-sm {
+                        color: #1e293b !important;
+                        font-weight: 600 !important;
+                    }
+                    .fi-simple-main .fi-logo {
+                        margin-bottom: 1rem !important;
+                    }
+                </style>') : Blade::render('<style>
+                    /* Ocultar el selector de temas duplicado */
+                    .fi-theme-switcher {
+                        display: none !important;
+                    }
+                    /* Ocultar el avatar/perfil del usuario */
+                    .fi-topbar .fi-user-menu {
+                        display: none !important;
+                    }
+                </style>'),
+            )
+            ->renderHook(
+                PanelsRenderHook::USER_MENU_BEFORE,
+                fn (): string => Blade::render('
+                    <div class="me-4 flex items-center gap-3">
+                        <button type="button" 
+                            x-data="{ theme: localStorage.getItem(\'theme\') || \'light\' }" 
+                            x-on:click="
+                                theme = theme === \'dark\' ? \'light\' : \'dark\';
+                                localStorage.setItem(\'theme\', theme);
+                                document.documentElement.classList.toggle(\'dark\', theme === \'dark\');
+                                $dispatch(\'theme-changed\', theme);
+                            "
+                            class="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 shadow-sm transition hover:ring-2 hover:ring-primary-500/50 hover:text-primary-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:ring-primary-500/50 dark:hover:text-primary-400" 
+                            title="Alternar Modo Oscuro/Claro">
+                            <x-heroicon-o-moon x-show="theme !== \'dark\'" class="h-5 w-5" />
+                            <x-heroicon-o-sun x-show="theme === \'dark\'" class="h-5 w-5" style="display: none;" x-bind:style="\'display: block;\'" />
+                        </button>
+
+                        <form method="POST" action="{{ route(\'filament.admin.auth.logout\') }}">
+                            @csrf
+                            <x-filament::button color="danger" outlined="true" size="sm" icon="heroicon-m-arrow-right-on-rectangle" type="submit">
+                                Cerrar sesión
+                            </x-filament::button>
+                        </form>
+                    </div>
+                ')
+            )
+            ->userMenuItems([
+                'logout' => MenuItem::make()->visible(false),
             ])
             ->middleware([
                 EncryptCookies::class,
