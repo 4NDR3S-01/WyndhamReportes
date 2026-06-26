@@ -3,12 +3,12 @@
 namespace App\Filament\Pages;
 
 use App\Models\MedicoProducto;
-use App\Models\MedicoProductoAlias;
 use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Enums\Width;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class MedicoProductos extends Page
 {
@@ -26,15 +26,12 @@ class MedicoProductos extends Page
     public string $tipoFiltro = 'todos';
     public string $estado = 'activos';
     public bool $modalProductoAbierto = false;
-    public bool $modalAliasAbierto = false;
     public string $tipo = 'medicina';
     public string $nombre = '';
     public ?float $stock_minimo = 0;
     public ?string $fecha_caducidad = null;
     public bool $activo = true;
     public ?string $observaciones = null;
-    public ?int $aliasProductoId = null;
-    public string $alias = '';
 
     public function guardar(): void
     {
@@ -50,11 +47,6 @@ class MedicoProductos extends Page
                 'activo' => $this->activo,
                 'observaciones' => $this->observaciones,
             ],
-        );
-
-        MedicoProductoAlias::query()->firstOrCreate(
-            ['alias_normalizado' => MedicoProducto::normalizarNombre($producto->nombre)],
-            ['producto_id' => $producto->id, 'alias' => $producto->nombre],
         );
 
         $label = $producto->tipo === 'equipo' ? 'Equipo' : 'Medicina';
@@ -88,45 +80,24 @@ class MedicoProductos extends Page
         $this->modalProductoAbierto = true;
     }
 
-    public function abrirModalAlias(?int $productoId = null): void
-    {
-        $this->aliasProductoId = $productoId;
-        $this->alias = '';
-        $this->modalAliasAbierto = true;
-    }
-
-    public function cerrarModalAlias(): void
-    {
-        $this->modalAliasAbierto = false;
-        $this->aliasProductoId = null;
-        $this->alias = '';
-    }
-
-    public function agregarAlias(): void
-    {
-        $this->validate(['aliasProductoId' => ['required', 'integer'], 'alias' => ['required', 'string', 'max:255']]);
-
-        MedicoProductoAlias::query()->updateOrCreate(
-            ['alias_normalizado' => MedicoProducto::normalizarNombre($this->alias)],
-            ['producto_id' => $this->aliasProductoId, 'alias' => trim($this->alias)],
-        );
-
-        $this->cerrarModalAlias();
-        Notification::make()->title('Alias guardado')->success()->send();
-    }
-
-    public function eliminarAlias(int $id): void
-    {
-        MedicoProductoAlias::query()->findOrFail($id)->delete();
-        Notification::make()->title('Alias eliminado')->success()->send();
-    }
-
     public function alternar(int $id): void
     {
         $p = MedicoProducto::query()->findOrFail($id);
         $p->update(['activo' => ! $p->activo]);
 
         Notification::make()->title($p->activo ? 'Producto activado' : 'Producto desactivado')->success()->send();
+    }
+
+    public function eliminar(int $id): void
+    {
+        $producto = MedicoProducto::query()->findOrFail($id);
+
+        DB::transaction(function () use ($producto) {
+            $producto->movimientos()->update(['producto_id' => null]);
+            $producto->delete();
+        });
+
+        Notification::make()->title('Producto eliminado')->success()->send();
     }
 
     public function limpiarFormulario(): void
@@ -143,7 +114,6 @@ class MedicoProductos extends Page
     public function getProductosProperty(): Collection
     {
         return MedicoProducto::query()
-            ->with('aliases')
             ->when($this->buscar !== '', fn ($q) => $q->where('nombre', 'like', '%' . $this->buscar . '%'))
             ->when($this->tipoFiltro !== 'todos', fn ($q) => $q->where('tipo', $this->tipoFiltro))
             ->when($this->estado === 'activos', fn ($q) => $q->where('activo', true))
@@ -152,11 +122,6 @@ class MedicoProductos extends Page
             ->orderBy('nombre')
             ->limit(120)
             ->get();
-    }
-
-    public function getTodosProductosProperty(): Collection
-    {
-        return MedicoProducto::query()->orderBy('nombre')->get();
     }
 
     public function getTotalProductosProperty(): int
@@ -172,11 +137,6 @@ class MedicoProductos extends Page
     public function getTotalEquiposProperty(): int
     {
         return (int) MedicoProducto::query()->where('tipo', 'equipo')->count();
-    }
-
-    public function getTotalAliasesProperty(): int
-    {
-        return (int) MedicoProductoAlias::query()->count();
     }
 
     public function getStockBajoProperty(): int

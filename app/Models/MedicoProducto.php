@@ -40,17 +40,43 @@ class MedicoProducto extends Model
 
     public function saldoActual(): float
     {
-        $base = (float) MedicoKardex::query()
+        $kardex = MedicoKardex::query()
             ->where('nombre', $this->nombre)
-            ->orderByDesc('fecha_fin')
-            ->orderByDesc('id')
-            ->value('total');
+            ->orderBy('fecha_inicio')
+            ->first();
 
-        $ingresos = (float) $this->movimientos()->whereIn('tipo', ['ingreso', 'ajuste'])->where('cantidad', '>', 0)->sum('cantidad');
-        $egresos = (float) $this->movimientos()->where('tipo', 'salida')->sum('cantidad');
-        $ajustesNegativos = abs((float) $this->movimientos()->where('tipo', 'ajuste')->where('cantidad', '<', 0)->sum('cantidad'));
+        if (! $kardex) {
+            $movIngresos = (float) $this->movimientos()->whereIn('tipo', ['ingreso', 'ajuste'])->where('cantidad', '>', 0)->sum('cantidad');
+            $movSalidas = (float) $this->movimientos()->where('tipo', 'salida')->sum('cantidad');
 
-        return $base + $ingresos - $egresos - $ajustesNegativos;
+            return $movIngresos - $movSalidas;
+        }
+
+        $base = (float) $kardex->saldo_anterior;
+        $kardexIngresos = (float) MedicoKardex::query()
+            ->where('nombre', $this->nombre)
+            ->sum('ingresos');
+
+        $corte = $kardex->fecha_inicio;
+
+        $movIngresos = (float) $this->movimientos()
+            ->whereIn('tipo', ['ingreso', 'ajuste'])
+            ->where('cantidad', '>', 0)
+            ->whereDate('fecha_movimiento', '>=', $corte)
+            ->sum('cantidad');
+
+        $movSalidas = (float) $this->movimientos()
+            ->where('tipo', 'salida')
+            ->whereDate('fecha_movimiento', '>=', $corte)
+            ->sum('cantidad');
+
+        $ajustesNegativos = abs((float) $this->movimientos()
+            ->where('tipo', 'ajuste')
+            ->where('cantidad', '<', 0)
+            ->whereDate('fecha_movimiento', '>=', $corte)
+            ->sum('cantidad'));
+
+        return $base + $kardexIngresos + $movIngresos - $movSalidas - $ajustesNegativos;
     }
 
     public static function normalizarNombre(string $valor): string

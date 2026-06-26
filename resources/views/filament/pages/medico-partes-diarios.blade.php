@@ -15,10 +15,9 @@
                     <div class="mb-2 flex items-center justify-between"><span class="text-xs font-semibold uppercase tracking-wide text-violet-700 dark:text-violet-300">Medicacion entregada</span><button type="button" wire:click="agregarMedicamento" class="text-xs font-semibold text-violet-700">Agregar</button></div>
                     <div class="space-y-2">
                         @foreach ($medicamentos as $i => $m)
-                            <div class="grid gap-2 sm:grid-cols-[1fr_1fr_80px_36px]">
-                                <select wire:model="medicamentos.{{ $i }}.producto_id" class="rounded-lg border-gray-300 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white"><option value="">Producto</option>@foreach ($this->productos as $p)<option value="{{ $p->id }}">{{ $p->nombre }}</option>@endforeach</select>
-                                <input wire:model="medicamentos.{{ $i }}.nombre_original" placeholder="Texto original / libre" class="rounded-lg border-gray-300 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white">
-                                <input type="number" step="0.01" wire:model="medicamentos.{{ $i }}.cantidad" class="rounded-lg border-gray-300 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white">
+                            <div class="grid gap-2 sm:grid-cols-[1fr_80px_36px]">
+                                <select wire:model="medicamentos.{{ $i }}.producto_id" class="rounded-lg border-gray-300 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white" required><option value="">Seleccionar producto...</option>@foreach ($this->productos as $p)<option value="{{ $p->id }}">{{ $p->nombre }} ({{ $p->tipo }})</option>@endforeach</select>
+                                <input type="number" step="0.01" wire:model="medicamentos.{{ $i }}.cantidad" class="rounded-lg border-gray-300 text-sm dark:border-gray-700 dark:bg-gray-950 dark:text-white" min="0.01">
                                 <button type="button" wire:click="quitarMedicamento({{ $i }})" class="rounded-lg border border-gray-200 text-sm dark:border-gray-700">x</button>
                             </div>
                         @endforeach

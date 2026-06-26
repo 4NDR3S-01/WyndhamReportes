@@ -8,7 +8,6 @@ use App\Models\MedicoKardex;
 use App\Models\MedicoPaciente;
 use App\Models\MedicoParteDiario;
 use App\Models\MedicoProducto;
-use App\Models\MedicoProductoAlias;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -33,7 +32,6 @@ class CargaInicialMedicoService
             $catalogos = $this->cargarCatalogos($spreadsheet);
             $pacientes = $this->cargarPacientesNomina($spreadsheet);
             $productos = $this->cargarProductosYKardex($spreadsheet, $archivo);
-            $aliases = $this->crearAliasesBase();
             $partes = $this->cargarPartes($spreadsheet, $archivo);
 
             $archivo->update([
@@ -44,7 +42,7 @@ class CargaInicialMedicoService
                 'observaciones' => 'Carga inicial del panel medico desde Excel base.',
             ]);
 
-            return compact('catalogos', 'pacientes', 'productos', 'partes', 'aliases');
+            return compact('catalogos', 'pacientes', 'productos', 'partes');
         });
     }
 
@@ -149,8 +147,6 @@ class CargaInicialMedicoService
             );
             if ($producto->wasRecentlyCreated) $creados++;
 
-            $this->alias($producto, $primera);
-
             $saldoAnterior = $seccion === 'medicina' ? $this->parsearNumero($sheet->getCell([2, $row])->getCalculatedValue()) : 0;
             $ingresos = $seccion === 'medicina' ? $this->parsearNumero($sheet->getCell([3, $row])->getCalculatedValue()) : 0;
             $egresos = $seccion === 'medicina' ? $this->parsearNumero($sheet->getCell([4, $row])->getCalculatedValue()) : 0;
@@ -183,7 +179,6 @@ class CargaInicialMedicoService
                 $nombre = $this->limpiarTexto($base->getCell([8, $row])->getValue());
                 if ($nombre === '') continue;
                 $producto = MedicoProducto::query()->firstOrCreate(['nombre' => $nombre], ['tipo' => 'medicina', 'activo' => true]);
-                $this->alias($producto, $nombre);
                 if ($producto->wasRecentlyCreated) $creados++;
             }
         }
@@ -255,53 +250,6 @@ class CargaInicialMedicoService
             ->filter(fn (array $m) => trim((string) $m['nombre_original']) !== '')
             ->values()
             ->all();
-    }
-
-    private function crearAliasesBase(): int
-    {
-        $aliases = [
-            'Alercet' => ['ALERCET'],
-            'Analgan' => ['Analgan tabletas 1g'],
-            'tiras reactivas glucosa' => ['TIRILLAS ACCU CHEK'],
-            'Jeringuillas 3 ML' => ['jeringuilla 3 cm'],
-            'jeringuiilas 5cc' => ['jeringuilla 5 cm'],
-            'Paracolic' => ['Paracolic IB comprimidos'],
-            'Oralyte' => ['SUERO ORAL SOBRES'],
-            'Diarem' => ['Diaren comprimidos 200/350mg'],
-            'Dexametasona' => ['Dexametasona 8 mg. Amp.'],
-            'Loratadina 10 mg' => ['Loratadina 10mg.tab'],
-            'Esomeprazol 40 mg' => ['ESOMEPRAZOL DE 40 MG'],
-            'ketorolaco 60 ml amp' => ['ketorolaco ampolla 60mg'],
-            'Diclofenaco tabletas' => ['DICLOFENACO AMP'],
-            'Buscapina duo' => ['Buscapina simple tabletas'],
-            'Bactrim' => ['Bactrim forte'],
-            'Decatileno' => ['Decatileno tabletas'],
-            'Migradoxirina' => ['Migradorixina comprimido'],
-            'Tensorelax forte' => ['TENSORELAX'],
-            'Ibuprofeno 600mg' => ['Ibuprofeno tabletas 600mg'],
-        ];
-
-        $creados = 0;
-        foreach ($aliases as $productoNombre => $aliasList) {
-            $producto = MedicoProducto::query()->where('nombre', $productoNombre)->first();
-            if (! $producto) continue;
-            foreach ($aliasList as $alias) {
-                if ($this->alias($producto, $alias)) $creados++;
-            }
-        }
-
-        return $creados;
-    }
-
-    private function alias(MedicoProducto $producto, string $alias): bool
-    {
-        $normalizado = MedicoProducto::normalizarNombre($alias);
-        $row = MedicoProductoAlias::query()->firstOrCreate(
-            ['alias_normalizado' => $normalizado],
-            ['producto_id' => $producto->id, 'alias' => $alias],
-        );
-
-        return $row->wasRecentlyCreated;
     }
 
     private function archivoInicial(string $ruta): MedicoArchivoImportado

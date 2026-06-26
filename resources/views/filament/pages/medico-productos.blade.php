@@ -13,11 +13,11 @@
                     </div>
                     <h2 class="mt-3 text-xl font-bold tracking-tight text-gray-950 dark:text-white sm:text-2xl">Catalogo de medicinas y equipos</h2>
                     <p class="mt-1 max-w-4xl text-sm leading-6 text-gray-600 dark:text-gray-300">
-                        Controla productos del dispensario, alias de nombres del Excel, stock minimo, caducidad y disponibilidad para partes diarios e inventario.
+                        Controla productos del dispensario, stock minimo, caducidad y disponibilidad para partes diarios e inventario.
                     </p>
                 </div>
 
-                <div class="grid w-full gap-3 2xl:max-w-[680px]" style="grid-template-columns: repeat(5, minmax(0, 1fr));">
+                <div class="grid w-full gap-3 2xl:max-w-[560px]" style="grid-template-columns: repeat(4, minmax(0, 1fr));">
                     <div class="min-w-0 rounded-2xl border border-gray-100 bg-gray-50/80 p-3 text-center dark:border-gray-800 dark:bg-gray-950/50">
                         <p class="truncate text-[10px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Total</p>
                         <p class="mt-1 truncate text-2xl font-black tracking-tight text-gray-950 dark:text-white">{{ number_format($this->totalProductos, 0, ',', '.') }}</p>
@@ -34,10 +34,7 @@
                         <p class="truncate text-[10px] font-semibold uppercase tracking-wide text-red-700 dark:text-red-300">Stock bajo</p>
                         <p class="mt-1 truncate text-2xl font-black tracking-tight text-red-700 dark:text-red-300">{{ number_format($this->stockBajo, 0, ',', '.') }}</p>
                     </div>
-                    <div class="min-w-0 rounded-2xl border border-violet-100 bg-violet-50/70 p-3 text-center dark:border-violet-900 dark:bg-violet-950/20">
-                        <p class="truncate text-[10px] font-semibold uppercase tracking-wide text-violet-700 dark:text-violet-300">Alias</p>
-                        <p class="mt-1 truncate text-2xl font-black tracking-tight text-violet-700 dark:text-violet-300">{{ number_format($this->totalAliases, 0, ',', '.') }}</p>
-                    </div>
+
                 </div>
             </div>
         </section>
@@ -57,7 +54,7 @@
                                 </span>
                             @endif
                         </div>
-                        <p class="mt-1 max-w-3xl text-sm leading-5 text-gray-500 dark:text-gray-400">Busca, edita o agrega productos. Los alias permiten descontar inventario aunque la doctora escriba variantes del nombre.</p>
+                        <p class="mt-1 max-w-3xl text-sm leading-5 text-gray-500 dark:text-gray-400">Busca, edita o agrega productos del dispensario medico.</p>
                     </div>
 
                     <div class="flex w-full flex-col gap-2 sm:flex-row sm:items-center 2xl:w-auto 2xl:justify-end" role="search" aria-label="Filtros de productos medicos">
@@ -79,9 +76,7 @@
                             <option class="bg-white text-gray-900 dark:bg-gray-950 dark:text-white" value="inactivos">Inactivos</option>
                         </select>
 
-                        <button wire:click="abrirModalAlias" class="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-violet-200 bg-white px-4 text-sm font-semibold text-violet-700 shadow-sm transition hover:bg-violet-50 dark:border-violet-900 dark:bg-gray-900 dark:text-violet-300 dark:hover:bg-violet-950/30 sm:w-auto">
-                            Alias
-                        </button>
+
                         <button wire:click="abrirModalProducto" class="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 text-sm font-semibold text-white shadow-sm shadow-emerald-600/20 transition hover:bg-emerald-700 sm:w-auto">
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m7-7H5" /></svg>
                             Nuevo
@@ -104,8 +99,8 @@
                         <thead class="sticky top-0 z-10 bg-gray-50/95 shadow-sm backdrop-blur dark:bg-gray-950/95">
                             <tr>
                                 <th class="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 sm:px-5">Producto</th>
-                                <th class="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Alias</th>
-                                <th class="px-4 py-3 text-right text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Saldo</th>
+
+                                <th class="px-4 py-3 text-right text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Stock</th>
                                 <th class="hidden px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 lg:table-cell">Caducidad</th>
                                 <th class="px-4 py-3 text-right text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 sm:px-5">Acciones</th>
                             </tr>
@@ -131,7 +126,7 @@
                                                 <p class="font-semibold text-gray-950 dark:text-white">{{ $p->nombre }}</p>
                                                 <div class="mt-1 flex flex-wrap items-center gap-1.5">
                                                     <span class="rounded-full px-2 py-0.5 text-[11px] font-semibold {{ $p->tipo === 'equipo' ? 'bg-sky-50 text-sky-700 dark:bg-sky-950/40 dark:text-sky-300' : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300' }}">{{ $p->tipo === 'equipo' ? 'Equipo' : 'Medicina' }}</span>
-                                                    <span class="text-xs text-gray-500 dark:text-gray-400">Min. {{ number_format($p->stock_minimo, 2, ',', '.') }}</span>
+                                                    <span class="text-xs text-gray-500 dark:text-gray-400">Min. {{ fmod($p->stock_minimo, 1) == 0 ? number_format($p->stock_minimo, 0, ',', '.') : number_format($p->stock_minimo, 1, ',', '.') }}</span>
                                                     @if (! $p->activo)
                                                         <span class="rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-semibold text-gray-500 dark:bg-gray-800 dark:text-gray-400">Inactivo</span>
                                                     @endif
@@ -139,22 +134,8 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="max-w-md px-4 py-3">
-                                        <div class="flex flex-wrap gap-1.5">
-                                            @foreach ($p->aliases->take(5) as $a)
-                                                <span class="inline-flex items-center gap-1 rounded-full bg-violet-50 px-2 py-0.5 text-xs font-medium text-violet-700 dark:bg-violet-950/40 dark:text-violet-300">
-                                                    {{ $a->alias }}
-                                                    <button wire:click="eliminarAlias({{ $a->id }})" class="text-violet-400 transition hover:text-red-500" title="Eliminar alias">x</button>
-                                                </span>
-                                            @endforeach
-                                            @if ($p->aliases->count() > 5)
-                                                <span class="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-semibold text-gray-500 dark:bg-gray-800 dark:text-gray-400">+{{ $p->aliases->count() - 5 }}</span>
-                                            @endif
-                                            <button wire:click="abrirModalAlias({{ $p->id }})" class="rounded-full bg-white px-2 py-0.5 text-xs font-semibold text-violet-700 ring-1 ring-violet-100 transition hover:bg-violet-50 dark:bg-gray-900 dark:text-violet-300 dark:ring-violet-900 dark:hover:bg-violet-950/30">Agregar</button>
-                                        </div>
-                                    </td>
                                     <td class="px-4 py-3 text-right">
-                                        <p class="font-bold {{ $stockBajo ? 'text-red-600 dark:text-red-400' : 'text-gray-950 dark:text-white' }}">{{ number_format($saldo, 2, ',', '.') }}</p>
+                                        <p class="font-bold {{ $stockBajo ? 'text-red-600 dark:text-red-400' : 'text-gray-950 dark:text-white' }}">{{ fmod($saldo, 1) == 0 ? number_format($saldo, 0, ',', '.') : number_format($saldo, 1, ',', '.') }}</p>
                                         @if ($stockBajo)
                                             <p class="text-[11px] font-semibold text-red-600 dark:text-red-400">Stock bajo</p>
                                         @endif
@@ -172,6 +153,7 @@
                                         <div class="inline-flex items-center gap-1 rounded-full bg-gray-50 p-1 dark:bg-gray-950">
                                             <button wire:click="editar({{ $p->id }})" class="rounded-full px-3 py-1 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-50 dark:text-emerald-300 dark:hover:bg-emerald-950/50">Editar</button>
                                             <button wire:click="alternar({{ $p->id }})" class="rounded-full px-3 py-1 text-xs font-semibold text-gray-500 transition hover:bg-white hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-900 dark:hover:text-gray-200">{{ $p->activo ? 'Desactivar' : 'Activar' }}</button>
+                                            <button wire:click="eliminar({{ $p->id }})" wire:confirm="Eliminar este producto permanentemente?" class="rounded-full px-3 py-1 text-xs font-semibold text-red-500 transition hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/50">Eliminar</button>
                                         </div>
                                     </td>
                                 </tr>
@@ -240,44 +222,6 @@
                         <div class="flex flex-col-reverse gap-2 border-t border-gray-100 pt-4 dark:border-gray-800 sm:flex-row sm:justify-end">
                             <button type="button" wire:click="cerrarModalProducto" class="rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-600 shadow-sm transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-800">Cancelar</button>
                             <button class="rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-emerald-600/20 transition hover:bg-emerald-700">Guardar producto</button>
-                        </div>
-                    </form>
-                </section>
-            </div>
-        @endif
-
-        @if ($modalAliasAbierto)
-            <div class="flex items-center justify-center p-4 sm:p-6" style="position: fixed; inset: 0; z-index: 99999; background: rgba(15, 23, 42, 0.58); backdrop-filter: blur(6px);" wire:click.self="cerrarModalAlias">
-                <section class="w-full overflow-hidden rounded-2xl border border-white/70 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.35)] ring-1 ring-gray-950/5 dark:border-gray-800 dark:bg-gray-900 dark:ring-white/10" style="max-width: 460px;">
-                    <div class="bg-gradient-to-br from-violet-50 via-white to-white px-5 py-4 dark:from-violet-950/30 dark:via-gray-900 dark:to-gray-900">
-                        <div class="flex items-start justify-between gap-4">
-                            <div>
-                                <h3 class="text-base font-semibold text-gray-950 dark:text-white">Agregar alias</h3>
-                                <p class="mt-1 text-sm leading-5 text-gray-500 dark:text-gray-400">Conecta variantes de escritura con el producto oficial.</p>
-                            </div>
-                            <button type="button" wire:click="cerrarModalAlias" class="rounded-full p-2 text-gray-400 transition hover:bg-white hover:text-gray-700 hover:shadow-sm dark:hover:bg-gray-800 dark:hover:text-gray-200">
-                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 18 6M6 6l12 12" /></svg>
-                            </button>
-                        </div>
-                    </div>
-
-                    <form wire:submit.prevent="agregarAlias" class="space-y-4 px-5 py-4">
-                        <div>
-                            <label class="text-xs font-medium text-gray-600 dark:text-gray-300">Producto destino</label>
-                            <select wire:model="aliasProductoId" class="mt-1 block w-full rounded-xl border-gray-300 bg-white text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white">
-                                <option value="">Selecciona producto</option>
-                                @foreach ($this->todosProductos as $p)
-                                    <option value="{{ $p->id }}">{{ $p->nombre }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div>
-                            <label class="text-xs font-medium text-gray-600 dark:text-gray-300">Alias o variante</label>
-                            <input wire:model="alias" placeholder="Ej. ALERCET" class="mt-1 block w-full rounded-xl border-gray-300 bg-white text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white" autofocus>
-                        </div>
-                        <div class="flex flex-col-reverse gap-2 border-t border-gray-100 pt-4 dark:border-gray-800 sm:flex-row sm:justify-end">
-                            <button type="button" wire:click="cerrarModalAlias" class="rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-600 shadow-sm transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-800">Cancelar</button>
-                            <button class="rounded-xl bg-violet-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-violet-600/20 transition hover:bg-violet-700">Guardar alias</button>
                         </div>
                     </form>
                 </section>

@@ -52,7 +52,7 @@ class MedicoPartesDiarios extends Page
         $this->fecha = now()->toDateString();
         $this->desde = now()->startOfMonth()->toDateString();
         $this->hasta = now()->toDateString();
-        $this->medicamentos = [['producto_id' => null, 'nombre_original' => '', 'cantidad' => 1]];
+        $this->medicamentos = [['producto_id' => null, 'cantidad' => 1]];
     }
 
     public function updatedPacienteId(): void
@@ -69,7 +69,7 @@ class MedicoPartesDiarios extends Page
 
     public function agregarMedicamento(): void
     {
-        $this->medicamentos[] = ['producto_id' => null, 'nombre_original' => '', 'cantidad' => 1];
+        $this->medicamentos[] = ['producto_id' => null, 'cantidad' => 1];
     }
 
     public function quitarMedicamento(int $index): void
@@ -86,14 +86,17 @@ class MedicoPartesDiarios extends Page
         ]);
 
         $archivo = $inventario->archivoSistema();
-        $meds = collect($this->medicamentos)->filter(fn ($m) => trim((string) ($m['nombre_original'] ?? '')) !== '' || ! empty($m['producto_id']))->values();
-        $medNames = $meds->map(function ($m) {
-            if (! empty($m['producto_id'])) {
-                return MedicoProducto::query()->whereKey($m['producto_id'])->value('nombre');
-            }
+        $meds = collect($this->medicamentos)
+            ->filter(fn ($m) => ! empty($m['producto_id']))
+            ->values();
 
-            return $m['nombre_original'] ?? null;
-        })->values();
+        if ($meds->isEmpty()) {
+            $this->addError('medicamentos.0.producto_id', 'Debe seleccionar al menos un producto.');
+
+            return;
+        }
+
+        $medNames = $meds->map(fn ($m) => MedicoProducto::query()->whereKey($m['producto_id'])->value('nombre'))->values();
 
         $parte = MedicoParteDiario::query()->updateOrCreate(
             ['id' => $this->editandoId],
@@ -122,10 +125,11 @@ class MedicoPartesDiarios extends Page
         );
 
         $inventario->sincronizarMedicacionParte($parte, $meds->map(function ($m) {
-            $productoNombre = ! empty($m['producto_id']) ? MedicoProducto::query()->whereKey($m['producto_id'])->value('nombre') : null;
+            $productoNombre = MedicoProducto::query()->whereKey($m['producto_id'])->value('nombre');
+
             return [
-                'producto_id' => $m['producto_id'] ?: null,
-                'nombre_original' => $m['nombre_original'] ?: $productoNombre,
+                'producto_id' => $m['producto_id'],
+                'nombre_original' => $productoNombre,
                 'cantidad' => (float) ($m['cantidad'] ?? 1),
             ];
         })->all());
@@ -158,11 +162,17 @@ class MedicoPartesDiarios extends Page
         $this->causa = $p->causa;
         $this->diagnostico = $p->diagnostico;
         $this->observacion = $p->observacion;
-        $this->medicamentos = $p->medicamentos->map(fn ($m) => [
-            'producto_id' => $m->producto_id,
-            'nombre_original' => $m->nombre_original,
-            'cantidad' => $m->cantidad,
-        ])->values()->all() ?: [['producto_id' => null, 'nombre_original' => '', 'cantidad' => 1]];
+        $this->medicamentos = $p->medicamentos->map(function ($m) {
+            $productoId = $m->producto_id;
+            if (! $productoId && $m->nombre_original) {
+                $productoId = MedicoProducto::resolverPorNombre($m->nombre_original)?->id;
+            }
+
+            return [
+                'producto_id' => $productoId,
+                'cantidad' => $m->cantidad,
+            ];
+        })->values()->all() ?: [['producto_id' => null, 'cantidad' => 1]];
     }
 
     public function eliminar(int $id, InventarioMedicoService $inventario): void
@@ -192,7 +202,7 @@ class MedicoPartesDiarios extends Page
         $this->causa = null;
         $this->diagnostico = null;
         $this->observacion = null;
-        $this->medicamentos = [['producto_id' => null, 'nombre_original' => '', 'cantidad' => 1]];
+        $this->medicamentos = [['producto_id' => null, 'cantidad' => 1]];
     }
 
     public function catalogo(string $tipo): Collection
