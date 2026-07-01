@@ -98,48 +98,104 @@
         </div>
     @endif
 
-    @if ($this->total > 0 && $this->mesesDisponibles->isNotEmpty())
-        {{-- SELECTOR DE MES --}}
-        <div class="mb-4 rounded-2xl border border-violet-200 bg-white shadow-sm dark:border-violet-900 dark:bg-gray-900">
-            <div class="flex items-center justify-between gap-2 px-5 py-3">
-                <div>
-                    <span class="text-xs font-semibold uppercase tracking-wide text-violet-700 dark:text-violet-300">KARDEX Mensual</span>
-                    <p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">Resumen generado desde los partes diarios</p>
-                </div>
-                <select wire:model.live="mesSeleccionado" class="rounded-lg border-gray-300 text-sm font-medium shadow-sm focus:border-violet-500 focus:ring-violet-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white">
-                    @foreach ($this->mesesDisponibles as $m)
-                        <option value="{{ $m->ym }}">{{ $m->label }}</option>
-                    @endforeach
-                </select>
-            </div>
+    {{-- BOTONES DE ACCESO A REPORTES DETALLADOS --}}
+    @if ($this->total > 0)
+        <h3 class="mb-4 mt-4 text-lg font-semibold text-gray-950 dark:text-white">Reportes Detallados</h3>
+        <div class="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            
+            @if ($this->mesesDisponibles->isNotEmpty())
+                <button type="button" x-on:click="$dispatch('open-modal', { id: 'modal-kardex-mensual' })" class="flex items-center justify-between rounded-2xl border border-indigo-200 bg-white p-4 shadow-sm transition hover:border-indigo-300 hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-indigo-900 dark:bg-gray-900 dark:hover:bg-indigo-950/40">
+                    <div class="flex items-center gap-3">
+                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 text-indigo-600 dark:bg-indigo-900/50 dark:text-indigo-400">
+                            <x-heroicon-o-calendar-days class="h-5 w-5" />
+                        </div>
+                        <div class="text-left">
+                            <p class="text-sm font-bold text-gray-900 dark:text-white">Resumen Mensual</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Atenciones y pacientes por mes</p>
+                        </div>
+                    </div>
+                    <x-heroicon-m-chevron-right class="h-5 w-5 text-gray-400" />
+                </button>
+            @endif
 
-            {{-- CARDS DEL MES --}}
-            <div class="border-t border-violet-100 px-5 pb-4 dark:border-violet-900">
-                <div class="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-                    <div class="rounded-xl border border-gray-100 bg-gray-50/70 p-3 dark:border-gray-800 dark:bg-gray-950/40">
-                        <p class="text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Atenciones</p>
-                        <p class="mt-1 text-xl font-bold text-gray-950 dark:text-white">{{ number_format($this->resumenDelMes->atenciones, 0, ',', '.') }}</p>
+            @if ($this->medicamentosMasUsados->isNotEmpty())
+                <button type="button" x-on:click="$dispatch('open-modal', { id: 'modal-medicamentos-usados' })" class="flex items-center justify-between rounded-2xl border border-violet-200 bg-white p-4 shadow-sm transition hover:border-violet-300 hover:bg-violet-50 focus:outline-none focus:ring-2 focus:ring-violet-500 dark:border-violet-900 dark:bg-gray-900 dark:hover:bg-violet-950/40">
+                    <div class="flex items-center gap-3">
+                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-violet-100 text-violet-600 dark:bg-violet-900/50 dark:text-violet-400">
+                            <x-heroicon-o-star class="h-5 w-5" />
+                        </div>
+                        <div class="text-left">
+                            <p class="text-sm font-bold text-gray-900 dark:text-white">Medicamentos más usados</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Histórico de consumos</p>
+                        </div>
                     </div>
-                    <div class="rounded-xl border border-gray-100 bg-gray-50/70 p-3 dark:border-gray-800 dark:bg-gray-950/40">
-                        <p class="text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Pacientes</p>
-                        <p class="mt-1 text-xl font-bold text-gray-950 dark:text-white">{{ number_format($this->resumenDelMes->pacientes, 0, ',', '.') }}</p>
+                    <x-heroicon-m-chevron-right class="h-5 w-5 text-gray-400" />
+                </button>
+            @endif
+
+            @if ($this->kardexAlertas->isNotEmpty())
+                <button type="button" x-on:click="$dispatch('open-modal', { id: 'modal-alertas-stock' })" class="flex items-center justify-between rounded-2xl border border-red-200 bg-white p-4 shadow-sm transition hover:border-red-300 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 dark:border-red-900 dark:bg-gray-900 dark:hover:bg-red-950/40">
+                    <div class="flex items-center gap-3">
+                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 text-red-600 dark:bg-red-900/50 dark:text-red-400">
+                            <x-heroicon-o-exclamation-triangle class="h-5 w-5" />
+                        </div>
+                        <div class="text-left">
+                            <p class="text-sm font-bold text-gray-900 dark:text-white">Alertas de Stock Bajo</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">{{ $this->kardexAlertas->count() }} alertas en inventario</p>
+                        </div>
                     </div>
-                    <div class="rounded-xl border border-gray-100 bg-gray-50/70 p-3 dark:border-gray-800 dark:bg-gray-950/40">
-                        <p class="text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Dias con atencion</p>
-                        <p class="mt-1 text-xl font-bold text-gray-950 dark:text-white">{{ number_format($this->resumenDelMes->dias, 0, ',', '.') }}</p>
+                    <x-heroicon-m-chevron-right class="h-5 w-5 text-gray-400" />
+                </button>
+            @endif
+
+            @if ($this->movimientosRecientes->isNotEmpty())
+                <button type="button" x-on:click="$dispatch('open-modal', { id: 'modal-movimientos' })" class="flex items-center justify-between rounded-2xl border border-sky-200 bg-white p-4 shadow-sm transition hover:border-sky-300 hover:bg-sky-50 focus:outline-none focus:ring-2 focus:ring-sky-500 dark:border-sky-900 dark:bg-gray-900 dark:hover:bg-sky-950/40">
+                    <div class="flex items-center gap-3">
+                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-sky-100 text-sky-600 dark:bg-sky-900/50 dark:text-sky-400">
+                            <x-heroicon-o-arrow-path-rounded-square class="h-5 w-5" />
+                        </div>
+                        <div class="text-left">
+                            <p class="text-sm font-bold text-gray-900 dark:text-white">Movimientos Recientes</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Últimos ingresos y egresos</p>
+                        </div>
                     </div>
-                    <div class="rounded-xl border border-orange-100 bg-orange-50/60 p-3 dark:border-orange-900 dark:bg-orange-950/20">
-                        <p class="text-[11px] font-semibold uppercase tracking-wide text-orange-600 dark:text-orange-400">Con certificado</p>
-                        <p class="mt-1 text-xl font-bold text-orange-700 dark:text-orange-300">{{ number_format($this->resumenDelMes->conCertificado, 0, ',', '.') }}</p>
+                    <x-heroicon-m-chevron-right class="h-5 w-5 text-gray-400" />
+                </button>
+            @endif
+
+            @if ($this->kardexActual->isNotEmpty())
+                <button type="button" x-on:click="$dispatch('open-modal', { id: 'modal-kardex-medicinas' })" class="flex items-center justify-between rounded-2xl border border-emerald-200 bg-white p-4 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-emerald-900 dark:bg-gray-900 dark:hover:bg-emerald-950/40">
+                    <div class="flex items-center gap-3">
+                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-400">
+                            <x-heroicon-o-beaker class="h-5 w-5" />
+                        </div>
+                        <div class="text-left">
+                            <p class="text-sm font-bold text-gray-900 dark:text-white">Kardex de Medicinas</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Inventario y saldos actuales</p>
+                        </div>
                     </div>
-                    <div class="rounded-xl border border-violet-100 bg-violet-50/60 p-3 dark:border-violet-900 dark:bg-violet-950/20">
-                        <p class="text-[11px] font-semibold uppercase tracking-wide text-violet-600 dark:text-violet-400">Medicamentos usados</p>
-                        <p class="mt-1 text-xl font-bold text-violet-700 dark:text-violet-300">{{ $this->resumenDelMes->medicamentos }}</p>
+                    <x-heroicon-m-chevron-right class="h-5 w-5 text-gray-400" />
+                </button>
+            @endif
+
+            @if ($this->equipos->isNotEmpty())
+                <button type="button" x-on:click="$dispatch('open-modal', { id: 'modal-kardex-equipos' })" class="flex items-center justify-between rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition hover:border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:border-gray-800 dark:bg-gray-900 dark:hover:bg-gray-800/80">
+                    <div class="flex items-center gap-3">
+                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                            <x-heroicon-o-briefcase class="h-5 w-5" />
+                        </div>
+                        <div class="text-left">
+                            <p class="text-sm font-bold text-gray-900 dark:text-white">Kardex de Equipos</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Inventario de instrumental</p>
+                        </div>
                     </div>
-                </div>
-            </div>
+                    <x-heroicon-m-chevron-right class="h-5 w-5 text-gray-400" />
+                </button>
+            @endif
         </div>
+    @endif
 
+    @if ($this->total > 0 && $this->fechasDisponibles->isNotEmpty())
         {{-- SELECTOR DE DIA --}}
         <div class="mb-4 rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
             <div class="flex items-center justify-between gap-2 px-5 py-3">
@@ -216,88 +272,51 @@
         </div>
     @endif
 
-    {{-- BOTONES DE ACCESO A REPORTES DETALLADOS --}}
-    <h3 class="mb-4 mt-8 text-lg font-semibold text-gray-950 dark:text-white">Reportes Detallados</h3>
-    <div class="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        
-        @if ($this->medicamentosMasUsados->isNotEmpty())
-            <button type="button" x-on:click="$dispatch('open-modal', { id: 'modal-medicamentos-usados' })" class="flex items-center justify-between rounded-2xl border border-violet-200 bg-white p-4 shadow-sm transition hover:border-violet-300 hover:bg-violet-50 focus:outline-none focus:ring-2 focus:ring-violet-500 dark:border-violet-900 dark:bg-gray-900 dark:hover:bg-violet-950/40">
-                <div class="flex items-center gap-3">
-                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-violet-100 text-violet-600 dark:bg-violet-900/50 dark:text-violet-400">
-                        <x-heroicon-o-star class="h-5 w-5" />
-                    </div>
-                    <div class="text-left">
-                        <p class="text-sm font-bold text-gray-900 dark:text-white">Medicamentos más usados</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Histórico de consumos</p>
-                    </div>
-                </div>
-                <x-heroicon-m-chevron-right class="h-5 w-5 text-gray-400" />
-            </button>
-        @endif
-
-        @if ($this->kardexAlertas->isNotEmpty())
-            <button type="button" x-on:click="$dispatch('open-modal', { id: 'modal-alertas-stock' })" class="flex items-center justify-between rounded-2xl border border-red-200 bg-white p-4 shadow-sm transition hover:border-red-300 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 dark:border-red-900 dark:bg-gray-900 dark:hover:bg-red-950/40">
-                <div class="flex items-center gap-3">
-                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 text-red-600 dark:bg-red-900/50 dark:text-red-400">
-                        <x-heroicon-o-exclamation-triangle class="h-5 w-5" />
-                    </div>
-                    <div class="text-left">
-                        <p class="text-sm font-bold text-gray-900 dark:text-white">Alertas de Stock Bajo</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ $this->kardexAlertas->count() }} alertas en inventario</p>
-                    </div>
-                </div>
-                <x-heroicon-m-chevron-right class="h-5 w-5 text-gray-400" />
-            </button>
-        @endif
-
-        @if ($this->movimientosRecientes->isNotEmpty())
-            <button type="button" x-on:click="$dispatch('open-modal', { id: 'modal-movimientos' })" class="flex items-center justify-between rounded-2xl border border-sky-200 bg-white p-4 shadow-sm transition hover:border-sky-300 hover:bg-sky-50 focus:outline-none focus:ring-2 focus:ring-sky-500 dark:border-sky-900 dark:bg-gray-900 dark:hover:bg-sky-950/40">
-                <div class="flex items-center gap-3">
-                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-sky-100 text-sky-600 dark:bg-sky-900/50 dark:text-sky-400">
-                        <x-heroicon-o-arrow-path-rounded-square class="h-5 w-5" />
-                    </div>
-                    <div class="text-left">
-                        <p class="text-sm font-bold text-gray-900 dark:text-white">Movimientos Recientes</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Últimos ingresos y egresos</p>
-                    </div>
-                </div>
-                <x-heroicon-m-chevron-right class="h-5 w-5 text-gray-400" />
-            </button>
-        @endif
-
-        @if ($this->kardexActual->isNotEmpty())
-            <button type="button" x-on:click="$dispatch('open-modal', { id: 'modal-kardex-medicinas' })" class="flex items-center justify-between rounded-2xl border border-emerald-200 bg-white p-4 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-emerald-900 dark:bg-gray-900 dark:hover:bg-emerald-950/40">
-                <div class="flex items-center gap-3">
-                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-400">
-                        <x-heroicon-o-beaker class="h-5 w-5" />
-                    </div>
-                    <div class="text-left">
-                        <p class="text-sm font-bold text-gray-900 dark:text-white">Kardex de Medicinas</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Inventario y saldos actuales</p>
-                    </div>
-                </div>
-                <x-heroicon-m-chevron-right class="h-5 w-5 text-gray-400" />
-            </button>
-        @endif
-
-        @if ($this->equipos->isNotEmpty())
-            <button type="button" x-on:click="$dispatch('open-modal', { id: 'modal-kardex-equipos' })" class="flex items-center justify-between rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition hover:border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:border-gray-800 dark:bg-gray-900 dark:hover:bg-gray-800/80">
-                <div class="flex items-center gap-3">
-                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
-                        <x-heroicon-o-briefcase class="h-5 w-5" />
-                    </div>
-                    <div class="text-left">
-                        <p class="text-sm font-bold text-gray-900 dark:text-white">Kardex de Equipos</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Inventario de instrumental</p>
-                    </div>
-                </div>
-                <x-heroicon-m-chevron-right class="h-5 w-5 text-gray-400" />
-            </button>
-        @endif
-    </div>
-
     {{-- MODALES CON LAS TABLAS --}}
     
+    @if ($this->total > 0 && $this->mesesDisponibles->isNotEmpty())
+        <x-filament::modal id="modal-kardex-mensual" width="5xl">
+            <x-slot name="heading">Resumen KARDEX Mensual</x-slot>
+            
+            <div class="mt-4">
+                <div class="flex items-center justify-between gap-2 mb-4">
+                    <div>
+                        <span class="text-sm font-semibold text-gray-950 dark:text-white">Seleccionar Mes</span>
+                        <p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">Cambia el mes para ver el histórico de atenciones</p>
+                    </div>
+                    <select wire:model.live="mesSeleccionado" class="rounded-lg border-gray-300 text-sm font-medium shadow-sm focus:border-violet-500 focus:ring-violet-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white">
+                        @foreach ($this->mesesDisponibles as $m)
+                            <option value="{{ $m->ym }}">{{ $m->label }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+                    <div class="rounded-xl border border-gray-100 bg-gray-50/70 p-4 dark:border-gray-800 dark:bg-gray-950/40">
+                        <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Atenciones</p>
+                        <p class="mt-1 text-2xl font-bold text-gray-950 dark:text-white">{{ number_format($this->resumenDelMes->atenciones, 0, ',', '.') }}</p>
+                    </div>
+                    <div class="rounded-xl border border-gray-100 bg-gray-50/70 p-4 dark:border-gray-800 dark:bg-gray-950/40">
+                        <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Pacientes</p>
+                        <p class="mt-1 text-2xl font-bold text-gray-950 dark:text-white">{{ number_format($this->resumenDelMes->pacientes, 0, ',', '.') }}</p>
+                    </div>
+                    <div class="rounded-xl border border-gray-100 bg-gray-50/70 p-4 dark:border-gray-800 dark:bg-gray-950/40">
+                        <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Días con atención</p>
+                        <p class="mt-1 text-2xl font-bold text-gray-950 dark:text-white">{{ number_format($this->resumenDelMes->dias, 0, ',', '.') }}</p>
+                    </div>
+                    <div class="rounded-xl border border-orange-100 bg-orange-50/60 p-4 dark:border-orange-900 dark:bg-orange-950/20">
+                        <p class="text-xs font-semibold uppercase tracking-wide text-orange-600 dark:text-orange-400">Con certificado</p>
+                        <p class="mt-1 text-2xl font-bold text-orange-700 dark:text-orange-300">{{ number_format($this->resumenDelMes->conCertificado, 0, ',', '.') }}</p>
+                    </div>
+                    <div class="rounded-xl border border-violet-100 bg-violet-50/60 p-4 dark:border-violet-900 dark:bg-violet-950/20">
+                        <p class="text-xs font-semibold uppercase tracking-wide text-violet-600 dark:text-violet-400">Meds. usados</p>
+                        <p class="mt-1 text-2xl font-bold text-violet-700 dark:text-violet-300">{{ $this->resumenDelMes->medicamentos }}</p>
+                    </div>
+                </div>
+            </div>
+        </x-filament::modal>
+    @endif
+
     @if ($this->medicamentosMasUsados->isNotEmpty())
         <x-filament::modal id="modal-medicamentos-usados" width="5xl">
             <x-slot name="heading">Medicamentos más usados (Histórico)</x-slot>
