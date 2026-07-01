@@ -386,38 +386,39 @@
         FORM MODAL
         ============================================================ --}}
         @if($modalAbierto)
-            <div class="modal-overlay" wire:click.self="cerrarModal">
-                <div class="modal-panel !max-w-2xl !w-full">
+            <div class="modal-overlay" wire:click.self="cerrarModal" x-data
+                 x-on:keydown.escape.window="$wire.cerrarModal()">
+                <div class="modal-panel !max-w-2xl w-[calc(100%-0.5rem)] sm:!w-full mx-auto">
                     {{-- Header --}}
-                    <div class="flex items-center justify-between gap-3 border-b border-gray-100 px-6 py-4 dark:border-gray-800">
-                        <div class="flex items-center gap-3">
-                            <span class="flex h-9 w-9 items-center justify-center rounded-xl
+                    <div class="flex items-center justify-between gap-2 border-b border-gray-100 px-4 py-3 sm:px-6 sm:py-4 dark:border-gray-800">
+                        <div class="flex min-w-0 items-center gap-2.5 sm:gap-3">
+                            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg sm:h-9 sm:w-9 sm:rounded-xl
                                 {{ $editandoId
                                     ? 'bg-amber-100 text-amber-600 ring-1 ring-amber-200 dark:bg-amber-950/30 dark:text-amber-400 dark:ring-amber-800'
                                     : 'bg-sky-100 text-sky-600 ring-1 ring-sky-200 dark:bg-sky-950/30 dark:text-sky-400 dark:ring-sky-800' }}">
-                                <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="h-4 w-4 sm:h-4.5 sm:w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="{{ $editandoId ? 'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z' : 'M12 4v16m8-8H4' }}"/>
                                 </svg>
                             </span>
-                            <div>
-                                <h3 class="text-base font-bold text-gray-900 dark:text-white">
+                            <div class="min-w-0">
+                                <h3 class="truncate text-sm font-bold text-gray-900 sm:text-base dark:text-white">
                                     {{ $editandoId ? 'Editar ficha médica' : 'Nuevo registro' }}
                                 </h3>
-                                <p class="text-[12px] text-gray-400 dark:text-gray-500">
+                                <p class="hidden text-[11px] text-gray-400 sm:block sm:text-xs dark:text-gray-500">
                                     {{ $editandoId ? 'Modifique los campos necesarios' : 'Complete los datos del colaborador o paciente' }}
                                 </p>
                             </div>
                         </div>
                         <button type="button" wire:click="cerrarModal"
-                            class="btn-ghost rounded-lg p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                            class="shrink-0 rounded-lg p-1.5 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600 sm:p-2 dark:hover:bg-gray-800 dark:hover:text-gray-300">
+                            <svg class="h-4.5 w-4.5 sm:h-5 sm:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                         </button>
                     </div>
 
-                    {{-- Form body — scrollable --}}
+                    {{-- Form body — scrollable, respects mobile keyboard --}}
                     <form wire:submit.prevent="guardar"
-                        class="scroll-thin max-h-[65vh] overflow-y-auto divide-y divide-gray-50 dark:divide-gray-800/50">
+                        class="scroll-thin max-h-[50vh] overflow-y-auto divide-y divide-gray-50 sm:max-h-[60vh] dark:divide-gray-800/50">
 
                         {{-- SECTION: Datos personales --}}
                         <div class="form-section">
@@ -531,16 +532,16 @@
                         {{-- SECTION: Visitas médicas anuales --}}
                         <div x-data="{ abierto: {{ ($editandoId && ($visita_2021 || $visita_2022 || $visita_2023 || $visita_2024 || $visita_2025 || $visita_2026)) ? 'true' : 'false' }} }">
                             <button type="button" x-on:click="abierto = !abierto"
-                                class="flex w-full items-center justify-between gap-2 px-5 py-3.5 text-left transition hover:bg-gray-50/50 dark:hover:bg-gray-950/30">
+                                class="flex w-full items-center justify-between gap-2 px-4 py-3 text-left transition hover:bg-gray-50/50 sm:px-5 sm:py-3.5 dark:hover:bg-gray-950/30">
                                 <span class="form-section-label text-violet-600 dark:text-violet-400 !mb-0 after:hidden">
                                     <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                                     Visitas médicas anuales
                                 </span>
-                                <svg class="h-4 w-4 text-gray-400 transition-transform duration-200" :class="abierto && 'rotate-180'"
+                                <svg class="h-4 w-4 shrink-0 text-gray-400 transition-transform duration-200" :class="abierto && 'rotate-180'"
                                     fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/></svg>
                             </button>
-                            <div x-show="abierto" x-collapse class="px-5 pb-4">
-                                <div class="grid grid-cols-3 gap-2 rounded-xl border border-violet-100 bg-violet-50/30 p-3.5 dark:border-violet-900/30 dark:bg-violet-950/10">
+                            <div x-show="abierto" x-collapse class="px-4 pb-3.5 sm:px-5 sm:pb-4">
+                                <div class="grid grid-cols-2 gap-2 rounded-xl border border-violet-100 bg-violet-50/30 p-3 sm:grid-cols-3 dark:border-violet-900/30 dark:bg-violet-950/10">
                                     @foreach(range(2021, 2026) as $anio)
                                         @php $campo = "visita_{$anio}"; @endphp
                                         <div>
@@ -560,15 +561,16 @@
                     </form>
 
                     {{-- ACTIONS — footer --}}
-                    <div class="flex items-center justify-end gap-2.5 border-t border-gray-100 px-6 py-4 dark:border-gray-800">
+                    <div class="flex items-center justify-end gap-2 border-t border-gray-100 px-4 py-3 sm:gap-2.5 sm:px-6 sm:py-4 dark:border-gray-800">
                         <button type="button" wire:click="cerrarModal"
-                            class="btn-outline text-sm">
+                            class="btn-outline px-3 py-2 text-xs sm:px-4 sm:py-2.5 sm:text-sm">
                             Cancelar
                         </button>
                         <button type="button" wire:click="guardar"
-                            class="btn-primary text-sm">
-                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            {{ $editandoId ? 'Actualizar ficha' : 'Guardar registro' }}
+                            class="btn-primary px-3 py-2 text-xs sm:px-4 sm:py-2.5 sm:text-sm">
+                            <svg class="h-3.5 w-3.5 sm:h-4 sm:w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span class="hidden sm:inline">{{ $editandoId ? 'Actualizar ficha' : 'Guardar registro' }}</span>
+                            <span class="sm:hidden">{{ $editandoId ? 'Actualizar' : 'Guardar' }}</span>
                         </button>
                     </div>
                 </div>
@@ -579,24 +581,25 @@
         DELETE CONFIRMATION MODAL
         ============================================================ --}}
         @if($modalEliminarAbierto)
-            <div class="modal-overlay" style="z-index: 10000;" wire:click.self="cancelarEliminar">
-                <div class="modal-panel">
-                    <div class="bg-gradient-to-br from-red-50 via-white to-white px-6 py-5 text-center dark:from-red-950/30 dark:via-gray-900 dark:to-gray-900">
-                        <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-100 ring-4 ring-red-50 dark:bg-red-950/30 dark:ring-red-950/10">
-                            <svg class="h-7 w-7 text-red-500 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+            <div class="modal-overlay" style="z-index: 10000;" wire:click.self="cancelarEliminar"
+                 x-data x-on:keydown.escape.window="$wire.cancelarEliminar()">
+                <div class="modal-panel w-[calc(100%-1rem)] sm:max-w-sm mx-auto">
+                    <div class="bg-gradient-to-br from-red-50 via-white to-white px-4 py-4 text-center sm:px-6 sm:py-5 dark:from-red-950/30 dark:via-gray-900 dark:to-gray-900">
+                        <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100 ring-4 ring-red-50 sm:h-14 sm:w-14 dark:bg-red-950/30 dark:ring-red-950/10">
+                            <svg class="h-6 w-6 text-red-500 sm:h-7 sm:w-7 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
                         </div>
-                        <h4 class="mt-4 text-base font-bold text-gray-900 dark:text-white">¿Eliminar este paciente?</h4>
-                        <p class="mt-2 text-sm leading-relaxed text-gray-500 dark:text-gray-400">
-                            Esta acción es permanente y no se puede deshacer.<br>Se eliminará todo el historial médico asociado.
+                        <h4 class="mt-3 text-sm font-bold text-gray-900 sm:mt-4 sm:text-base dark:text-white">¿Eliminar este paciente?</h4>
+                        <p class="mt-1.5 text-xs leading-relaxed text-gray-500 sm:mt-2 sm:text-sm dark:text-gray-400">
+                            Esta acción es permanente y no se puede deshacer. Se eliminará todo el historial médico asociado.
                         </p>
                     </div>
                     <div class="flex border-t border-gray-100 dark:border-gray-800">
                         <button wire:click="cancelarEliminar"
-                            class="flex-1 border-r border-gray-100 px-4 py-3.5 text-sm font-semibold text-gray-600 transition hover:bg-gray-50 dark:border-gray-800 dark:text-gray-400 dark:hover:bg-gray-950">
+                            class="flex-1 border-r border-gray-100 px-3 py-3 text-xs font-semibold text-gray-600 transition hover:bg-gray-50 sm:px-4 sm:py-3.5 sm:text-sm dark:border-gray-800 dark:text-gray-400 dark:hover:bg-gray-950">
                             Cancelar
                         </button>
                         <button wire:click="confirmarEliminar"
-                            class="flex-1 px-4 py-3.5 text-sm font-semibold text-red-600 transition hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/20">
+                            class="flex-1 px-3 py-3 text-xs font-semibold text-red-600 transition hover:bg-red-50 sm:px-4 sm:py-3.5 sm:text-sm dark:text-red-400 dark:hover:bg-red-950/20">
                             Sí, eliminar
                         </button>
                     </div>
