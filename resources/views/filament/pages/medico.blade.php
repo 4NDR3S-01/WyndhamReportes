@@ -1,18 +1,100 @@
 <x-filament-panels::page>
-    <div class="flex items-center justify-between gap-4 pb-4">
+    <!-- Encabezado con Reloj (Estilo Premium) -->
+    <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
-            <h2 class="text-xl font-bold tracking-tight text-gray-950 dark:text-white">Departamento Medico</h2>
-            <p class="text-sm text-gray-500 dark:text-gray-400">
-                @if ($this->minFecha) {{ \Carbon\Carbon::parse($this->minFecha)->format('d/m/Y') }} — {{ \Carbon\Carbon::parse($this->maxFecha)->format('d/m/Y') }} @else Sin datos @endif
-                &middot; {{ number_format($this->total, 0, ',', '.') }} atenciones &middot; {{ $this->archivos }} archivo{{ $this->archivos !== 1 ? 's' : '' }}
+            <h2 class="flex items-center gap-2 text-3xl font-bold tracking-tight text-gray-950 dark:text-white">
+                Dashboard de Médico
+            </h2>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                @if ($this->total)
+                    Datos desde {{ \Carbon\Carbon::parse($this->minFecha)->format('d/m/Y') }} — {{ \Carbon\Carbon::parse($this->maxFecha)->format('d/m/Y') }} &middot; {{ $this->archivos }} archivo(s)
+                @else
+                    Sin datos registrados actualmente
+                @endif
             </p>
+        </div>
+
+        <div class="mt-4 sm:mt-0 flex items-center gap-3 rounded-2xl border border-gray-200 bg-white px-5 py-3 shadow-sm dark:border-gray-800 dark:bg-gray-900" x-data="{ time: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) }" x-init="setInterval(() => time = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }), 1000)">
+            <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-50 text-primary-600 dark:bg-primary-900/50 dark:text-primary-400">
+                <x-heroicon-o-clock class="h-7 w-7" />
+            </div>
+            <div>
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ now()->translatedFormat('l, d \d\e F') }}</p>
+                <p class="text-xl font-bold tracking-tight text-gray-900 dark:text-white" x-text="time"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tarjetas de Estadísticas (Colores Pasteles) -->
+    <h3 class="mb-4 text-lg font-semibold text-gray-950 dark:text-white">Resumen de Atenciones</h3>
+    <div class="mb-8 grid gap-6 sm:grid-cols-4">
+        <!-- Atenciones -->
+        <div class="rounded-2xl border border-primary-100 bg-primary-50/30 p-5 shadow-sm transition hover:shadow-md dark:border-primary-900/30 dark:bg-primary-900/10">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-primary-600 dark:text-primary-400">Atenciones totales</p>
+                    <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">{{ number_format($this->totalAtenciones, 0, ',', '.') }}</p>
+                </div>
+                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-primary-100 text-primary-600 dark:bg-primary-900/50 dark:text-primary-400">
+                    <x-heroicon-o-document-text class="h-6 w-6" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Pacientes -->
+        <div class="rounded-2xl border border-emerald-100 bg-emerald-50/30 p-5 shadow-sm transition hover:shadow-md dark:border-emerald-900/30 dark:bg-emerald-900/10">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-emerald-600 dark:text-emerald-400">Pacientes únicos</p>
+                    <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">{{ number_format($this->totalPacientes, 0, ',', '.') }}</p>
+                </div>
+                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-400">
+                    <x-heroicon-o-user-group class="h-6 w-6" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Último día -->
+        <div class="rounded-2xl border border-amber-100 bg-amber-50/30 p-5 shadow-sm transition hover:shadow-md dark:border-amber-900/30 dark:bg-amber-900/10">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-amber-600 dark:text-amber-400">Último día</p>
+                    <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">{{ \Carbon\Carbon::parse($this->ultimaFechaStr)->format('d/m/Y') }}</p>
+                </div>
+                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 text-amber-600 dark:bg-amber-900/50 dark:text-amber-400">
+                    <x-heroicon-o-calendar-days class="h-6 w-6" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Kardex / Días cubiertos -->
+        <div class="rounded-2xl border border-rose-100 bg-rose-50/30 p-5 shadow-sm transition hover:shadow-md dark:border-rose-900/30 dark:bg-rose-900/10">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-rose-600 dark:text-rose-400">Días cubiertos</p>
+                    <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">{{ number_format($this->diasCubiertos, 0, ',', '.') }}</p>
+                </div>
+                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-rose-100 text-rose-600 dark:bg-rose-900/50 dark:text-rose-400">
+                    <x-heroicon-o-squares-2x2 class="h-6 w-6" />
+                </div>
+            </div>
         </div>
     </div>
 
     @if ($this->total === 0)
-        <div class="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-gray-200 py-16 dark:border-gray-800">
-            <h3 class="text-base font-semibold text-gray-950 dark:text-white">Sin datos todavia</h3>
-            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Sube un archivo Excel desde <strong>Subir datos</strong> y presiona <strong>Importar</strong>.</p>
+        <!-- Empty State Mejorado con CTA -->
+        <div class="my-10 flex flex-col items-center justify-center rounded-3xl border border-dashed border-gray-300 bg-gray-50/50 py-16 dark:border-gray-800 dark:bg-gray-900/50">
+            <div class="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary-100 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400">
+                <x-heroicon-o-cloud-arrow-up class="h-10 w-10" />
+            </div>
+            <h3 class="text-lg font-bold text-gray-950 dark:text-white">Aún no hay datos médicos</h3>
+            <p class="mt-2 text-center text-sm text-gray-500 max-w-md dark:text-gray-400">
+                El dashboard está vacío. Para comenzar a ver estadísticas y resúmenes, sube tu primer reporte de atenciones en formato Excel.
+            </p>
+            <a href="/admin/medico/subir-datos" class="mt-6 inline-flex items-center justify-center gap-2 rounded-xl bg-primary-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600">
+                <x-heroicon-m-plus class="h-5 w-5" />
+                Importar tu primer archivo
+            </a>
         </div>
     @endif
 
@@ -134,159 +216,212 @@
         </div>
     @endif
 
-    {{-- MEDICAMENTOS MAS USADOS --}}
-    @if ($this->medicamentosMasUsados->isNotEmpty())
-        <details class="mb-4 group rounded-2xl border border-violet-200 bg-white shadow-sm dark:border-violet-900 dark:bg-gray-900">
-            <summary class="flex cursor-pointer items-center justify-between gap-2 px-5 py-3 text-xs font-semibold uppercase tracking-wide text-violet-700 dark:text-violet-300 select-none">
-                Medicamentos mas usados (historico)
-                <svg class="h-4 w-4 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/></svg>
-            </summary>
-            <div class="border-t border-violet-100 px-5 pb-4 dark:border-violet-900">
-                <div class="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-                    @foreach ($this->medicamentosMasUsados as $med)
-                        <div class="flex items-center justify-between rounded-xl border border-violet-100 bg-violet-50/50 px-3 py-2 text-sm dark:border-violet-900 dark:bg-violet-950/20">
-                            <span class="truncate font-medium text-gray-900 dark:text-white">{{ $med->nombre }}</span>
-                            <span class="ml-2 shrink-0 font-semibold text-violet-700 dark:text-violet-300">{{ $med->total }}</span>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </details>
-    @endif
-
-    {{-- ALERTAS STOCK BAJO --}}
-    @if ($this->kardexAlertas->isNotEmpty())
-        <details class="mb-4 group rounded-2xl border border-red-200 bg-white shadow-sm dark:border-red-900 dark:bg-gray-900">
-            <summary class="flex cursor-pointer items-center justify-between gap-2 px-5 py-3 text-xs font-semibold uppercase tracking-wide text-red-700 dark:text-red-300 select-none">
-                Alertas de stock bajo (KARDEX inventario)
-                <svg class="h-4 w-4 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/></svg>
-            </summary>
-            <div class="border-t border-red-100 px-5 pb-4 dark:border-red-900">
-                <div class="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-                    @foreach ($this->kardexAlertas as $alerta)
-                        @php $saldoAlerta = $alerta->saldoActual(); @endphp
-                        <div class="flex items-center justify-between rounded-xl border border-red-100 bg-red-50/50 px-3 py-2 text-sm dark:border-red-900 dark:bg-red-950/20">
-                            <span class="truncate font-medium text-gray-900 dark:text-white">{{ $alerta->nombre }}</span>
-                            <span class="ml-2 shrink-0 rounded-full bg-red-100 px-2 py-0.5 text-xs font-bold text-red-700 dark:bg-red-950 dark:text-red-300">{{ $saldoAlerta }}</span>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </details>
-    @endif
-
-    {{-- MOVIMIENTOS RECIENTES --}}
-    @if ($this->movimientosRecientes->isNotEmpty())
-        <details class="mb-4 group rounded-2xl border border-sky-200 bg-white shadow-sm dark:border-sky-900 dark:bg-gray-900">
-            <summary class="flex cursor-pointer items-center justify-between gap-2 px-5 py-3 text-xs font-semibold uppercase tracking-wide text-sky-700 dark:text-sky-300 select-none">
-                Movimientos recientes de medicamentos
-                <svg class="h-4 w-4 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/></svg>
-            </summary>
-            <div class="border-t border-sky-100 px-5 pb-4 dark:border-sky-900">
-                <div class="mt-2 overflow-x-auto">
-                    <table class="min-w-full text-sm">
-                        <thead>
-                            <tr class="border-b border-gray-100 dark:border-gray-800">
-                                <th class="py-2 text-left text-xs font-medium text-gray-500">Fecha</th>
-                                <th class="py-2 text-left text-xs font-medium text-gray-500">Medicamento</th>
-                                <th class="py-2 text-right text-xs font-medium text-gray-500">Cantidad</th>
-                                <th class="py-2 text-right text-xs font-medium text-gray-500">Saldo</th>
-                                <th class="py-2 text-left text-xs font-medium text-gray-500">Responsable</th>
-                                <th class="py-2 text-left text-xs font-medium text-gray-500">Paciente</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($this->movimientosRecientes as $mov)
-                                <tr class="border-b border-gray-50 dark:border-gray-800/50">
-                                    <td class="py-2 pr-3 text-gray-600 dark:text-gray-400">{{ $mov->fecha_movimiento?->format('d/m/Y') }}</td>
-                                    <td class="py-2 pr-3 font-medium text-gray-900 dark:text-white">{{ $mov->medicamento_nombre }}</td>
-                                    <td class="py-2 pr-3 text-right text-gray-600 dark:text-gray-400">{{ $mov->cantidad }}</td>
-                                    <td class="py-2 pr-3 text-right font-semibold text-gray-900 dark:text-white">{{ $mov->saldo_resultante }}</td>
-                                    <td class="py-2 pr-3 text-gray-600 dark:text-gray-400">{{ $mov->personal_responsable ?: '-' }}</td>
-                                    <td class="py-2 pr-3 text-gray-600 dark:text-gray-400">{{ $mov->parteDiario?->nombres ?: '-' }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </details>
-    @endif
-
-    {{-- KARDEX MEDICINAS --}}
-    @if ($this->kardexActual->isNotEmpty())
-        <details class="mb-4 group rounded-2xl border border-emerald-200 bg-white shadow-sm dark:border-emerald-900 dark:bg-gray-900" open>
-            <summary class="flex cursor-pointer items-center justify-between gap-2 px-5 py-3 text-xs font-semibold uppercase tracking-wide text-emerald-700 dark:text-emerald-300 select-none">
-                Kardex Inventario — Medicinas
-                <svg class="h-4 w-4 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/></svg>
-            </summary>
-            <div class="border-t border-emerald-100 px-5 pb-4 dark:border-emerald-900">
-                <div class="mt-2 overflow-x-auto">
-                    <table class="min-w-full text-sm">
-                        <thead>
-                            <tr class="border-b border-gray-100 dark:border-gray-800">
-                                <th class="py-2 text-left text-xs font-medium text-gray-500">Medicina</th>
-                                <th class="py-2 text-right text-xs font-medium text-gray-500">Saldo Ant.</th>
-                                <th class="py-2 text-right text-xs font-medium text-gray-500">Ingresos</th>
-                                <th class="py-2 text-right text-xs font-medium text-gray-500">Egresos</th>
-                                <th class="py-2 text-right text-xs font-medium text-gray-500">Total Ref.</th>
-                                <th class="py-2 text-right text-xs font-medium text-gray-500">Consumos</th>
-                                <th class="py-2 text-right text-xs font-medium text-gray-500">Saldo Real</th>
-                                <th class="py-2 text-left text-xs font-medium text-gray-500">Caducidad</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($this->kardexActual as $k)
-                                @php
-                                    $consumos = $k->totalSalidas();
-                                    $saldoReal = $k->saldoActual();
-                                @endphp
-                                <tr class="border-b border-gray-50 dark:border-gray-800/50">
-                                    <td class="py-2 pr-3 font-medium text-gray-900 dark:text-white">{{ $k->nombre }}</td>
-                                    <td class="py-2 pr-3 text-right text-gray-600 dark:text-gray-400">{{ $k->saldo_anterior }}</td>
-                                    <td class="py-2 pr-3 text-right text-gray-600 dark:text-gray-400">{{ $k->ingresos }}</td>
-                                    <td class="py-2 pr-3 text-right text-gray-600 dark:text-gray-400">{{ $k->egresos }}</td>
-                                    <td class="py-2 pr-3 text-right text-gray-600 dark:text-gray-400">{{ $k->total }}</td>
-                                    <td class="py-2 pr-3 text-right text-gray-600 dark:text-gray-400">{{ $consumos }}</td>
-                                    <td class="py-2 pr-3 text-right">
-                                        <span class="font-semibold {{ $saldoReal <= 2 ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-white' }}">{{ $saldoReal }}</span>
-                                    </td>
-                                    <td class="py-2 pr-3 text-gray-600 dark:text-gray-400">{{ $k->fecha_caducidad ?: '-' }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </details>
-
-        @if ($this->equipos->isNotEmpty())
-            <details class="mb-4 group rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
-                <summary class="flex cursor-pointer items-center justify-between gap-2 px-5 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 select-none">
-                    Kardex Inventario — Equipos
-                    <svg class="h-4 w-4 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/></svg>
-                </summary>
-                <div class="border-t border-gray-100 px-5 pb-4 dark:border-gray-800">
-                    <div class="mt-2 overflow-x-auto">
-                        <table class="min-w-full text-sm">
-                            <thead>
-                                <tr class="border-b border-gray-100 dark:border-gray-800">
-                                    <th class="py-2 text-left text-xs font-medium text-gray-500">Equipo</th>
-                                    <th class="py-2 text-right text-xs font-medium text-gray-500">Cantidad</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($this->equipos as $eq)
-                                    <tr class="border-b border-gray-50 dark:border-gray-800/50">
-                                        <td class="py-2 pr-3 font-medium text-gray-900 dark:text-white">{{ $eq->nombre }}</td>
-                                        <td class="py-2 pr-3 text-right font-semibold text-gray-900 dark:text-white">{{ $eq->total }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+    {{-- BOTONES DE ACCESO A REPORTES DETALLADOS --}}
+    <h3 class="mb-4 mt-8 text-lg font-semibold text-gray-950 dark:text-white">Reportes Detallados</h3>
+    <div class="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        
+        @if ($this->medicamentosMasUsados->isNotEmpty())
+            <button type="button" x-on:click="$dispatch('open-modal', { id: 'modal-medicamentos-usados' })" class="flex items-center justify-between rounded-2xl border border-violet-200 bg-white p-4 shadow-sm transition hover:border-violet-300 hover:bg-violet-50 focus:outline-none focus:ring-2 focus:ring-violet-500 dark:border-violet-900 dark:bg-gray-900 dark:hover:bg-violet-950/40">
+                <div class="flex items-center gap-3">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-violet-100 text-violet-600 dark:bg-violet-900/50 dark:text-violet-400">
+                        <x-heroicon-o-star class="h-5 w-5" />
+                    </div>
+                    <div class="text-left">
+                        <p class="text-sm font-bold text-gray-900 dark:text-white">Medicamentos más usados</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Histórico de consumos</p>
                     </div>
                 </div>
-            </details>
+                <x-heroicon-m-chevron-right class="h-5 w-5 text-gray-400" />
+            </button>
+        @endif
+
+        @if ($this->kardexAlertas->isNotEmpty())
+            <button type="button" x-on:click="$dispatch('open-modal', { id: 'modal-alertas-stock' })" class="flex items-center justify-between rounded-2xl border border-red-200 bg-white p-4 shadow-sm transition hover:border-red-300 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 dark:border-red-900 dark:bg-gray-900 dark:hover:bg-red-950/40">
+                <div class="flex items-center gap-3">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 text-red-600 dark:bg-red-900/50 dark:text-red-400">
+                        <x-heroicon-o-exclamation-triangle class="h-5 w-5" />
+                    </div>
+                    <div class="text-left">
+                        <p class="text-sm font-bold text-gray-900 dark:text-white">Alertas de Stock Bajo</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ $this->kardexAlertas->count() }} alertas en inventario</p>
+                    </div>
+                </div>
+                <x-heroicon-m-chevron-right class="h-5 w-5 text-gray-400" />
+            </button>
+        @endif
+
+        @if ($this->movimientosRecientes->isNotEmpty())
+            <button type="button" x-on:click="$dispatch('open-modal', { id: 'modal-movimientos' })" class="flex items-center justify-between rounded-2xl border border-sky-200 bg-white p-4 shadow-sm transition hover:border-sky-300 hover:bg-sky-50 focus:outline-none focus:ring-2 focus:ring-sky-500 dark:border-sky-900 dark:bg-gray-900 dark:hover:bg-sky-950/40">
+                <div class="flex items-center gap-3">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-sky-100 text-sky-600 dark:bg-sky-900/50 dark:text-sky-400">
+                        <x-heroicon-o-arrow-path-rounded-square class="h-5 w-5" />
+                    </div>
+                    <div class="text-left">
+                        <p class="text-sm font-bold text-gray-900 dark:text-white">Movimientos Recientes</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Últimos ingresos y egresos</p>
+                    </div>
+                </div>
+                <x-heroicon-m-chevron-right class="h-5 w-5 text-gray-400" />
+            </button>
+        @endif
+
+        @if ($this->kardexActual->isNotEmpty())
+            <button type="button" x-on:click="$dispatch('open-modal', { id: 'modal-kardex-medicinas' })" class="flex items-center justify-between rounded-2xl border border-emerald-200 bg-white p-4 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-emerald-900 dark:bg-gray-900 dark:hover:bg-emerald-950/40">
+                <div class="flex items-center gap-3">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-400">
+                        <x-heroicon-o-beaker class="h-5 w-5" />
+                    </div>
+                    <div class="text-left">
+                        <p class="text-sm font-bold text-gray-900 dark:text-white">Kardex de Medicinas</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Inventario y saldos actuales</p>
+                    </div>
+                </div>
+                <x-heroicon-m-chevron-right class="h-5 w-5 text-gray-400" />
+            </button>
+        @endif
+
+        @if ($this->equipos->isNotEmpty())
+            <button type="button" x-on:click="$dispatch('open-modal', { id: 'modal-kardex-equipos' })" class="flex items-center justify-between rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition hover:border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:border-gray-800 dark:bg-gray-900 dark:hover:bg-gray-800/80">
+                <div class="flex items-center gap-3">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                        <x-heroicon-o-briefcase class="h-5 w-5" />
+                    </div>
+                    <div class="text-left">
+                        <p class="text-sm font-bold text-gray-900 dark:text-white">Kardex de Equipos</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Inventario de instrumental</p>
+                    </div>
+                </div>
+                <x-heroicon-m-chevron-right class="h-5 w-5 text-gray-400" />
+            </button>
+        @endif
+    </div>
+
+    {{-- MODALES CON LAS TABLAS --}}
+    
+    @if ($this->medicamentosMasUsados->isNotEmpty())
+        <x-filament::modal id="modal-medicamentos-usados" width="5xl">
+            <x-slot name="heading">Medicamentos más usados (Histórico)</x-slot>
+            <div class="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                @foreach ($this->medicamentosMasUsados as $med)
+                    <div class="flex items-center justify-between rounded-xl border border-violet-100 bg-violet-50/50 px-3 py-2 text-sm dark:border-violet-900 dark:bg-violet-950/20">
+                        <span class="truncate font-medium text-gray-900 dark:text-white">{{ $med->nombre }}</span>
+                        <span class="ml-2 shrink-0 font-semibold text-violet-700 dark:text-violet-300">{{ $med->total }}</span>
+                    </div>
+                @endforeach
+            </div>
+        </x-filament::modal>
+    @endif
+
+    @if ($this->kardexAlertas->isNotEmpty())
+        <x-filament::modal id="modal-alertas-stock" width="5xl">
+            <x-slot name="heading">Alertas de Stock Bajo (Kardex Inventario)</x-slot>
+            <div class="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                @foreach ($this->kardexAlertas as $alerta)
+                    @php $saldoAlerta = $alerta->saldoActual(); @endphp
+                    <div class="flex items-center justify-between rounded-xl border border-red-100 bg-red-50/50 px-3 py-2 text-sm dark:border-red-900 dark:bg-red-950/20">
+                        <span class="truncate font-medium text-gray-900 dark:text-white">{{ $alerta->nombre }}</span>
+                        <span class="ml-2 shrink-0 rounded-full bg-red-100 px-2 py-0.5 text-xs font-bold text-red-700 dark:bg-red-950 dark:text-red-300">{{ $saldoAlerta }}</span>
+                    </div>
+                @endforeach
+            </div>
+        </x-filament::modal>
+    @endif
+
+    @if ($this->movimientosRecientes->isNotEmpty())
+        <x-filament::modal id="modal-movimientos" width="7xl">
+            <x-slot name="heading">Movimientos Recientes de Medicamentos</x-slot>
+            <div class="mt-4 overflow-x-auto">
+                <table class="min-w-full text-sm">
+                    <thead>
+                        <tr class="border-b border-gray-100 dark:border-gray-800">
+                            <th class="py-2 text-left text-xs font-medium text-gray-500">Fecha</th>
+                            <th class="py-2 text-left text-xs font-medium text-gray-500">Medicamento</th>
+                            <th class="py-2 text-right text-xs font-medium text-gray-500">Cantidad</th>
+                            <th class="py-2 text-right text-xs font-medium text-gray-500">Saldo</th>
+                            <th class="py-2 text-left text-xs font-medium text-gray-500">Responsable</th>
+                            <th class="py-2 text-left text-xs font-medium text-gray-500">Paciente</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($this->movimientosRecientes as $mov)
+                            <tr class="border-b border-gray-50 dark:border-gray-800/50">
+                                <td class="py-2 pr-3 text-gray-600 dark:text-gray-400">{{ $mov->fecha_movimiento?->format('d/m/Y') }}</td>
+                                <td class="py-2 pr-3 font-medium text-gray-900 dark:text-white">{{ $mov->medicamento_nombre }}</td>
+                                <td class="py-2 pr-3 text-right text-gray-600 dark:text-gray-400">{{ $mov->cantidad }}</td>
+                                <td class="py-2 pr-3 text-right font-semibold text-gray-900 dark:text-white">{{ $mov->saldo_resultante }}</td>
+                                <td class="py-2 pr-3 text-gray-600 dark:text-gray-400">{{ $mov->personal_responsable ?: '-' }}</td>
+                                <td class="py-2 pr-3 text-gray-600 dark:text-gray-400">{{ $mov->parteDiario?->nombres ?: '-' }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </x-filament::modal>
+    @endif
+
+    @if ($this->kardexActual->isNotEmpty())
+        <x-filament::modal id="modal-kardex-medicinas" width="7xl">
+            <x-slot name="heading">Kardex Inventario — Medicinas</x-slot>
+            <div class="mt-4 overflow-x-auto max-h-[70vh]">
+                <table class="min-w-full text-sm">
+                    <thead class="sticky top-0 bg-white dark:bg-gray-900">
+                        <tr class="border-b border-gray-200 dark:border-gray-700">
+                            <th class="py-2 text-left text-xs font-medium text-gray-500">Medicina</th>
+                            <th class="py-2 text-right text-xs font-medium text-gray-500">Saldo Ant.</th>
+                            <th class="py-2 text-right text-xs font-medium text-gray-500">Ingresos</th>
+                            <th class="py-2 text-right text-xs font-medium text-gray-500">Egresos</th>
+                            <th class="py-2 text-right text-xs font-medium text-gray-500">Total Ref.</th>
+                            <th class="py-2 text-right text-xs font-medium text-gray-500">Consumos</th>
+                            <th class="py-2 text-right text-xs font-medium text-gray-500">Saldo Real</th>
+                            <th class="py-2 text-left text-xs font-medium text-gray-500">Caducidad</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($this->kardexActual as $k)
+                            @php
+                                $consumos = $k->totalSalidas();
+                                $saldoReal = $k->saldoActual();
+                            @endphp
+                            <tr class="border-b border-gray-50 dark:border-gray-800/50 hover:bg-gray-50 dark:hover:bg-gray-800/30">
+                                <td class="py-2 pr-3 font-medium text-gray-900 dark:text-white">{{ $k->nombre }}</td>
+                                <td class="py-2 pr-3 text-right text-gray-600 dark:text-gray-400">{{ $k->saldo_anterior }}</td>
+                                <td class="py-2 pr-3 text-right text-gray-600 dark:text-gray-400">{{ $k->ingresos }}</td>
+                                <td class="py-2 pr-3 text-right text-gray-600 dark:text-gray-400">{{ $k->egresos }}</td>
+                                <td class="py-2 pr-3 text-right text-gray-600 dark:text-gray-400">{{ $k->total }}</td>
+                                <td class="py-2 pr-3 text-right text-gray-600 dark:text-gray-400">{{ $consumos }}</td>
+                                <td class="py-2 pr-3 text-right">
+                                    <span class="font-semibold {{ $saldoReal <= 2 ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-white' }}">{{ $saldoReal }}</span>
+                                </td>
+                                <td class="py-2 pr-3 text-gray-600 dark:text-gray-400">{{ $k->fecha_caducidad ?: '-' }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </x-filament::modal>
+
+        @if ($this->equipos->isNotEmpty())
+            <x-filament::modal id="modal-kardex-equipos" width="3xl">
+                <x-slot name="heading">Kardex Inventario — Equipos</x-slot>
+                <div class="mt-4 overflow-x-auto max-h-[60vh]">
+                    <table class="min-w-full text-sm">
+                        <thead class="sticky top-0 bg-white dark:bg-gray-900">
+                            <tr class="border-b border-gray-200 dark:border-gray-700">
+                                <th class="py-2 text-left text-xs font-medium text-gray-500">Equipo</th>
+                                <th class="py-2 text-right text-xs font-medium text-gray-500">Cantidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($this->equipos as $eq)
+                                <tr class="border-b border-gray-50 dark:border-gray-800/50 hover:bg-gray-50 dark:hover:bg-gray-800/30">
+                                    <td class="py-2 pr-3 font-medium text-gray-900 dark:text-white">{{ $eq->nombre }}</td>
+                                    <td class="py-2 pr-3 text-right font-semibold text-gray-900 dark:text-white">{{ $eq->total }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </x-filament::modal>
         @endif
     @endif
 </x-filament-panels::page>

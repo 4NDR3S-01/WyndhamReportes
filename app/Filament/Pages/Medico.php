@@ -20,6 +20,8 @@ class Medico extends Page
 
     protected static ?string $title = 'Dashboard de Medico';
 
+    protected ?string $heading = '';
+
     protected static ?string $slug = 'medico';
 
     protected static ?int $navigationSort = 1;
@@ -29,11 +31,25 @@ class Medico extends Page
     public ?string $fechaSeleccionada = null;
     public ?string $mesSeleccionado = null;
 
+    public int $totalAtenciones = 0;
+    public int $totalPacientes = 0;
+    public int $totalKardex = 0;
+    public ?string $ultimaFechaStr = null;
+    public int $atencionesHoy = 0;
+    public int $diasCubiertos = 0;
+
     public function mount(): void
     {
         $max = MedicoParteDiario::query()->max('fecha');
         $this->fechaSeleccionada = $max ? Carbon::parse($max)->format('Y-m-d') : null;
         $this->mesSeleccionado = $max ? Carbon::parse($max)->format('Y-m') : null;
+
+        $this->totalAtenciones = MedicoParteDiario::query()->count();
+        $this->totalPacientes = (int) MedicoParteDiario::query()->distinct('nombres')->count('nombres');
+        $this->totalKardex = MedicoKardex::query()->count();
+        $this->ultimaFechaStr = $max ?: now()->toDateString();
+        $this->atencionesHoy = (int) MedicoParteDiario::query()->whereDate('fecha', $this->ultimaFechaStr)->count();
+        $this->diasCubiertos = (int) MedicoParteDiario::query()->distinct('fecha')->count('fecha');
     }
 
     public function updatedFechaSeleccionada(): void {}
@@ -47,7 +63,7 @@ class Medico extends Page
     protected function getHeaderWidgets(): array
     {
         return [
-            \App\Filament\Widgets\MedicoStatsWidget::class,
+            // El widget de estadísticas se maquetará directamente en blade.
         ];
     }
 

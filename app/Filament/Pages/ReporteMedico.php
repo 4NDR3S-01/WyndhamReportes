@@ -30,7 +30,7 @@ class ReporteMedico extends Page
 
     protected static ?int $navigationSort = 2;
 
-    protected static bool $shouldRegisterNavigation = false;
+    protected static bool $shouldRegisterNavigation = true;
 
     protected string $view = 'filament.pages.reporte-medico';
 
