@@ -88,26 +88,117 @@ class CargaInicialMedicoService
 
     private function cargarPacientesNomina($spreadsheet): int
     {
-        $sheet = $spreadsheet->getSheetByName('NOMINA') ?: $spreadsheet->getSheetByName('Copia de NOMINA');
-        if (! $sheet) return 0;
+        $creados = 0;
+
+        // Process BOTH sheets — they contain different groups of employees
+        foreach (['NOMINA', 'Copia de NOMINA'] as $sheetName) {
+            $sheet = $spreadsheet->getSheetByName($sheetName);
+            if ($sheet) {
+                $creados += $this->procesarHojaNomina($sheet);
+            }
+        }
+
+        return $creados;
+    }
+
+    private function procesarHojaNomina($sheet): int
+    {
+        // Detect sheet variant: NOMINA has headers in row 2, Copia de NOMINA in row 1
+        $esCopia = $sheet->getTitle() === 'Copia de NOMINA';
+        $dataStartRow = $esCopia ? 2 : 3;
+
+        // Column mapping for NOMINA (1-based):
+        // A(1)=Nº  B(2)=Cédula  C(3)=Nombres  D(4)=AREA  E(5)=PUESTO  F(6)=fecha_ingreso
+        // G(7)=PATOLOGIAS  H(8)=VACUNAS  I(9)=FICHAS ANTERIORES
+        // J(10)=2021  K(11)=2022  L(12)=2023  M(13)=2024  N(14)=2025  O(15)=2026
+        // P(16)=ESPIROMETRIA  Q(17)=empty  R(18)=ECOGRAFIA  S(19)=AUDIOMETRIA  T(20)=OPTOMETRIA
+        // U(21)=Nº TELEFONICO  V(22)=antecedentes
+
+        // Copia de NOMINA column mapping (different structure):
+        // A(1)=Nº  B(2)=Cédula  C(3)=Nombres  D(4)=AREA  E(5)=PUESTO
+        // F(6)=(vacunado data, no header)  G(7)=fecha_ingreso  H(8)=PATOLOGIAS  I(9)=VACUNAS
+        // J(10)=FICHAS ANTERIORES  K(11)=2021  L(12)=2022  M(13)=2023  N(14)=2024
+        // O(15)=ESPIROMETRIA  P(16)=ECOGRAFIA  Q(17)=AUDIOMETRIA  R(18)=OPTOMETRIA
+        // S(19)=Nº TELEFONICO
+
+        if ($esCopia) {
+            $col = [
+                'nombre' => 3, 'cedula' => 2, 'area' => 4, 'cargo' => 5,
+                'fecha_ingreso' => 7, 'patologias' => 8, 'vacunas' => 9,
+                'fichas_anteriores' => 10,
+                'visitas' => [11 => 'visita_2021', 12 => 'visita_2022', 13 => 'visita_2023', 14 => 'visita_2024'],
+                'espirometria' => 15, 'ecografia' => 16, 'audiometria' => 17, 'optometria' => 18,
+                'telefono' => 19, 'antecedentes' => null,
+            ];
+        } else {
+            $col = [
+                'nombre' => 3, 'cedula' => 2, 'area' => 4, 'cargo' => 5,
+                'fecha_ingreso' => 6, 'patologias' => 7, 'vacunas' => 8,
+                'fichas_anteriores' => 9,
+                'visitas' => [10 => 'visita_2021', 11 => 'visita_2022', 12 => 'visita_2023', 13 => 'visita_2024', 14 => 'visita_2025', 15 => 'visita_2026'],
+                'espirometria' => 16, 'ecografia' => 18, 'audiometria' => 19, 'optometria' => 20,
+                'telefono' => 21, 'antecedentes' => 22,
+            ];
+        }
 
         $creados = 0;
-        for ($row = 3; $row <= $sheet->getHighestRow(); $row++) {
-            $nombre = $this->limpiarTexto($sheet->getCell([3, $row])->getValue());
+        for ($row = $dataStartRow; $row <= $sheet->getHighestRow(); $row++) {
+            $nombre = $this->limpiarTexto($sheet->getCell([$col['nombre'], $row])->getValue());
             if ($nombre === '') continue;
 
-            $cedula = $this->limpiarTexto($sheet->getCell([2, $row])->getValue());
+            $cedula = $this->limpiarTexto($sheet->getCell([$col['cedula'], $row])->getValue());
+
+            // Skip header-like rows (section labels like "SERVICIOS PRESTADOS", "ASPIRANTES")
+            $nombreUpper = mb_strtoupper($nombre);
+            if (in_array($nombreUpper, ['SERVICIOS PRESTADOS', 'ASPIRANTES', 'HUESPED', 'DOCTOR'], true)) {
+                continue;
+            }
+
+            // Skip aspirante/huesped rows in Copia (no real employee data)
+            $areaUpper = mb_strtoupper($this->limpiarTexto($sheet->getCell([$col['area'], $row])->getValue()) ?: '');
+            if ($areaUpper === 'ASPIRANTES' && ($cedula === '' || $nombreUpper === 'ASPIRANTES')) {
+                continue;
+            }
+            if ($nombreUpper === 'HUESPED' || $areaUpper === 'HUESPED') {
+                continue;
+            }
+            if ($nombreUpper === 'DOCTOR') {
+                continue;
+            }
+
+            $data = [
+                'nombres'          => $nombre,
+                'area'             => $this->limpiarTexto($sheet->getCell([$col['area'], $row])->getValue()) ?: null,
+                'cargo'            => $this->limpiarTexto($sheet->getCell([$col['cargo'], $row])->getValue()) ?: null,
+                'fecha_ingreso'    => $this->parsearFecha($sheet->getCell([$col['fecha_ingreso'], $row])->getValue()),
+                'patologias'       => $this->limpiarTexto($sheet->getCell([$col['patologias'], $row])->getValue()) ?: null,
+                'vacunas'          => $this->limpiarTexto($sheet->getCell([$col['vacunas'], $row])->getValue()) ?: null,
+                'fichas_anteriores'=> $this->limpiarTexto($sheet->getCell([$col['fichas_anteriores'], $row])->getValue()) ?: null,
+                'telefono'         => $this->limpiarTexto($sheet->getCell([$col['telefono'], $row])->getValue()) ?: null,
+                'espirometria'     => $this->parsearFecha($sheet->getCell([$col['espirometria'], $row])->getValue()),
+                'ecografia'        => $this->parsearFecha($sheet->getCell([$col['ecografia'], $row])->getValue()),
+                'audiometria'      => $this->parsearFecha($sheet->getCell([$col['audiometria'], $row])->getValue()),
+                'optometria'       => $this->parsearFecha($sheet->getCell([$col['optometria'], $row])->getValue()),
+                'tipo'             => 'colaborador',
+                'activo'           => true,
+            ];
+
+            // Yearly medical visits (2021-2026)
+            foreach ($col['visitas'] as $colIdx => $dbField) {
+                $fechaVisita = $this->parsearFecha($sheet->getCell([$colIdx, $row])->getValue());
+                if ($fechaVisita) {
+                    $data[$dbField] = $fechaVisita;
+                }
+            }
+
+            // Antecedentes (only in NOMINA, not Copia)
+            if ($col['antecedentes']) {
+                $data['antecedentes'] = $this->limpiarTexto($sheet->getCell([$col['antecedentes'], $row])->getValue()) ?: null;
+            }
+
             $paciente = MedicoPaciente::query()->updateOrCreate(
                 $cedula !== '' ? ['cedula' => $cedula] : ['nombres' => $nombre],
-                [
-                    'nombres' => $nombre,
-                    'area' => $this->limpiarTexto($sheet->getCell([4, $row])->getValue()) ?: null,
-                    'cargo' => $this->limpiarTexto($sheet->getCell([5, $row])->getValue()) ?: null,
-                    'fecha_ingreso' => $this->parsearFecha($sheet->getCell([6, $row])->getValue()),
-                    'patologias' => $this->limpiarTexto($sheet->getCell([7, $row])->getValue()) ?: null,
-                    'tipo' => 'colaborador',
-                    'activo' => true,
-                ],
+                $data,
             );
 
             if ($paciente->wasRecentlyCreated) $creados++;

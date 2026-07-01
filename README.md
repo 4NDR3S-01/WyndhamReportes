@@ -53,6 +53,27 @@ In order to ensure that the Laravel community is welcoming to all, please review
 
 If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
+## Migración A Producción
+
+Este proyecto incluye [migrate_to_mysql.php](migrate_to_mysql.php) para copiar datos desde una base SQLite local hacia una base MySQL vacía de producción.
+
+Antes de ejecutarlo, define estas variables de entorno en tu terminal o en tu archivo `.env` local:
+
+- `SOURCE_SQLITE_PATH`: ruta al archivo SQLite de origen
+- `TARGET_DB_HOST`: host de la base MySQL de producción
+- `TARGET_DB_PORT`: puerto de MySQL
+- `TARGET_DB_DATABASE`: nombre de la base de datos
+- `TARGET_DB_USERNAME`: usuario
+- `TARGET_DB_PASSWORD`: contraseña
+
+Luego ejecuta:
+
+```bash
+php migrate_to_mysql.php
+```
+
+La base de producción debe tener primero el esquema creado con `php artisan migrate --force`.
+
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
