@@ -242,16 +242,16 @@
                                     <div class="rounded-xl border border-gray-100 bg-gray-50/70 px-3 py-2.5 text-sm dark:border-gray-800 dark:bg-gray-950/40">
                                         <div class="flex items-start justify-between gap-2">
                                             <p class="truncate font-medium text-gray-950 dark:text-white">{{ $at->nombres }}</p>
-                                            @if ($at->certificados && $at->certificados !== 'SIN CERTIFICADO')
-                                                <span class="shrink-0 rounded-md bg-orange-100 px-1.5 py-0.5 text-[10px] font-semibold text-orange-700 dark:bg-orange-950/50 dark:text-orange-300">{{ $at->certificados }}</span>
+                                            @if ($at->entidadCertificado)
+                                                <span class="shrink-0 rounded-md bg-orange-100 px-1.5 py-0.5 text-[10px] font-semibold text-orange-700 dark:bg-orange-950/50 dark:text-orange-300">{{ $at->entidadCertificado->nombre }}</span>
                                             @endif
                                         </div>
-                                        <p class="mt-0.5 truncate text-xs text-gray-500 dark:text-gray-400">{{ $at->cargo ?: '' }}</p>
+                                        <p class="mt-0.5 truncate text-xs text-gray-500 dark:text-gray-400">{{ $at->cargo?->nombre ?: '' }}</p>
                                         @if ($at->causa)
-                                            <p class="mt-1 truncate text-xs font-medium text-gray-600 dark:text-gray-300">{{ $at->causa }}</p>
+                                            <p class="mt-1 truncate text-xs font-medium text-gray-600 dark:text-gray-300">{{ $at->causa->nombre }}</p>
                                         @endif
                                         @if ($at->diagnostico)
-                                            <p class="mt-0.5 truncate text-xs text-gray-400 dark:text-gray-500">{{ Str::limit($at->diagnostico, 60) }}</p>
+                                            <p class="mt-0.5 truncate text-xs text-gray-400 dark:text-gray-500">{{ Str::limit($at->diagnostico->nombre, 60) }}</p>
                                         @endif
                                     </div>
                                 @endforeach
@@ -356,11 +356,11 @@
                         @foreach ($this->movimientosRecientes as $mov)
                             <tr class="border-b border-gray-50 dark:border-gray-800/50">
                                 <td class="py-2 pr-3 text-gray-600 dark:text-gray-400">{{ $mov->fecha_movimiento?->format('d/m/Y') }}</td>
-                                <td class="py-2 pr-3 font-medium text-gray-900 dark:text-white">{{ $mov->medicamento_nombre }}</td>
+                                <td class="py-2 pr-3 font-medium text-gray-900 dark:text-white">{{ $mov->kardex?->nombre ?? $mov->producto?->nombre ?? '-' }}</td>
                                 <td class="py-2 pr-3 text-right text-gray-600 dark:text-gray-400">{{ $mov->cantidad }}</td>
-                                <td class="py-2 pr-3 text-right font-semibold text-gray-900 dark:text-white">{{ $mov->saldo_resultante }}</td>
+                                <td class="py-2 pr-3 text-right font-semibold text-gray-900 dark:text-white">{{ $mov->origen }}</td>
                                 <td class="py-2 pr-3 text-gray-600 dark:text-gray-400">{{ $mov->personal_responsable ?: '-' }}</td>
-                                <td class="py-2 pr-3 text-gray-600 dark:text-gray-400">{{ $mov->parteDiario?->nombres ?: '-' }}</td>
+                                <td class="py-2 pr-3 text-gray-600 dark:text-gray-400">{{ $mov->observacion ?: '-' }}</td>
                             </tr>
                         @endforeach
                     </tbody>

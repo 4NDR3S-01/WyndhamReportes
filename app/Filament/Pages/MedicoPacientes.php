@@ -18,9 +18,9 @@ class MedicoPacientes extends Page
 
     protected static string|\UnitEnum|null $navigationGroup = 'Medico';
 
-    protected static ?string $navigationLabel = 'Pacientes y colaboradores';
+    protected static ?string $navigationLabel = 'Personas';
 
-    protected static ?string $title = 'Pacientes y colaboradores';
+    protected static ?string $title = 'Personas';
 
     protected static ?string $slug = 'medico/pacientes';
 

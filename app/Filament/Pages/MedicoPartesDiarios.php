@@ -45,6 +45,8 @@ class MedicoPartesDiarios extends Page
 
     public string $nombres = '';
 
+    public string $cedula = '';
+
     public ?int $edad = null;
 
     public ?int $area_id = null;
@@ -56,6 +58,19 @@ class MedicoPartesDiarios extends Page
     public ?string $habitacion = null;
 
     public ?string $turno = null;
+
+    // === QUICK-CREATE MODAL ===
+    public bool $quickCreateAbierto = false;
+
+    public string $quickNombres = '';
+
+    public string $quickCedula = '';
+
+    public string $quickTipo = 'huesped';
+
+    public ?string $quickHabitacion = null;
+
+    public ?string $quickTelefono = null;
 
     // Certificado
     public ?int $entidad_certificado_id = null;
@@ -140,6 +155,7 @@ class MedicoPartesDiarios extends Page
         }
 
         $this->nombres = $p->nombres;
+        $this->cedula = $p->cedula ?? '';
         $this->edad = $p->edad;
         $this->area_id = $p->area_id;
         $this->cargo_id = $p->cargo_id;
@@ -174,12 +190,64 @@ class MedicoPartesDiarios extends Page
         $this->medicamentos = array_values($this->medicamentos);
     }
 
+    // === QUICK-CREATE PACIENTE ===
+
+    public function abrirQuickCreate(): void
+    {
+        $this->quickNombres = $this->buscarPaciente ?: '';
+        $this->quickCedula = '';
+        $this->quickTipo = 'huesped';
+        $this->quickHabitacion = null;
+        $this->quickTelefono = null;
+        $this->quickCreateAbierto = true;
+        $this->buscarPaciente = '';
+    }
+
+    public function cerrarQuickCreate(): void
+    {
+        $this->quickCreateAbierto = false;
+    }
+
+    public function quickGuardarPaciente(): void
+    {
+        $this->validate([
+            'quickNombres' => ['required', 'string', 'max:255'],
+            'quickTipo'    => ['required', 'in:colaborador,aspirante,externo,paciente,huesped'],
+            'quickCedula'  => ['nullable', 'string', 'max:20'],
+        ]);
+
+        $nombreNormalizado = mb_strtoupper(trim($this->quickNombres));
+
+        // Crear el paciente
+        $paciente = MedicoPaciente::query()->create([
+            'cedula'  => $this->quickCedula !== '' ? $this->quickCedula : null,
+            'nombres' => $nombreNormalizado,
+            'tipo'    => $this->quickTipo,
+            'activo'  => true,
+            'telefono'=> $this->quickTelefono,
+        ]);
+
+        // Asignarlo al formulario actual
+        $this->pacienteId = $paciente->id;
+        $this->nombres = $paciente->nombres;
+        $this->cedula = $paciente->cedula ?? '';
+        $this->tipoPaciente = $paciente->tipo;
+        $this->habitacion = $this->quickHabitacion;
+        $this->edad = null;
+        $this->area_id = null;
+        $this->cargo_id = null;
+
+        $this->cerrarQuickCreate();
+        Notification::make()->title("«{$nombreNormalizado}» creado y seleccionado")->success()->send();
+    }
+
     public function guardar(): void
     {
         $this->validate([
             'fecha'           => ['required', 'date'],
             'nombres'         => ['required', 'string', 'max:255'],
-            'tipoPaciente'    => ['required', 'in:colaborador,huesped'],
+            'cedula'          => ['nullable', 'string', 'max:20'],
+            'tipoPaciente'    => ['required', 'in:colaborador,aspirante,externo,paciente,huesped'],
             'habitacion'      => ['nullable', 'string', 'max:20', 'required_if:tipoPaciente,huesped'],
             'turno'           => ['nullable', 'in:mañana,tarde,noche'],
             'causa_id'        => ['required', 'integer', 'exists:causas,id'],
@@ -203,7 +271,7 @@ class MedicoPartesDiarios extends Page
             ['id' => $this->editandoId],
             [
                 'fecha'                    => $this->fecha,
-                'nombres'                  => trim($this->nombres),
+                'nombres'                  => mb_strtoupper(trim($this->nombres)),
                 'edad'                     => $this->edad,
                 'area_id'                  => $this->area_id,
                 'cargo_id'                 => $this->cargo_id,
@@ -238,17 +306,38 @@ class MedicoPartesDiarios extends Page
             ]);
         }
 
-        // Upsert paciente
-        MedicoPaciente::query()->firstOrCreate(
-            ['nombres' => trim($this->nombres)],
-            [
-                'edad'   => $this->edad,
-                'area_id'=> $this->area_id,
+        // Vincular o crear paciente — usar pacienteId si ya se seleccionó
+        $nombreNormalizado = mb_strtoupper(trim($this->nombres));
+        if ($this->pacienteId && MedicoPaciente::query()->whereKey($this->pacienteId)->exists()) {
+            // Actualizar datos del paciente existente
+            MedicoPaciente::query()->whereKey($this->pacienteId)->update([
+                'edad'    => $this->edad ?? null,
+                'area_id' => $this->area_id,
                 'cargo_id'=> $this->cargo_id,
-                'tipo'   => $this->tipoPaciente,
-                'activo' => true,
-            ],
-        );
+                'tipo'    => $this->tipoPaciente,
+            ]);
+        } elseif ($this->tipoPaciente !== 'colaborador') {
+            // Para huéspedes/externos/aspirantes/pacientes: crear si no existe
+            // Buscar por nombre exacto o cédula
+            $paciente = null;
+            if ($this->cedula !== '') {
+                $paciente = MedicoPaciente::query()->where('cedula', $this->cedula)->first();
+            }
+            if (! $paciente) {
+                $paciente = MedicoPaciente::query()->where('nombres', $nombreNormalizado)->first();
+            }
+            if (! $paciente) {
+                MedicoPaciente::query()->create([
+                    'cedula'  => $this->cedula !== '' ? $this->cedula : null,
+                    'nombres' => $nombreNormalizado,
+                    'edad'    => $this->edad,
+                    'area_id' => $this->area_id,
+                    'cargo_id'=> $this->cargo_id,
+                    'tipo'    => $this->tipoPaciente,
+                    'activo'  => true,
+                ]);
+            }
+        }
 
         $this->limpiarFormulario();
         Notification::make()->title('Atención guardada correctamente')->success()->send();
@@ -315,6 +404,7 @@ class MedicoPartesDiarios extends Page
         $this->buscarPaciente = '';
         $this->fecha = now()->toDateString();
         $this->nombres = '';
+        $this->cedula = '';
         $this->edad = null;
         $this->area_id = null;
         $this->cargo_id = null;
@@ -351,12 +441,16 @@ class MedicoPartesDiarios extends Page
     public function getPacientesProperty(): Collection
     {
         return MedicoPaciente::query()->with(['area', 'cargo', 'examenes', 'visitas'])
-            ->where('activo', true)
-            ->when($this->buscarPaciente !== '', fn ($q) => $q->where('nombres', 'like', '%' . $this->buscarPaciente . '%'))
+            ->when($this->buscarPaciente !== '', fn ($q) => $q->where(function ($q) {
+                $q->where('nombres', 'like', '%' . $this->buscarPaciente . '%')
+                  ->orWhere('cedula', 'like', '%' . $this->buscarPaciente . '%')
+                  ->orWhereHas('area', fn ($a) => $a->where('nombre', 'like', '%' . $this->buscarPaciente . '%'));
+            }))
+            ->orderByDesc('activo')
             ->orderBy('nombres')
             ->limit(20)
-            ->get(['id', 'nombres', 'edad', 'area_id', 'cargo_id', 'tipo',
-                   'patologias', 'vacunas', 'telefono', 'fecha_ingreso', 'antecedentes',
+            ->get(['id', 'nombres', 'cedula', 'edad', 'area_id', 'cargo_id', 'tipo',
+                   'activo', 'patologias', 'vacunas', 'telefono', 'fecha_ingreso', 'antecedentes',
                    'fichas_anteriores']);
     }
 

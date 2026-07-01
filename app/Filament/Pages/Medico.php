@@ -128,22 +128,23 @@ class Medico extends Page
         $atenciones = (int) (clone $query)->count();
         $pacientes = (int) (clone $query)->distinct('nombres')->count('nombres');
         $dias = (int) (clone $query)->distinct('fecha')->count('fecha');
-        $conCert = (int) (clone $query)->whereNotNull('certificados')
-            ->whereNotIn('certificados', ['SIN CERTIFICADO', ''])->count();
+        $conCert = (int) (clone $query)->whereNotNull('entidad_certificado_id')->count();
 
-        $meds = collect();
-        foreach (['medicamento_1', 'medicamento_2', 'medicamento_3'] as $col) {
-            (clone $query)->whereNotNull($col)->where($col, '!=', '')
-                ->select($col)->get()
-                ->each(fn ($r) => $meds->push($r->$col));
-        }
+        $meds = \App\Models\MedicoParteMedicamento::query()
+            ->whereHas('parteDiario', fn ($q) => $q->whereBetween('fecha', [$inicio, $fin]))
+            ->with('medicamento')
+            ->get()
+            ->pluck('medicamento.nombre')
+            ->filter()
+            ->unique()
+            ->count();
 
         return (object) [
             'atenciones' => $atenciones,
             'pacientes' => $pacientes,
             'dias' => $dias,
             'conCertificado' => $conCert,
-            'medicamentos' => $meds->unique()->count(),
+            'medicamentos' => $meds,
         ];
     }
 
@@ -157,9 +158,9 @@ class Medico extends Page
 
         return (object) [
             'atenciones' => $atenciones->count(),
-            'areas' => $atenciones->pluck('area')->unique()->filter()->count(),
-            'conCertificado' => $atenciones->filter(fn ($a) => $a->certificados && $a->certificados !== 'SIN CERTIFICADO')->count(),
-            'sinCertificado' => $atenciones->filter(fn ($a) => ! $a->certificados || $a->certificados === 'SIN CERTIFICADO')->count(),
+            'areas' => $atenciones->pluck('area_id')->unique()->filter()->count(),
+            'conCertificado' => $atenciones->filter(fn ($a) => $a->entidad_certificado_id !== null)->count(),
+            'sinCertificado' => $atenciones->filter(fn ($a) => $a->entidad_certificado_id === null)->count(),
         ];
     }
 
@@ -170,8 +171,8 @@ class Medico extends Page
         }
 
         return MedicoParteDiario::query()
+            ->with(['area', 'cargo', 'causa', 'diagnostico', 'entidadCertificado'])
             ->whereDate('fecha', $this->fechaSeleccionada)
-            ->orderBy('area')
             ->orderBy('nombres')
             ->get();
     }
@@ -180,7 +181,7 @@ class Medico extends Page
     {
         $agrupado = [];
         foreach ($this->atencionesDelDia as $at) {
-            $area = $at->area ?: 'Sin area';
+            $area = $at->area?->nombre ?: 'Sin area';
             $agrupado[$area][] = $at;
         }
         return $agrupado;
@@ -190,16 +191,17 @@ class Medico extends Page
     {
         if ($this->total === 0) return collect();
 
-        $todos = collect();
-        foreach (['medicamento_1', 'medicamento_2', 'medicamento_3'] as $col) {
-            MedicoParteDiario::query()
-                ->whereNotNull($col)->where($col, '!=', '')
-                ->select($col)->get()
-                ->each(fn ($p) => $todos->push($p->$col));
-        }
-
-        return $todos->countBy()->sortDesc()->take(10)
-            ->map(fn ($c, $n) => (object) ['nombre' => $n, 'total' => $c])->values();
+        return \App\Models\MedicoParteMedicamento::query()
+            ->with('medicamento')
+            ->get()
+            ->groupBy(fn ($m) => $m->medicamento?->nombre ?? $m->nombre_original)
+            ->map(fn ($items, $nombre) => (object) [
+                'nombre' => $nombre,
+                'total'  => $items->sum('cantidad'),
+            ])
+            ->sortByDesc('total')
+            ->take(10)
+            ->values();
     }
 
     public function getKardexAlertasProperty(): Collection
@@ -238,7 +240,7 @@ class Medico extends Page
     public function getMovimientosRecientesProperty(): Collection
     {
         return MedicoKardexMovimiento::query()
-            ->with(['kardex', 'parteDiario'])
+            ->with(['kardex', 'producto'])
             ->latest('fecha_movimiento')
             ->latest('id')
             ->limit(20)

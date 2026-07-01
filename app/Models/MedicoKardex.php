@@ -1,6 +1,7 @@
 <?php
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class MedicoKardex extends Model
 {
@@ -17,5 +18,22 @@ class MedicoKardex extends Model
             'saldo_anterior' => 'decimal:2', 'ingresos' => 'decimal:2',
             'egresos' => 'decimal:2', 'total' => 'decimal:2',
         ];
+    }
+
+    public function movimientos(): HasMany
+    {
+        return $this->hasMany(MedicoKardexMovimiento::class, 'kardex_id');
+    }
+
+    public function totalSalidas(): float
+    {
+        return (float) $this->movimientos()
+            ->where('tipo', 'salida')
+            ->sum('cantidad');
+    }
+
+    public function saldoActual(): float
+    {
+        return (float) $this->total - $this->totalSalidas();
     }
 }
