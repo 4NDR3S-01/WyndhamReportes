@@ -13,7 +13,7 @@
                     </div>
                     <h2 class="mt-3 text-xl font-bold tracking-tight text-gray-950 dark:text-white sm:text-2xl">Listas maestras del dispensario</h2>
                     <p class="mt-1 max-w-4xl text-sm leading-6 text-gray-600 dark:text-gray-300">
-                        Administra los datos base que alimentan partes diarios, certificados, diagnosticos e inventario. Todo se guarda en la base de datos del panel.
+                        Administra los datos base que alimentan partes diarios, certificados, diagnósticos e inventario. Cada sección corresponde a una tabla independiente en la base de datos.
                     </p>
                 </div>
 
@@ -72,11 +72,8 @@
                                 <span class="inline-flex items-center rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-600 ring-1 ring-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:ring-gray-700">
                                     {{ number_format($this->totalFiltrado, 0, ',', '.') }} resultados
                                 </span>
-                                @if ($this->totalFiltrado > 120)
-                                    <span class="inline-flex items-center rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700 ring-1 ring-amber-100 dark:bg-amber-950/40 dark:text-amber-300 dark:ring-amber-900">Mostrando 120</span>
-                                @endif
                             </div>
-                            <p class="mt-1 max-w-3xl text-sm leading-5 text-gray-500 dark:text-gray-400">{{ $descripciones[$tipo] ?? 'Lista editable de la base medica.' }}</p>
+                            <p class="mt-1 max-w-3xl text-sm leading-5 text-gray-500 dark:text-gray-400">{{ $descripciones[$tipo] ?? 'Lista editable de la base médica.' }}</p>
                         </div>
 
                         <div class="flex w-full flex-col gap-2 sm:flex-row sm:items-center xl:w-auto xl:justify-end" role="search" aria-label="Filtros de registros">
@@ -107,15 +104,14 @@
                             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6v12m6-6H6" /></svg>
                         </div>
                         <h4 class="mt-4 font-semibold text-gray-950 dark:text-white">Sin registros para los filtros actuales</h4>
-                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Cambia la busqueda, el estado o agrega un nuevo valor.</p>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Cambiá la búsqueda, el estado o agregá un nuevo valor.</p>
                     </div>
                 @else
-                    <div class="max-h-[640px] overflow-auto">
+                    <div class="overflow-auto">
                         <table class="min-w-full text-sm">
                             <thead class="sticky top-0 z-10 bg-gray-50/95 shadow-sm backdrop-blur dark:bg-gray-950/95">
                                 <tr>
                                     <th class="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 sm:px-5">Registro</th>
-                                    <th class="hidden px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 md:table-cell">Descripcion</th>
                                     <th class="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Estado</th>
                                     <th class="px-4 py-3 text-right text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 sm:px-5">Acciones</th>
                                 </tr>
@@ -126,14 +122,6 @@
                                         <td class="px-4 py-3 sm:px-5">
                                             <p class="font-medium text-gray-950 dark:text-white">{{ $item->nombre }}</p>
                                             <p class="mt-0.5 text-xs text-gray-400">ID {{ $item->id }}</p>
-                                            @if ($item->descripcion)
-                                                <p class="mt-1 line-clamp-2 text-xs text-gray-500 md:hidden">{{ $item->descripcion }}</p>
-                                            @endif
-                                        </td>
-                                        <td class="hidden max-w-md px-4 py-3 text-gray-600 dark:text-gray-300 md:table-cell">
-                                            @if ($item->descripcion)
-                                                <span class="line-clamp-2">{{ $item->descripcion }}</span>
-                                            @endif
                                         </td>
                                         <td class="px-4 py-3">
                                             <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ring-1 {{ $item->activo ? 'bg-emerald-50 text-emerald-700 ring-emerald-100 dark:bg-emerald-950/40 dark:text-emerald-300 dark:ring-emerald-900' : 'bg-gray-100 text-gray-500 ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700' }}">
@@ -152,9 +140,56 @@
                             </tbody>
                         </table>
                     </div>
+
+                    {{-- PAGINATION --}}
+                    @php
+                        $totalP = $this->totalFiltrado;
+                        $paginas = $this->totalPaginas;
+                        $actual = $this->pagina;
+                        $desde = ($actual - 1) * $this->porPagina + 1;
+                        $hasta = min($actual * $this->porPagina, $totalP);
+                    @endphp
+                    @if($paginas > 1)
+                        <div class="flex items-center justify-between gap-3 border-t border-gray-100 px-5 py-3 dark:border-gray-800">
+                            <p class="text-[11px] font-medium text-gray-400 dark:text-gray-500">{{ $desde }}–{{ $hasta }} de {{ $totalP }}</p>
+                            <div class="flex items-center gap-1">
+                                <button wire:click="irPagina({{ $actual - 1 }})" @if($actual <= 1) disabled @endif
+                                    class="rounded-lg p-1.5 text-gray-400 transition hover:text-gray-700 disabled:opacity-30 dark:text-gray-500 dark:hover:text-gray-200">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/></svg>
+                                </button>
+                                @php
+                                    $inicio = max(1, $actual - 2);
+                                    $fin = min($paginas, $actual + 2);
+                                    if ($fin - $inicio < 4) {
+                                        if ($inicio === 1) $fin = min($paginas, 5);
+                                        else $inicio = max(1, $paginas - 4);
+                                    }
+                                @endphp
+                                @if($inicio > 1)
+                                    <button wire:click="irPagina(1)" class="rounded-lg px-2.5 py-1.5 text-xs font-semibold text-gray-400 transition hover:text-gray-700 dark:text-gray-500 dark:hover:text-gray-200">1</button>
+                                    @if($inicio > 2)<span class="px-0.5 text-xs text-gray-300 dark:text-gray-600">&hellip;</span>@endif
+                                @endif
+                                @for($i = $inicio; $i <= $fin; $i++)
+                                    <button wire:click="irPagina({{ $i }})"
+                                        class="rounded-lg px-2.5 py-1.5 text-xs font-semibold transition {{ $i === $actual ? 'bg-sky-600 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-800' }}">
+                                        {{ $i }}
+                                    </button>
+                                @endfor
+                                @if($fin < $paginas)
+                                    @if($fin < $paginas - 1)<span class="px-0.5 text-xs text-gray-300 dark:text-gray-600">&hellip;</span>@endif
+                                    <button wire:click="irPagina({{ $paginas }})" class="rounded-lg px-2.5 py-1.5 text-xs font-semibold text-gray-400 transition hover:text-gray-700 dark:text-gray-500 dark:hover:text-gray-200">{{ $paginas }}</button>
+                                @endif
+                                <button wire:click="irPagina({{ $actual + 1 }})" @if($actual >= $paginas) disabled @endif
+                                    class="rounded-lg p-1.5 text-gray-400 transition hover:text-gray-700 disabled:opacity-30 dark:text-gray-500 dark:hover:text-gray-200">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    @endif
                 @endif
         </section>
 
+        {{-- MODAL: CREAR / EDITAR --}}
         @if ($modalAbierto)
             <div
                 class="flex items-center justify-center p-4 sm:p-6"
@@ -170,7 +205,7 @@
                                 </div>
                                 <div class="min-w-0">
                                     <h3 class="text-base font-semibold text-gray-950 dark:text-white">{{ $editandoId ? 'Editar registro' : 'Nuevo registro' }}</h3>
-                                    <p class="mt-1 text-sm leading-5 text-gray-500 dark:text-gray-400">{{ $editandoId ? 'Actualiza el valor seleccionado.' : 'Agrega un valor a ' . ($tipos[$tipo] ?? $tipo) . '.' }}</p>
+                                    <p class="mt-1 text-sm leading-5 text-gray-500 dark:text-gray-400">{{ $editandoId ? 'Actualizá el valor seleccionado.' : 'Agregá un valor a ' . ($tipos[$tipo] ?? $tipo) . '.' }}</p>
                                 </div>
                             </div>
                             <button type="button" wire:click="cerrarModal" class="rounded-full p-2 text-gray-400 transition hover:bg-white hover:text-gray-700 hover:shadow-sm dark:hover:bg-gray-800 dark:hover:text-gray-200">
@@ -181,7 +216,7 @@
 
                     <form wire:submit.prevent="guardar" class="space-y-4 px-5 py-4">
                         <div>
-                            <label class="text-xs font-medium text-gray-600 dark:text-gray-300">Seccion</label>
+                            <label class="text-xs font-medium text-gray-600 dark:text-gray-300">Sección</label>
                             <select wire:model.live="tipo" class="mt-1 block w-full rounded-xl border-gray-300 bg-white text-sm shadow-sm focus:border-sky-500 focus:ring-sky-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white">
                                 @foreach ($tipos as $key => $label)
                                     <option value="{{ $key }}">{{ $label }}</option>
@@ -191,13 +226,8 @@
 
                         <div>
                             <label class="text-xs font-medium text-gray-600 dark:text-gray-300">Nombre</label>
-                            <input wire:model="nombre" placeholder="Ej. NUEVA AREA" class="mt-1 block w-full rounded-xl border-gray-300 bg-white text-sm shadow-sm focus:border-sky-500 focus:ring-sky-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white" autofocus>
+                            <input wire:model="nombre" placeholder="Ej. NUEVA ÁREA" class="mt-1 block w-full rounded-xl border-gray-300 bg-white text-sm shadow-sm focus:border-sky-500 focus:ring-sky-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white" autofocus>
                             @error('nombre') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
-                        </div>
-
-                        <div>
-                            <label class="text-xs font-medium text-gray-600 dark:text-gray-300">Descripcion interna</label>
-                            <textarea wire:model="descripcion" rows="3" placeholder="Opcional" class="mt-1 block w-full rounded-xl border-gray-300 bg-white text-sm shadow-sm focus:border-sky-500 focus:ring-sky-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white"></textarea>
                         </div>
 
                         <label class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
@@ -213,6 +243,7 @@
             </div>
         @endif
 
+        {{-- MODAL: ELIMINAR --}}
         @if ($modalEliminarAbierto)
             <div
                 class="flex items-center justify-center p-4 sm:p-6"
@@ -229,11 +260,11 @@
                                 <h3 class="text-base font-semibold text-gray-950 dark:text-white">Eliminar registro</h3>
                                 <p class="mt-1 text-sm leading-6 text-gray-500 dark:text-gray-400">
                                     @if ($this->registroAEliminar)
-                                        Vas a eliminar <strong class="font-semibold text-gray-900 dark:text-white">{{ $this->registroAEliminar->nombre }}</strong> de {{ $tipos[$this->registroAEliminar->tipo] ?? 'esta seccion' }}.
+                                        Vas a eliminar <strong class="font-semibold text-gray-900 dark:text-white">{{ $this->registroAEliminar->nombre }}</strong> de {{ $tipos[$tipo] ?? 'esta sección' }}.
                                     @else
                                         Vas a eliminar este registro.
                                     @endif
-                                    Esta accion no se puede deshacer.
+                                    Esta acción no se puede deshacer.
                                 </p>
                             </div>
                         </div>

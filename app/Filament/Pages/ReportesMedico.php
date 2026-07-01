@@ -154,7 +154,7 @@ class ReportesMedico extends Page
             ->values();
 
         $movimientos = MedicoKardexMovimiento::query()
-            ->with(['kardex', 'parteDiario', 'archivoImportado'])
+            ->with(['kardex', 'producto'])
             ->orderBy('fecha_movimiento')
             ->orderBy('id')
             ->get();
@@ -200,13 +200,13 @@ class ReportesMedico extends Page
         $row = 2;
         foreach ($movimientos as $mov) {
             $detalle->setCellValue("A{$row}", $mov->fecha_movimiento?->format('Y-m-d'));
-            $detalle->setCellValue("B{$row}", $mov->medicamento_nombre);
+            $detalle->setCellValue("B{$row}", $mov->producto?->nombre ?? $mov->observacion);
             $detalle->setCellValue("C{$row}", $mov->tipo);
             $detalle->setCellValue("D{$row}", $mov->cantidad);
-            $detalle->setCellValue("E{$row}", $mov->saldo_resultante);
+            $detalle->setCellValue("E{$row}", $mov->origen);
             $detalle->setCellValue("F{$row}", $mov->personal_responsable);
-            $detalle->setCellValue("G{$row}", $mov->parteDiario?->nombres);
-            $detalle->setCellValue("H{$row}", $mov->archivoImportado?->nombre_original);
+            $detalle->setCellValue("G{$row}", $mov->kardex?->nombre);
+            $detalle->setCellValue("H{$row}", $mov->observacion);
             $row++;
         }
 
@@ -537,19 +537,10 @@ class ReportesMedico extends Page
             ->groupBy(fn ($item) => "{$item->fecha_inicio} al {$item->fecha_fin}");
     }
 
-    public function getErroresImportacionProperty(): Collection
-    {
-        return \App\Models\MedicoImportacionError::query()
-            ->with('archivoImportado')
-            ->latest()
-            ->limit(20)
-            ->get();
-    }
-
     public function getKardexMovimientosProperty(): Collection
     {
         return MedicoKardexMovimiento::query()
-            ->with(['parteDiario', 'archivoImportado'])
+            ->with(['kardex'])
             ->latest('fecha_movimiento')
             ->latest('id')
             ->limit(50)

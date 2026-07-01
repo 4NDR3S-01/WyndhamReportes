@@ -11,27 +11,23 @@ class MedicoParteDiario extends Model
     protected $table = 'medico_partes_diarios';
 
     protected $fillable = [
-        'archivo_importado_id',
         'fecha',
         'nombres',
         'edad',
-        'area',
-        'cargo',
+        'area_id',
+        'cargo_id',
         'tipo_paciente',
         'habitacion',
         'turno',
-        'certificados',
-        'subsidio',
+        'tipo_certificado_id',
+        'entidad_certificado_id',
         'horas_certificado',
         'dias_certificado',
         'fecha_inicio_certificado',
         'fecha_fin_certificado',
         'medico_certifica',
-        'causa',
-        'diagnostico',
-        'medicamento_1',
-        'medicamento_2',
-        'medicamento_3',
+        'causa_id',
+        'diagnostico_id',
         'observacion',
         'hash_unico',
     ];
@@ -42,24 +38,46 @@ class MedicoParteDiario extends Model
             'fecha' => 'date',
             'fecha_inicio_certificado' => 'date',
             'fecha_fin_certificado' => 'date',
-            'horas_certificado' => 'float',
+            'horas_certificado' => 'decimal:2',
             'dias_certificado' => 'integer',
             'edad' => 'integer',
         ];
     }
 
-    public function archivoImportado(): BelongsTo
+    // === RELACIONES ===
+
+    public function area(): BelongsTo
     {
-        return $this->belongsTo(MedicoArchivoImportado::class, 'archivo_importado_id');
+        return $this->belongsTo(Area::class, 'area_id');
+    }
+
+    public function cargo(): BelongsTo
+    {
+        return $this->belongsTo(Cargo::class, 'cargo_id');
+    }
+
+    public function tipoCertificado(): BelongsTo
+    {
+        return $this->belongsTo(TipoCertificado::class, 'tipo_certificado_id');
+    }
+
+    public function entidadCertificado(): BelongsTo
+    {
+        return $this->belongsTo(EntidadCertificado::class, 'entidad_certificado_id');
+    }
+
+    public function causa(): BelongsTo
+    {
+        return $this->belongsTo(Causa::class, 'causa_id');
+    }
+
+    public function diagnostico(): BelongsTo
+    {
+        return $this->belongsTo(Diagnostico::class, 'diagnostico_id');
     }
 
     public function medicamentos(): HasMany
     {
         return $this->hasMany(MedicoParteMedicamento::class, 'parte_diario_id');
-    }
-
-    public static function generarHash(int $archivoId, int $numeroFila): string
-    {
-        return hash('sha256', implode('|', [$archivoId, $numeroFila]));
     }
 }

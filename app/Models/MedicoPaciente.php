@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class MedicoPaciente extends Model
 {
@@ -12,24 +14,14 @@ class MedicoPaciente extends Model
         'cedula',
         'nombres',
         'edad',
-        'area',
-        'cargo',
+        'area_id',
+        'cargo_id',
         'fecha_ingreso',
         'patologias',
         'vacunas',
         'fichas_anteriores',
         'antecedentes',
         'telefono',
-        'espirometria',
-        'ecografia',
-        'audiometria',
-        'optometria',
-        'visita_2021',
-        'visita_2022',
-        'visita_2023',
-        'visita_2024',
-        'visita_2025',
-        'visita_2026',
         'tipo',
         'activo',
         'observaciones',
@@ -38,19 +30,31 @@ class MedicoPaciente extends Model
     protected function casts(): array
     {
         return [
-            'edad'          => 'integer',
+            'edad' => 'integer',
             'fecha_ingreso' => 'date',
-            'espirometria'  => 'date',
-            'ecografia'     => 'date',
-            'audiometria'   => 'date',
-            'optometria'    => 'date',
-            'visita_2021'   => 'date',
-            'visita_2022'   => 'date',
-            'visita_2023'   => 'date',
-            'visita_2024'   => 'date',
-            'visita_2025'   => 'date',
-            'visita_2026'   => 'date',
-            'activo'        => 'boolean',
+            'activo' => 'boolean',
         ];
+    }
+
+    // === RELACIONES ===
+
+    public function area(): BelongsTo
+    {
+        return $this->belongsTo(Area::class, 'area_id');
+    }
+
+    public function cargo(): BelongsTo
+    {
+        return $this->belongsTo(Cargo::class, 'cargo_id');
+    }
+
+    public function examenes(): HasMany
+    {
+        return $this->hasMany(MedicoPacienteExamen::class, 'paciente_id');
+    }
+
+    public function visitas(): HasMany
+    {
+        return $this->hasMany(MedicoPacienteVisita::class, 'paciente_id');
     }
 }

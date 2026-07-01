@@ -7,7 +7,7 @@
             </h2>
             <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
                 @if ($this->total)
-                    Datos desde {{ \Carbon\Carbon::parse($this->minFecha)->format('d/m/Y') }} — {{ \Carbon\Carbon::parse($this->maxFecha)->format('d/m/Y') }} &middot; {{ $this->archivos }} archivo(s)
+                    Datos desde {{ \Carbon\Carbon::parse($this->minFecha)->format('d/m/Y') }} — {{ \Carbon\Carbon::parse($this->maxFecha)->format('d/m/Y') }}
                 @else
                     Sin datos registrados actualmente
                 @endif
@@ -82,18 +82,18 @@
     </div>
 
     @if ($this->total === 0)
-        <!-- Empty State Mejorado con CTA -->
+        <!-- Empty State -->
         <div class="my-10 flex flex-col items-center justify-center rounded-3xl border border-dashed border-gray-300 bg-gray-50/50 py-16 dark:border-gray-800 dark:bg-gray-900/50">
             <div class="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary-100 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400">
-                <x-heroicon-o-cloud-arrow-up class="h-10 w-10" />
+                <x-heroicon-o-clipboard-document-list class="h-10 w-10" />
             </div>
             <h3 class="text-lg font-bold text-gray-950 dark:text-white">Aún no hay datos médicos</h3>
             <p class="mt-2 text-center text-sm text-gray-500 max-w-md dark:text-gray-400">
-                El dashboard está vacío. Para comenzar a ver estadísticas y resúmenes, sube tu primer reporte de atenciones en formato Excel.
+                El dashboard está vacío. Comenzá registrando atenciones manualmente desde Partes Diarios.
             </p>
-            <a href="/admin/medico/subir-datos" class="mt-6 inline-flex items-center justify-center gap-2 rounded-xl bg-primary-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600">
+            <a href="/admin/medico/partes-diarios" class="mt-6 inline-flex items-center justify-center gap-2 rounded-xl bg-primary-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600">
                 <x-heroicon-m-plus class="h-5 w-5" />
-                Importar tu primer archivo
+                Registrar atención
             </a>
         </div>
     @endif

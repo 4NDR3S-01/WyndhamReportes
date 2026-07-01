@@ -2,19 +2,32 @@
 
 namespace App\Filament\Pages;
 
-use App\Models\MedicoCatalogo;
+use App\Models\Area;
+use App\Models\AtencionMedica;
+use App\Models\Cargo;
+use App\Models\Causa;
+use App\Models\CirugiaGeneral;
+use App\Models\Diagnostico;
+use App\Models\EntidadCertificado;
+use App\Models\FlebologiaVascular;
+use App\Models\Incidente;
+use App\Models\Medicamento;
+use App\Models\TipoCertificado;
+use App\Models\TipoDescanso;
+use App\Models\TipoSalida;
 use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Enums\Width;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 class MedicoCatalogos extends Page
 {
     protected static string|\BackedEnum|null $navigationIcon = \Filament\Support\Icons\Heroicon::OutlinedCircleStack;
     protected static string|\UnitEnum|null $navigationGroup = 'Medico';
-    protected static ?string $navigationLabel = 'Base medica';
-    protected static ?string $title = 'Base medica';
+    protected static ?string $navigationLabel = 'Base médica';
+    protected static ?string $title = 'Base médica';
     protected static ?string $slug = 'medico/base-medica';
     protected static ?int $navigationSort = 5;
     protected string $view = 'filament.pages.medico-catalogos';
@@ -28,54 +41,80 @@ class MedicoCatalogos extends Page
     public ?int $editandoId = null;
     public ?int $eliminandoId = null;
     public string $nombre = '';
-    public ?string $descripcion = null;
     public bool $activo = true;
 
+    // === PAGINATION ===
+    public int $pagina = 1;
+    public int $porPagina = 30;
+
+    // === TIPO → MODELO + ETIQUETA ===
+
     public array $tipos = [
-        'area' => 'Areas',
-        'cargo' => 'Cargos',
-        'causa' => 'Causas',
-        'diagnostico' => 'Diagnosticos',
-        'certificado_medico' => 'Certificados medicos',
-        'subsidio' => 'Subsidios',
-        'descanso_en' => 'Descanso en',
-        'salida' => 'Salida',
-        'medicacion' => 'Medicacion base',
-        'cirugia_general' => 'Cirugia general',
-        'flebologia_vascular' => 'Flebologia vascular',
-        'atencion_medica_general' => 'Atencion medica general',
-        'incidente' => 'Incidentes',
+        'area'                   => 'Áreas',
+        'cargo'                  => 'Cargos',
+        'causa'                  => 'Causas',
+        'diagnostico'            => 'Diagnósticos',
+        'tipo_certificado'       => 'Tipos de certificado',
+        'entidad_certificado'    => 'Entidades certificado',
+        'tipo_descanso'          => 'Tipos de descanso',
+        'tipo_salida'            => 'Tipos de salida',
+        'medicamento'            => 'Medicamentos',
+        'cirugia_general'        => 'Cirugía general',
+        'flebologia_vascular'    => 'Flebología vascular',
+        'atencion_medica'        => 'Atención médica',
+        'incidente'              => 'Incidentes',
     ];
 
     public array $descripciones = [
-        'area' => 'Departamentos y areas laborales usados en partes diarios.',
-        'cargo' => 'Puestos de trabajo vinculados a colaboradores.',
-        'causa' => 'Categorias principales de atencion medica.',
-        'diagnostico' => 'Diagnosticos disponibles para registrar atenciones.',
-        'certificado_medico' => 'Origen del certificado presentado por el colaborador.',
-        'subsidio' => 'Valores usados para controlar subsidios.',
-        'descanso_en' => 'Unidad del descanso medico: horas o dias.',
-        'salida' => 'Resultado de la atencion o derivacion.',
-        'medicacion' => 'Lista base importada desde la hoja BASE DE DATOS.',
-        'cirugia_general' => 'Opciones clinicas relacionadas con cirugia general.',
-        'flebologia_vascular' => 'Opciones clinicas relacionadas con flebologia vascular.',
-        'atencion_medica_general' => 'Motivos frecuentes de atencion general.',
-        'incidente' => 'Tipos de incidente registrados por el dispensario.',
+        'area'                  => 'Departamentos y áreas laborales usados en partes diarios.',
+        'cargo'                 => 'Puestos de trabajo vinculados a colaboradores.',
+        'causa'                 => 'Categorías principales de atención médica.',
+        'diagnostico'           => 'Diagnósticos disponibles para registrar atenciones.',
+        'tipo_certificado'      => 'Tipos de certificado (subsidio, reposo, etc.).',
+        'entidad_certificado'   => 'Origen del certificado presentado por el colaborador.',
+        'tipo_descanso'         => 'Unidad del descanso médico: horas o días.',
+        'tipo_salida'           => 'Resultado de la atención o derivación.',
+        'medicamento'           => 'Lista base importada desde la hoja BASE DE DATOS.',
+        'cirugia_general'       => 'Opciones clínicas relacionadas con cirugía general.',
+        'flebologia_vascular'   => 'Opciones clínicas relacionadas con flebología vascular.',
+        'atencion_medica'       => 'Motivos frecuentes de atención general.',
+        'incidente'             => 'Tipos de incidente registrados por el dispensario.',
     ];
+
+    protected function getModelClass(string $tipo): string
+    {
+        return match ($tipo) {
+            'area'                => Area::class,
+            'cargo'               => Cargo::class,
+            'causa'               => Causa::class,
+            'diagnostico'         => Diagnostico::class,
+            'tipo_certificado'    => TipoCertificado::class,
+            'entidad_certificado' => EntidadCertificado::class,
+            'tipo_descanso'       => TipoDescanso::class,
+            'tipo_salida'         => TipoSalida::class,
+            'medicamento'         => Medicamento::class,
+            'cirugia_general'     => CirugiaGeneral::class,
+            'flebologia_vascular' => FlebologiaVascular::class,
+            'atencion_medica'     => AtencionMedica::class,
+            'incidente'           => Incidente::class,
+        };
+    }
+
+    // === CRUD ===
 
     public function guardar(): void
     {
         $this->validate([
-            'tipo' => ['required', 'string'],
+            'tipo'   => ['required', 'string', 'max:50'],
             'nombre' => ['required', 'string', 'max:255'],
         ]);
 
-        MedicoCatalogo::query()->updateOrCreate(
+        $modelClass = $this->getModelClass($this->tipo);
+
+        $modelClass::query()->updateOrCreate(
             ['id' => $this->editandoId],
             [
-                'tipo' => $this->tipo,
-                'nombre' => trim($this->nombre),
-                'descripcion' => $this->descripcion,
+                'nombre' => mb_strtoupper(trim($this->nombre)),
                 'activo' => $this->activo,
             ],
         );
@@ -100,18 +139,18 @@ class MedicoCatalogos extends Page
 
     public function editar(int $id): void
     {
-        $item = MedicoCatalogo::query()->findOrFail($id);
+        $modelClass = $this->getModelClass($this->tipo);
+        $item = $modelClass::query()->findOrFail($id);
         $this->editandoId = $item->id;
-        $this->tipo = $item->tipo;
         $this->nombre = $item->nombre;
-        $this->descripcion = $item->descripcion;
         $this->activo = $item->activo;
         $this->modalAbierto = true;
     }
 
     public function alternar(int $id): void
     {
-        $item = MedicoCatalogo::query()->findOrFail($id);
+        $modelClass = $this->getModelClass($this->tipo);
+        $item = $modelClass::query()->findOrFail($id);
         $item->update(['activo' => ! $item->activo]);
     }
 
@@ -133,8 +172,9 @@ class MedicoCatalogos extends Page
             return;
         }
 
-        $item = MedicoCatalogo::query()->findOrFail($this->eliminandoId);
-        $label = str($this->tipos[$item->tipo] ?? 'Registro')->singular()->lower()->ucfirst();
+        $modelClass = $this->getModelClass($this->tipo);
+        $item = $modelClass::query()->findOrFail($this->eliminandoId);
+        $label = str($this->tipos[$this->tipo] ?? 'Registro')->singular()->lower()->ucfirst();
 
         $item->delete();
 
@@ -147,9 +187,13 @@ class MedicoCatalogos extends Page
         Notification::make()->title("{$label} eliminado")->success()->send();
     }
 
-    public function getRegistroAEliminarProperty(): ?MedicoCatalogo
+    public function getRegistroAEliminarProperty(): ?Model
     {
-        return $this->eliminandoId ? MedicoCatalogo::query()->find($this->eliminandoId) : null;
+        if (! $this->eliminandoId) {
+            return null;
+        }
+        $modelClass = $this->getModelClass($this->tipo);
+        return $modelClass::query()->find($this->eliminandoId);
     }
 
     public function seleccionarTipo(string $tipo): void
@@ -161,41 +205,61 @@ class MedicoCatalogos extends Page
         $this->tipo = $tipo;
         $this->buscar = '';
         $this->estado = 'activos';
+        $this->pagina = 1;
         $this->limpiarFormulario();
+    }
+
+    public function irPagina(int $n): void
+    {
+        $this->pagina = max(1, min($n, $this->totalPaginas));
+    }
+
+    public function updated(string $property): void
+    {
+        if (in_array($property, ['buscar', 'estado'], true)) {
+            $this->pagina = 1;
+        }
     }
 
     public function limpiarFormulario(): void
     {
         $this->editandoId = null;
         $this->nombre = '';
-        $this->descripcion = null;
         $this->activo = true;
     }
 
+    // === COMPUTED PROPERTIES ===
+
     public function getItemsProperty(): Collection
     {
-        return MedicoCatalogo::query()
-            ->where('tipo', $this->tipo)
-            ->when($this->estado === 'activos', fn ($query) => $query->where('activo', true))
-            ->when($this->estado === 'ocultos', fn ($query) => $query->where('activo', false))
-            ->when($this->buscar !== '', fn ($query) => $query->where(function ($query): void {
-                $query->where('nombre', 'like', '%' . $this->buscar . '%')
-                    ->orWhere('descripcion', 'like', '%' . $this->buscar . '%');
-            }))
+        $modelClass = $this->getModelClass($this->tipo);
+
+        return $modelClass::query()
+            ->when($this->estado === 'activos', fn ($q) => $q->where('activo', true))
+            ->when($this->estado === 'ocultos', fn ($q) => $q->where('activo', false))
+            ->when($this->buscar !== '', fn ($q) => $q->where('nombre', 'like', '%' . $this->buscar . '%'))
             ->orderByDesc('activo')
             ->orderBy('nombre')
-            ->limit(120)
+            ->skip(($this->pagina - 1) * $this->porPagina)
+            ->take($this->porPagina)
             ->get();
+    }
+
+    public function getTotalPaginasProperty(): int
+    {
+        return (int) ceil($this->totalFiltrado / $this->porPagina);
     }
 
     public function getTotalSeccionProperty(): int
     {
-        return (int) MedicoCatalogo::query()->where('tipo', $this->tipo)->count();
+        $modelClass = $this->getModelClass($this->tipo);
+        return (int) $modelClass::query()->count();
     }
 
     public function getActivosSeccionProperty(): int
     {
-        return (int) MedicoCatalogo::query()->where('tipo', $this->tipo)->where('activo', true)->count();
+        $modelClass = $this->getModelClass($this->tipo);
+        return (int) $modelClass::query()->where('activo', true)->count();
     }
 
     public function getOcultosSeccionProperty(): int
@@ -205,35 +269,44 @@ class MedicoCatalogos extends Page
 
     public function getTotalFiltradoProperty(): int
     {
-        return (int) MedicoCatalogo::query()
-            ->where('tipo', $this->tipo)
-            ->when($this->estado === 'activos', fn ($query) => $query->where('activo', true))
-            ->when($this->estado === 'ocultos', fn ($query) => $query->where('activo', false))
-            ->when($this->buscar !== '', fn ($query) => $query->where(function ($query): void {
-                $query->where('nombre', 'like', '%' . $this->buscar . '%')
-                    ->orWhere('descripcion', 'like', '%' . $this->buscar . '%');
-            }))
+        $modelClass = $this->getModelClass($this->tipo);
+
+        return (int) $modelClass::query()
+            ->when($this->estado === 'activos', fn ($q) => $q->where('activo', true))
+            ->when($this->estado === 'ocultos', fn ($q) => $q->where('activo', false))
+            ->when($this->buscar !== '', fn ($q) => $q->where('nombre', 'like', '%' . $this->buscar . '%'))
             ->count();
     }
 
     public function getConteosPorTipoProperty(): array
     {
-        return MedicoCatalogo::query()
-            ->selectRaw('tipo, COUNT(*) as total')
-            ->groupBy('tipo')
-            ->pluck('total', 'tipo')
-            ->map(fn ($total) => (int) $total)
-            ->all();
+        $result = [];
+
+        foreach ($this->tipos as $key => $label) {
+            try {
+                $modelClass = $this->getModelClass($key);
+                $result[$key] = (int) $modelClass::query()->count();
+            } catch (\Throwable) {
+                $result[$key] = 0;
+            }
+        }
+
+        return $result;
     }
 
     public function getActivosPorTipoProperty(): array
     {
-        return MedicoCatalogo::query()
-            ->where('activo', true)
-            ->selectRaw('tipo, COUNT(*) as total')
-            ->groupBy('tipo')
-            ->pluck('total', 'tipo')
-            ->map(fn ($total) => (int) $total)
-            ->all();
+        $result = [];
+
+        foreach ($this->tipos as $key => $label) {
+            try {
+                $modelClass = $this->getModelClass($key);
+                $result[$key] = (int) $modelClass::query()->where('activo', true)->count();
+            } catch (\Throwable) {
+                $result[$key] = 0;
+            }
+        }
+
+        return $result;
     }
 }

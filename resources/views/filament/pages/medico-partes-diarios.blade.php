@@ -161,7 +161,7 @@
                                                         @endif
                                                     </div>
                                                     <p class="mt-0.5 truncate text-[11px] text-gray-400 dark:text-gray-500">
-                                                        {{ $p->area ?: 'Sin área' }} · {{ $p->cargo ?: 'Sin cargo' }}
+                                                        {{ $p->area?->nombre ?: 'Sin área' }} · {{ $p->cargo?->nombre ?: 'Sin cargo' }}
                                                     </p>
                                                 </div>
                                                 <span class="chip {{ $p->tipo === 'huesped' ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-300' : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-300' }}">
@@ -196,7 +196,6 @@
                             <div class="rounded-xl border border-gray-100 bg-gradient-to-br from-gray-50/80 to-white p-3.5 dark:border-gray-800 dark:from-gray-950/50 dark:to-gray-900 space-y-2.5">
                                 <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">Ficha Médica — NOMINA</p>
 
-                                {{-- Patologías --}}
                                 @if($sel->patologias)
                                     <div class="flex items-start gap-2 rounded-lg border border-red-100 bg-red-50/50 p-2.5 dark:border-red-900/30 dark:bg-red-950/10">
                                         <svg class="mt-0.5 h-4 w-4 shrink-0 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
@@ -207,7 +206,6 @@
                                     </div>
                                 @endif
 
-                                {{-- Vacunas + Fichas anteriores --}}
                                 @if($sel->vacunas || $sel->fichas_anteriores)
                                     <div class="flex flex-wrap gap-1.5">
                                         @if($sel->vacunas)
@@ -225,7 +223,6 @@
                                     </div>
                                 @endif
 
-                                {{-- Visitas anuales --}}
                                 @php $visitasConDato = array_filter($visitasAnuales); @endphp
                                 @if(!empty($visitasConDato))
                                     <div>
@@ -240,7 +237,6 @@
                                     </div>
                                 @endif
 
-                                {{-- Exámenes ocupacionales --}}
                                 @if(!empty($examenes))
                                     <div>
                                         <p class="mb-1 text-[10px] font-bold text-gray-400 dark:text-gray-500">Exámenes ocupacionales</p>
@@ -260,7 +256,6 @@
                                     </div>
                                 @endif
 
-                                {{-- Contacto + información --}}
                                 <div class="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[11px] text-gray-400 dark:text-gray-500">
                                     @if($sel->telefono)
                                         <span class="inline-flex items-center gap-1 font-medium text-gray-600 dark:text-gray-300">
@@ -276,7 +271,6 @@
                                     @endif
                                 </div>
 
-                                {{-- Historial reciente --}}
                                 @if($ultimas->isNotEmpty())
                                     <div>
                                         <p class="mb-1 text-[10px] font-bold text-gray-400 dark:text-gray-500">Últimas atenciones</p>
@@ -284,10 +278,7 @@
                                             @foreach($ultimas->take(3) as $v)
                                                 <p class="text-[11px] leading-relaxed text-gray-500 dark:text-gray-400">
                                                     <span class="font-semibold text-gray-700 dark:text-gray-200">{{ $v->fecha?->format('d/m/Y') }}</span>
-                                                    — {{ $v->causa ?: 'Sin causa' }}
-                                                    @if($v->diagnostico)
-                                                        <span class="text-gray-400 dark:text-gray-500">· {{ Str::limit($v->diagnostico, 40) }}</span>
-                                                    @endif
+                                                    — {{ $v->causa_nombre ?: 'Sin causa' }}
                                                 </p>
                                             @endforeach
                                         </div>
@@ -314,11 +305,21 @@
                             </div>
                             <div>
                                 <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Área</label>
-                                <input wire:model="area" list="areas" placeholder="—" class="input">
+                                <select wire:model="area_id" class="input">
+                                    <option value="">—</option>
+                                    @foreach ($this->areaCatalog as $a)
+                                        <option value="{{ $a->id }}">{{ $a->nombre }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div>
                                 <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Cargo</label>
-                                <input wire:model="cargo" list="cargos" placeholder="—" class="input">
+                                <select wire:model="cargo_id" class="input">
+                                    <option value="">—</option>
+                                    @foreach ($this->cargoCatalog as $c)
+                                        <option value="{{ $c->id }}">{{ $c->nombre }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
 
@@ -361,7 +362,7 @@
                     </div>
 
                     {{-- SECTION: Certificado Médico --}}
-                    <div x-data="{ abierto: {{ ($this->tieneCertificado || ($certificados && $certificados !== '' && $certificados !== 'SIN CERTIFICADO')) ? 'true' : 'false' }} }">
+                    <div x-data="{ abierto: {{ ($this->tieneCertificado) ? 'true' : 'false' }} }">
                         <button type="button" x-on:click="abierto = !abierto"
                             class="flex w-full items-center justify-between gap-2 px-5 py-3.5 text-left transition hover:bg-gray-50/50 dark:hover:bg-gray-950/30">
                             <div class="flex items-center gap-2.5">
@@ -369,9 +370,10 @@
                                     <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                                     Certificado Médico
                                 </span>
-                                @if($certificados && $certificados !== '' && $certificados !== 'SIN CERTIFICADO')
+                                @if($entidad_certificado_id)
+                                    @php $entCert = $this->entidadCatalog->firstWhere('id', $entidad_certificado_id); @endphp
                                     <span class="chip bg-orange-100 text-orange-700 dark:bg-orange-950/30 dark:text-orange-300">
-                                        {{ $certificados }}
+                                        {{ $entCert?->nombre ?? 'Certificado' }}
                                     </span>
                                 @endif
                             </div>
@@ -383,16 +385,16 @@
                         <div x-show="abierto" x-collapse class="px-5 pb-4">
                             <div class="space-y-2.5 rounded-xl border border-orange-100 bg-orange-50/30 p-3.5 dark:border-orange-900/30 dark:bg-orange-950/10">
                                 <div class="grid gap-2.5 sm:grid-cols-2">
-                                    <select wire:model="certificados" class="input-sm focus:border-orange-400">
+                                    <select wire:model="entidad_certificado_id" class="input-sm focus:border-orange-400">
                                         <option value="">Tipo de certificado</option>
-                                        @foreach ($this->catalogo('certificado_medico') as $v)
-                                            <option value="{{ $v }}">{{ $v }}</option>
+                                        @foreach ($this->entidadCatalog as $ec)
+                                            <option value="{{ $ec->id }}">{{ $ec->nombre }}</option>
                                         @endforeach
                                     </select>
-                                    <select wire:model="subsidio" class="input-sm focus:border-orange-400">
+                                    <select wire:model="tipo_certificado_id" class="input-sm focus:border-orange-400">
                                         <option value="">Subsidio</option>
-                                        @foreach ($this->catalogo('subsidio') as $v)
-                                            <option value="{{ $v }}">{{ $v }}</option>
+                                        @foreach ($this->tipoCertCatalog as $tc)
+                                            <option value="{{ $tc->id }}">{{ $tc->nombre }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -417,16 +419,21 @@
                         </span>
                         <div>
                             <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Causa</label>
-                            <select wire:model="causa" class="input">
+                            <select wire:model="causa_id" class="input">
                                 <option value="">Seleccionar causa...</option>
-                                @foreach ($this->catalogo('causa') as $v)
-                                    <option value="{{ $v }}">{{ $v }}</option>
+                                @foreach ($this->causaCatalog as $c)
+                                    <option value="{{ $c->id }}">{{ $c->nombre }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div>
                             <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Diagnóstico</label>
-                            <input wire:model="diagnostico" list="diagnosticos" placeholder="Diagnóstico" class="input">
+                            <select wire:model="diagnostico_id" class="input">
+                                <option value="">— Seleccionar —</option>
+                                @foreach ($this->diagnosticoCatalog as $d)
+                                    <option value="{{ $d->id }}">{{ Str::limit($d->nombre, 80) }}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
 
@@ -450,26 +457,15 @@
                                     {{ $i + 1 }}
                                 </span>
                                 <div class="flex-1 space-y-2">
-                                    <select wire:model="medicamentos.{{ $i }}.producto_id" class="input-sm" required>
-                                        <option value="">Seleccionar producto...</option>
-                                        @foreach ($this->productos as $p)
-                                            <option value="{{ $p->id }}">
-                                                {{ $p->nombre }}{{ $p->bajoStock ? ' ⚠ BAJO: ' . $p->stock : '' }}
-                                            </option>
+                                    <select wire:model="medicamentos.{{ $i }}.medicamento_id" class="input-sm" required>
+                                        <option value="">Seleccionar medicamento...</option>
+                                        @foreach ($this->medicamentosCatalog as $med)
+                                            <option value="{{ $med->id }}">{{ $med->nombre }}</option>
                                         @endforeach
                                     </select>
                                     <div class="flex items-center gap-2">
                                         <input type="number" step="0.01" wire:model="medicamentos.{{ $i }}.cantidad"
                                             placeholder="Cant." min="0.01" class="w-24 input-xs">
-                                        @php $prodSel = collect($this->productos)->firstWhere('id', $m['producto_id'] ?? null); @endphp
-                                        @if($prodSel)
-                                            <span class="chip
-                                                {{ $prodSel->bajoStock ? 'bg-red-50 text-red-600 dark:bg-red-950/20 dark:text-red-400' : '' }}
-                                                {{ (!$prodSel->bajoStock && $prodSel->stock <= ($prodSel->minimo * 2)) ? 'bg-yellow-50 text-yellow-600 dark:bg-yellow-950/20 dark:text-yellow-400' : '' }}
-                                                {{ ($prodSel->stock > ($prodSel->minimo * 2)) ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/20 dark:text-emerald-400' : '' }}">
-                                                Stock: {{ $prodSel->stock }}
-                                            </span>
-                                        @endif
                                     </div>
                                 </div>
                                 <button type="button" wire:click="quitarMedicamento({{ $i }})"
@@ -479,7 +475,7 @@
                             </div>
                         @endforeach
 
-                        @error('medicamentos.*.producto_id')
+                        @error('medicamentos.*.medicamento_id')
                             <p class="text-[11px] font-medium text-red-500 dark:text-red-400">{{ $message }}</p>
                         @enderror
                         @error('medicamentos.*.cantidad')
@@ -541,13 +537,13 @@
                             <svg class="h-3.5 w-3.5 shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z"/></svg>
                             <input wire:model.live.debounce.350ms="buscar" placeholder="Buscar paciente, diagnóstico...">
                         </div>
-                        <select wire:model.live="areaFiltro" class="filter-select-sm">
+                        <select wire:model.live="areaFiltroId" class="filter-select-sm">
                             <option value="">Todas las áreas</option>
-                            @foreach ($this->catalogo('area') as $v)<option value="{{ $v }}">{{ $v }}</option>@endforeach
+                            @foreach ($this->areaCatalog as $a)<option value="{{ $a->id }}">{{ $a->nombre }}</option>@endforeach
                         </select>
-                        <select wire:model.live="causaFiltro" class="filter-select-sm">
+                        <select wire:model.live="causaFiltroId" class="filter-select-sm">
                             <option value="">Todas las causas</option>
-                            @foreach ($this->catalogo('causa') as $v)<option value="{{ $v }}">{{ $v }}</option>@endforeach
+                            @foreach ($this->causaCatalog as $c)<option value="{{ $c->id }}">{{ $c->nombre }}</option>@endforeach
                         </select>
                         <select wire:model.live="tipoPacienteFiltro" class="filter-select-sm">
                             <option value="">Todos los tipos</option>
@@ -570,16 +566,16 @@
                                     <button wire:click="$set('buscar', '')" class="ml-0.5 hover:text-sky-900 dark:hover:text-sky-200">&times;</button>
                                 </span>
                             @endif
-                            @if($this->areaFiltro)
+                            @if($this->areaFiltroId)
                                 <span class="chip-sm bg-violet-50 text-violet-700 dark:bg-violet-950/20 dark:text-violet-400">
-                                    {{ $this->areaFiltro }}
-                                    <button wire:click="$set('areaFiltro', null)" class="ml-0.5 hover:text-violet-900">&times;</button>
+                                    {{ $this->areaCatalog->firstWhere('id', $this->areaFiltroId)?->nombre ?? 'Área' }}
+                                    <button wire:click="$set('areaFiltroId', null)" class="ml-0.5 hover:text-violet-900">&times;</button>
                                 </span>
                             @endif
-                            @if($this->causaFiltro)
+                            @if($this->causaFiltroId)
                                 <span class="chip-sm bg-amber-50 text-amber-700 dark:bg-amber-950/20 dark:text-amber-400">
-                                    {{ $this->causaFiltro }}
-                                    <button wire:click="$set('causaFiltro', null)" class="ml-0.5 hover:text-amber-900">&times;</button>
+                                    {{ $this->causaCatalog->firstWhere('id', $this->causaFiltroId)?->nombre ?? 'Causa' }}
+                                    <button wire:click="$set('causaFiltroId', null)" class="ml-0.5 hover:text-amber-900">&times;</button>
                                 </span>
                             @endif
                             @if($this->tipoPacienteFiltro)
@@ -624,8 +620,8 @@
                                                     </p>
                                                     <div class="mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-[11px] text-gray-400 dark:text-gray-500">
                                                         <span class="font-medium text-gray-500 dark:text-gray-400">{{ $p->fecha?->format('d/m/Y') }}</span>
-                                                        @if($p->area)<span>·</span><span>{{ $p->area }}</span>@endif
-                                                        @if($p->cargo)<span>·</span><span class="truncate">{{ $p->cargo }}</span>@endif
+                                                        @if($p->area)<span>·</span><span>{{ $p->area->nombre }}</span>@endif
+                                                        @if($p->cargo)<span>·</span><span class="truncate">{{ $p->cargo->nombre }}</span>@endif
                                                         @if($p->turno)<span>·</span><span class="capitalize">{{ $p->turno }}</span>@endif
                                                     </div>
                                                     @if($p->tipo_paciente === 'huesped' && $p->habitacion)
@@ -639,16 +635,16 @@
                                         {{-- Atención --}}
                                         <td class="table-cell">
                                             <p class="truncate text-[13px] font-medium text-gray-700 dark:text-gray-300">
-                                                {{ $p->causa ?: '—' }}
+                                                {{ $p->causa?->nombre ?: '—' }}
                                             </p>
                                             @if($p->diagnostico)
                                                 <p class="mt-0.5 line-clamp-1 text-[11px] leading-relaxed text-gray-400 dark:text-gray-500">
-                                                    {{ $p->diagnostico }}
+                                                    {{ $p->diagnostico->nombre }}
                                                 </p>
                                             @endif
-                                            @if($p->certificados && $p->certificados !== 'SIN CERTIFICADO')
+                                            @if($p->entidadCertificado)
                                                 <span class="chip mt-1.5 bg-orange-50 text-orange-700 dark:bg-orange-950/30 dark:text-orange-300">
-                                                    {{ $p->certificados }}
+                                                    {{ $p->entidadCertificado->nombre }}
                                                 </span>
                                             @endif
                                         </td>
@@ -657,7 +653,7 @@
                                             <div class="flex flex-wrap gap-1">
                                                 @forelse ($p->medicamentos as $m)
                                                     <span class="chip bg-violet-50 text-violet-700 dark:bg-violet-950/30 dark:text-violet-300">
-                                                        {{ $m->producto?->nombre ?? $m->nombre_original }}
+                                                        {{ $m->medicamento?->nombre ?? $m->nombre_original }}
                                                         <span class="font-bold">&times;{{ $m->cantidad }}</span>
                                                     </span>
                                                 @empty
@@ -701,7 +697,7 @@
                                 <button wire:click="irPagina({{ $actual - 1 }})"
                                     @if($actual <= 1) disabled @endif
                                     class="rounded-lg p-1.5 text-gray-400 transition hover:text-gray-700 disabled:opacity-30 dark:text-gray-500 dark:hover:text-gray-200">
-                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/></svg>
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7 7-7-7"/></svg>
                                 </button>
                                 @php
                                     $inicio = max(1, $actual - 2);
@@ -764,7 +760,7 @@
                         </div>
                         <h4 class="mt-4 text-base font-bold text-gray-900 dark:text-white">¿Eliminar esta atención?</h4>
                         <p class="mt-2 text-sm leading-relaxed text-gray-500 dark:text-gray-400">
-                            Esta acción no se puede deshacer.<br>Se revertirá la medicación del inventario.
+                            Esta acción no se puede deshacer.
                         </p>
                     </div>
                     <div class="flex border-t border-gray-100 dark:border-gray-800">
@@ -780,10 +776,5 @@
                 </div>
             </div>
         @endif
-
-        {{-- Datalists --}}
-        <datalist id="areas">@foreach ($this->catalogo('area') as $v)<option value="{{ $v }}">@endforeach</datalist>
-        <datalist id="cargos">@foreach ($this->catalogo('cargo') as $v)<option value="{{ $v }}">@endforeach</datalist>
-        <datalist id="diagnosticos">@foreach ($this->catalogo('diagnostico') as $v)<option value="{{ $v }}">@endforeach</datalist>
     </div>
 </x-filament-panels::page>

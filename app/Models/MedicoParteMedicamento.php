@@ -11,20 +11,15 @@ class MedicoParteMedicamento extends Model
 
     protected $fillable = [
         'parte_diario_id',
-        'producto_id',
-        'movimiento_id',
-        'campo_origen',
+        'medicamento_id',
         'nombre_original',
         'cantidad',
-        'procesado',
-        'observacion',
     ];
 
     protected function casts(): array
     {
         return [
-            'cantidad' => 'float',
-            'procesado' => 'boolean',
+            'cantidad' => 'decimal:2',
         ];
     }
 
@@ -33,13 +28,8 @@ class MedicoParteMedicamento extends Model
         return $this->belongsTo(MedicoParteDiario::class, 'parte_diario_id');
     }
 
-    public function producto(): BelongsTo
+    public function medicamento(): BelongsTo
     {
-        return $this->belongsTo(MedicoProducto::class, 'producto_id');
-    }
-
-    public function movimiento(): BelongsTo
-    {
-        return $this->belongsTo(MedicoKardexMovimiento::class, 'movimiento_id');
+        return $this->belongsTo(Medicamento::class, 'medicamento_id');
     }
 }

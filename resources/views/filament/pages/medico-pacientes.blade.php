@@ -85,10 +85,10 @@
                         <svg class="h-3.5 w-3.5 shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z"/></svg>
                         <input wire:model.live.debounce.350ms="buscar" placeholder="Buscar nombre, cédula, área, cargo...">
                     </div>
-                    <select wire:model.live="areaFiltro" class="filter-select-sm">
+                    <select wire:model.live="areaFiltroId" class="filter-select-sm">
                         <option value="">Todas las áreas</option>
-                        @foreach ($this->areasUnicas as $a)
-                            <option value="{{ $a }}">{{ $a }}</option>
+                        @foreach ($this->areasParaFiltro as $area)
+                            <option value="{{ $area->id }}">{{ $area->nombre }}</option>
                         @endforeach
                     </select>
                     <select wire:model.live="tipoFiltro" class="filter-select-sm">
@@ -115,10 +115,10 @@
                                 <button wire:click="$set('buscar', '')" class="ml-0.5 hover:text-sky-900 dark:hover:text-sky-200">&times;</button>
                             </span>
                         @endif
-                        @if($this->areaFiltro)
+                        @if($this->areaFiltroId)
                             <span class="chip-sm bg-violet-50 text-violet-700 dark:bg-violet-950/20 dark:text-violet-400">
-                                {{ $this->areaFiltro }}
-                                <button wire:click="$set('areaFiltro', null)" class="ml-0.5">&times;</button>
+                                {{ $this->areasParaFiltro->firstWhere('id', $this->areaFiltroId)?->nombre ?? 'Área #'.$this->areaFiltroId }}
+                                <button wire:click="$set('areaFiltroId', null)" class="ml-0.5">&times;</button>
                             </span>
                         @endif
                         @if($this->tipoFiltro)
@@ -182,10 +182,10 @@
                                     {{-- Área / Cargo --}}
                                     <td class="table-cell">
                                         <p class="truncate text-[13px] font-medium text-gray-700 dark:text-gray-300">
-                                            {{ $p->area ?: '—' }}
+                                            {{ $p->area?->nombre ?: '—' }}
                                         </p>
                                         <p class="mt-0.5 truncate text-[11px] text-gray-400 dark:text-gray-500">
-                                            {{ $p->cargo ?: '—' }}
+                                            {{ $p->cargo?->nombre ?: '—' }}
                                         </p>
                                         @if($p->telefono)
                                             <p class="mt-0.5 text-[11px] text-teal-600 dark:text-teal-400">{{ $p->telefono }}</p>
@@ -197,12 +197,13 @@
                                             @php
                                                 $examenVigente = false;
                                                 $hoy = now();
-                                                foreach (['espirometria','ecografia','audiometria','optometria'] as $exam) {
-                                                    if ($p->{$exam} && $p->{$exam}->gt($hoy->copy()->subYear())) {
+                                                foreach ($p->examenes as $ex) {
+                                                    if ($ex->fecha && $ex->fecha->gt($hoy->copy()->subYear())) {
                                                         $examenVigente = true; break;
                                                     }
                                                 }
-                                                $examenVencido = ($p->espirometria || $p->ecografia || $p->audiometria || $p->optometria) && !$examenVigente;
+                                                $tieneExamen = $p->examenes->isNotEmpty();
+                                                $examenVencido = $tieneExamen && !$examenVigente;
                                             @endphp
                                             @if($examenVigente)
                                                 <span class="chip bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-300">Exámenes OK</span>
@@ -217,7 +218,7 @@
                                             @endif
                                         </div>
                                     </td>
-                                    {{-- Acciones — always visible --}}
+                                    {{-- Acciones --}}
                                     <td class="table-cell">
                                         <div class="flex items-center justify-end gap-1">
                                             <button wire:click="abrirModal({{ $p->id }})"
@@ -266,9 +267,9 @@
                                                     <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">Fichas anuales</p>
                                                     <div class="mt-1.5 flex flex-wrap gap-1">
                                                         @foreach(range(2021, 2026) as $anio)
-                                                            @php $campo = "visita_{$anio}"; @endphp
-                                                            <span class="chip-sm {{ $det->{$campo} ? 'bg-sky-50 text-sky-700 dark:bg-sky-950/20 dark:text-sky-400' : 'bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500' }}">
-                                                                {{ $anio }}: {{ $det->{$campo}?->format('d/m/Y') ?: '—' }}
+                                                            @php $vis = $det->visitas->firstWhere('anio', $anio); @endphp
+                                                            <span class="chip-sm {{ $vis ? 'bg-sky-50 text-sky-700 dark:bg-sky-950/20 dark:text-sky-400' : 'bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500' }}">
+                                                                {{ $anio }}: {{ $vis?->fecha?->format('d/m/Y') ?: '—' }}
                                                             </span>
                                                         @endforeach
                                                     </div>
@@ -416,7 +417,7 @@
                         </button>
                     </div>
 
-                    {{-- Form body — scrollable, respects mobile keyboard --}}
+                    {{-- Form body --}}
                     <form wire:submit.prevent="guardar"
                         class="scroll-thin max-h-[50vh] overflow-y-auto divide-y divide-gray-50 sm:max-h-[60vh] dark:divide-gray-800/50">
 
@@ -444,11 +445,21 @@
                             <div class="grid gap-2.5 sm:grid-cols-2">
                                 <div>
                                     <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Área</label>
-                                    <input wire:model="area" list="areasList" placeholder="Ej: Cocina central" class="input">
+                                    <select wire:model="area_id" class="input">
+                                        <option value="">— Seleccionar —</option>
+                                        @foreach ($this->areasParaSelect as $area)
+                                            <option value="{{ $area->id }}">{{ $area->nombre }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                                 <div>
                                     <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Cargo</label>
-                                    <input wire:model="cargo" placeholder="Ej: AYUDANTE DE COCINA" class="input">
+                                    <select wire:model="cargo_id" class="input">
+                                        <option value="">— Seleccionar —</option>
+                                        @foreach ($this->cargosParaSelect as $cargo)
+                                            <option value="{{ $cargo->id }}">{{ $cargo->nombre }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                             <div class="grid gap-2.5 sm:grid-cols-3">
@@ -510,27 +521,17 @@
                                 Exámenes ocupacionales
                             </span>
                             <div class="grid gap-2.5 sm:grid-cols-2">
-                                <div>
-                                    <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Espirometría</label>
-                                    <input type="date" wire:model="espirometria" class="input">
-                                </div>
-                                <div>
-                                    <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Ecografía</label>
-                                    <input type="date" wire:model="ecografia" class="input">
-                                </div>
-                                <div>
-                                    <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Audiometría</label>
-                                    <input type="date" wire:model="audiometria" class="input">
-                                </div>
-                                <div>
-                                    <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Optometría</label>
-                                    <input type="date" wire:model="optometria" class="input">
-                                </div>
+                                @foreach(['espirometria' => 'Espirometría', 'ecografia' => 'Ecografía', 'audiometria' => 'Audiometría', 'optometria' => 'Optometría'] as $key => $label)
+                                    <div>
+                                        <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">{{ $label }}</label>
+                                        <input type="date" wire:model="examenesFechas.{{ $key }}" class="input">
+                                    </div>
+                                @endforeach
                             </div>
                         </div>
 
                         {{-- SECTION: Visitas médicas anuales --}}
-                        <div x-data="{ abierto: {{ ($editandoId && ($visita_2021 || $visita_2022 || $visita_2023 || $visita_2024 || $visita_2025 || $visita_2026)) ? 'true' : 'false' }} }">
+                        <div x-data="{ abierto: {{ $editandoId ? 'true' : 'false' }} }">
                             <button type="button" x-on:click="abierto = !abierto"
                                 class="flex w-full items-center justify-between gap-2 px-4 py-3 text-left transition hover:bg-gray-50/50 sm:px-5 sm:py-3.5 dark:hover:bg-gray-950/30">
                                 <span class="form-section-label text-violet-600 dark:text-violet-400 !mb-0 after:hidden">
@@ -543,10 +544,9 @@
                             <div x-show="abierto" x-collapse class="px-4 pb-3.5 sm:px-5 sm:pb-4">
                                 <div class="grid grid-cols-2 gap-2 rounded-xl border border-violet-100 bg-violet-50/30 p-3 sm:grid-cols-3 dark:border-violet-900/30 dark:bg-violet-950/10">
                                     @foreach(range(2021, 2026) as $anio)
-                                        @php $campo = "visita_{$anio}"; @endphp
                                         <div>
                                             <label class="mb-1 block text-[10px] font-bold uppercase text-violet-600 dark:text-violet-400">{{ $anio }}</label>
-                                            <input type="date" wire:model="{{ $campo }}" class="input-xs border-violet-200 dark:border-violet-800">
+                                            <input type="date" wire:model="visitasFechas.{{ $anio }}" class="input-xs border-violet-200 dark:border-violet-800">
                                         </div>
                                     @endforeach
                                 </div>
@@ -560,7 +560,7 @@
                         </div>
                     </form>
 
-                    {{-- ACTIONS — footer --}}
+                    {{-- ACTIONS --}}
                     <div class="flex items-center justify-end gap-2 border-t border-gray-100 px-4 py-3 sm:gap-2.5 sm:px-6 sm:py-4 dark:border-gray-800">
                         <button type="button" wire:click="cerrarModal"
                             class="btn-outline px-3 py-2 text-xs sm:px-4 sm:py-2.5 sm:text-sm">
@@ -606,10 +606,5 @@
                 </div>
             </div>
         @endif
-
-        {{-- Datalists --}}
-        <datalist id="areasList">
-            @foreach ($this->areasUnicas as $a)<option value="{{ $a }}">@endforeach
-        </datalist>
     </div>
 </x-filament-panels::page>

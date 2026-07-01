@@ -92,11 +92,6 @@ class Medico extends Page
         return (int) MedicoParteDiario::query()->count();
     }
 
-    public function getArchivosProperty(): int
-    {
-        return (int) \App\Models\MedicoArchivoImportado::query()->count();
-    }
-
     public function getFechasDisponiblesProperty(): Collection
     {
         return MedicoParteDiario::query()

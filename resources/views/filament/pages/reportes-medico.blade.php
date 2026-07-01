@@ -280,32 +280,4 @@
         </div>
     @endif
 
-    {{-- ERRORES --}}
-    @if ($this->erroresImportacion->isNotEmpty())
-        <div class="mt-4 rounded-2xl border border-rose-100 bg-white shadow-sm dark:border-rose-900/40 dark:bg-gray-900">
-            <div class="border-b border-rose-100 px-5 py-4 dark:border-rose-900/40">
-                <h3 class="text-base font-semibold text-gray-950 dark:text-white">Errores de importacion</h3>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="min-w-full text-sm">
-                    <thead>
-                        <tr class="border-b border-rose-100 bg-rose-50 dark:border-rose-900/40 dark:bg-rose-950/30">
-                            <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-rose-700 dark:text-rose-300">Archivo</th>
-                            <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-rose-700 dark:text-rose-300">Fila</th>
-                            <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-rose-700 dark:text-rose-300">Error</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($this->erroresImportacion as $error)
-                            <tr class="border-b border-gray-100 dark:border-gray-800">
-                                <td class="px-5 py-3 text-sm text-gray-700 dark:text-gray-300">{{ $error->archivoImportado?->nombre_original }}</td>
-                                <td class="px-5 py-3 text-sm text-gray-700 dark:text-gray-300">{{ $error->fila }}</td>
-                                <td class="px-5 py-3 text-sm text-gray-700 dark:text-gray-300">{{ $error->mensaje }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    @endif
 </x-filament-panels::page>
