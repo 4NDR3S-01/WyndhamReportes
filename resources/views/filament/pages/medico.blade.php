@@ -1,26 +1,37 @@
 <x-filament-panels::page>
-    <!-- Encabezado con Reloj (Estilo Premium) -->
-    <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between">
-        <div>
-            <h2 class="flex items-center gap-2 text-3xl font-bold tracking-tight text-gray-950 dark:text-white">
-                Dashboard de Médico
-            </h2>
-            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                @if ($this->total)
-                    Datos desde {{ \Carbon\Carbon::parse($this->minFecha)->format('d/m/Y') }} — {{ \Carbon\Carbon::parse($this->maxFecha)->format('d/m/Y') }}
-                @else
-                    Sin datos registrados actualmente
-                @endif
-            </p>
-        </div>
-
-        <div class="mt-4 sm:mt-0 flex items-center gap-3 rounded-2xl border border-gray-200 bg-white px-5 py-3 shadow-sm dark:border-gray-800 dark:bg-gray-900" x-data="{ time: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) }" x-init="setInterval(() => time = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }), 1000)">
-            <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-50 text-primary-600 dark:bg-primary-900/50 dark:text-primary-400">
-                <x-heroicon-o-clock class="h-7 w-7" />
+    <!-- Encabezado Principal (Welcome Card Premium) -->
+    <div class="mb-8 relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary-600 to-indigo-900 p-8 shadow-lg sm:p-10">
+        <!-- Decoraciones de fondo (Micro-animaciones) -->
+        <div class="absolute -right-10 -top-10 h-64 w-64 rounded-full bg-white/10 blur-3xl"></div>
+        <div class="absolute -bottom-10 -left-10 h-64 w-64 rounded-full bg-indigo-500/20 blur-3xl"></div>
+        
+        <div class="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+            <!-- Título y Subtítulo -->
+            <div class="transition-all duration-300 hover:translate-x-2">
+                <h2 class="flex items-center gap-3 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md shadow-sm">
+                        <x-heroicon-o-heart class="h-7 w-7 text-white" />
+                    </div>
+                    Dashboard de Médico
+                </h2>
+                <p class="mt-4 text-sm font-medium text-primary-100 sm:text-base">
+                    @if ($this->total)
+                        Mostrando datos desde el {{ \Carbon\Carbon::parse($this->minFecha)->format('d/m/Y') }} al {{ \Carbon\Carbon::parse($this->maxFecha)->format('d/m/Y') }}
+                    @else
+                        Sin datos registrados actualmente
+                    @endif
+                </p>
             </div>
-            <div>
-                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ now()->translatedFormat('l, d \d\e F') }}</p>
-                <p class="text-xl font-bold tracking-tight text-gray-900 dark:text-white" x-text="time"></p>
+
+            <!-- Reloj -->
+            <div class="flex items-center gap-4 rounded-2xl bg-white/10 px-6 py-4 backdrop-blur-md border border-white/20 shadow-inner transition-all duration-300 hover:scale-105" x-data="{ time: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) }" x-init="setInterval(() => time = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }), 1000)">
+                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-white/20 text-white shadow-sm">
+                    <x-heroicon-o-clock class="h-6 w-6" />
+                </div>
+                <div>
+                    <p class="text-xs font-bold tracking-wider text-primary-200 uppercase">{{ now()->translatedFormat('l, d \d\e F') }}</p>
+                    <p class="text-2xl font-black tracking-tight text-white" x-text="time"></p>
+                </div>
             </div>
         </div>
     </div>
@@ -29,56 +40,36 @@
     <h3 class="mb-4 text-lg font-semibold text-gray-950 dark:text-white">Resumen de Atenciones</h3>
     <div class="mb-8 grid gap-6 sm:grid-cols-4">
         <!-- Atenciones -->
-        <div class="rounded-2xl border border-primary-100 bg-primary-50/30 p-5 shadow-sm transition hover:shadow-md dark:border-primary-900/30 dark:bg-primary-900/10">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-primary-600 dark:text-primary-400">Atenciones totales</p>
-                    <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">{{ number_format($this->totalAtenciones, 0, ',', '.') }}</p>
-                </div>
-                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-primary-100 text-primary-600 dark:bg-primary-900/50 dark:text-primary-400">
-                    <x-heroicon-o-document-text class="h-6 w-6" />
-                </div>
-            </div>
-        </div>
+        <x-stat-card 
+            title="Atenciones totales" 
+            :value="number_format($this->totalAtenciones, 0, ',', '.')" 
+            icon="heroicon-o-document-text" 
+            color="primary" 
+        />
 
         <!-- Pacientes -->
-        <div class="rounded-2xl border border-emerald-100 bg-emerald-50/30 p-5 shadow-sm transition hover:shadow-md dark:border-emerald-900/30 dark:bg-emerald-900/10">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-emerald-600 dark:text-emerald-400">Pacientes únicos</p>
-                    <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">{{ number_format($this->totalPacientes, 0, ',', '.') }}</p>
-                </div>
-                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-400">
-                    <x-heroicon-o-user-group class="h-6 w-6" />
-                </div>
-            </div>
-        </div>
+        <x-stat-card 
+            title="Pacientes únicos" 
+            :value="number_format($this->totalPacientes, 0, ',', '.')" 
+            icon="heroicon-o-user-group" 
+            color="emerald" 
+        />
 
         <!-- Último día -->
-        <div class="rounded-2xl border border-amber-100 bg-amber-50/30 p-5 shadow-sm transition hover:shadow-md dark:border-amber-900/30 dark:bg-amber-900/10">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-amber-600 dark:text-amber-400">Último día</p>
-                    <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">{{ \Carbon\Carbon::parse($this->ultimaFechaStr)->format('d/m/Y') }}</p>
-                </div>
-                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 text-amber-600 dark:bg-amber-900/50 dark:text-amber-400">
-                    <x-heroicon-o-calendar-days class="h-6 w-6" />
-                </div>
-            </div>
-        </div>
+        <x-stat-card 
+            title="Último día" 
+            :value="\Carbon\Carbon::parse($this->ultimaFechaStr)->format('d/m/Y')" 
+            icon="heroicon-o-calendar-days" 
+            color="amber" 
+        />
 
         <!-- Kardex / Días cubiertos -->
-        <div class="rounded-2xl border border-rose-100 bg-rose-50/30 p-5 shadow-sm transition hover:shadow-md dark:border-rose-900/30 dark:bg-rose-900/10">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-rose-600 dark:text-rose-400">Días cubiertos</p>
-                    <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">{{ number_format($this->diasCubiertos, 0, ',', '.') }}</p>
-                </div>
-                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-rose-100 text-rose-600 dark:bg-rose-900/50 dark:text-rose-400">
-                    <x-heroicon-o-squares-2x2 class="h-6 w-6" />
-                </div>
-            </div>
-        </div>
+        <x-stat-card 
+            title="Días cubiertos" 
+            :value="number_format($this->diasCubiertos, 0, ',', '.')" 
+            icon="heroicon-o-squares-2x2" 
+            color="rose" 
+        />
     </div>
 
     @if ($this->total === 0)
