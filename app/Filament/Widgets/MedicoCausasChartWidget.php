@@ -24,20 +24,20 @@ class MedicoCausasChartWidget extends ChartWidget
     protected function getData(): array
     {
         $causas = MedicoParteDiario::query()
-            ->selectRaw("causa, COUNT(*) as total")
-            ->whereNotNull('causa')
-            ->where('causa', '!=', '')
-            ->groupBy('causa')
+            ->selectRaw("causa_id, COUNT(*) as total")
+            ->whereNotNull('causa_id')
+            ->groupBy('causa_id')
             ->orderByDesc('total')
             ->limit(8)
+            ->with('causa')
             ->get();
 
-        $colors = ['#ef4444', '#f59e0b', '#f97316', '#ec4899', '#8b5cf6', '#06b6d4', '#10b981', '#0ea5e9'];
+        $colors = ['#ef4444', '#A68064', '#D9704A', '#ee7e62', '#3B4C82', '#2f9bb3', '#4D7C5E', '#0E7490'];
 
         $datasets = [];
         foreach ($causas as $i => $c) {
             $datasets[] = [
-                'label' => $c->causa,
+                'label' => $c->causa?->nombre ?? 'Sin Causa',
                 'data' => [(int) $c->total],
                 'backgroundColor' => $colors[$i % count($colors)],
                 'borderColor' => $colors[$i % count($colors)],

@@ -24,20 +24,20 @@ class MedicoAreasChartWidget extends ChartWidget
     protected function getData(): array
     {
         $areas = MedicoParteDiario::query()
-            ->selectRaw("area, COUNT(*) as total")
-            ->whereNotNull('area')
-            ->where('area', '!=', '')
-            ->groupBy('area')
+            ->selectRaw("area_id, COUNT(*) as total")
+            ->whereNotNull('area_id')
+            ->groupBy('area_id')
             ->orderByDesc('total')
             ->limit(8)
+            ->with('area')
             ->get();
 
-        $colors = ['#10b981', '#0ea5e9', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#f97316'];
+        $colors = ['#4D7C5E', '#0E7490', '#A68064', '#ef4444', '#3B4C82', '#ee7e62', '#2f9bb3', '#D9704A'];
 
         $datasets = [];
         foreach ($areas as $i => $a) {
             $datasets[] = [
-                'label' => $a->area,
+                'label' => $a->area?->nombre ?? 'Sin Area',
                 'data' => [(int) $a->total],
                 'backgroundColor' => $colors[$i % count($colors)],
                 'borderColor' => $colors[$i % count($colors)],

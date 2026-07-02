@@ -1,4 +1,6 @@
 <x-filament-panels::page>
+    <x-hero-card title="Personas" subtitle="Gestiona pacientes, colaboradores y huéspedes del dispensario médico" icon="heroicon-o-user-group" color="sand" />
+
     <div class="page-enter space-y-5">
 
         {{-- ============================================================
@@ -7,7 +9,7 @@
         @php $stats = $this->estadisticas; @endphp
         <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
             <div class="stat border-gray-100 bg-white dark:border-gray-800 dark:bg-gray-900/80">
-                <div class="stat-icon bg-sky-50 text-sky-600 dark:bg-sky-950/30 dark:text-sky-400">
+                <div class="stat-icon bg-ocean-50 text-ocean-600 dark:bg-ocean-950/30 dark:text-ocean-400">
                     <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                 </div>
                 <div class="min-w-0">
@@ -15,40 +17,40 @@
                     <p class="stat-label text-gray-400 dark:text-gray-500">Total registros</p>
                 </div>
             </div>
-            <div class="stat border-emerald-100 bg-emerald-50/50 dark:border-emerald-900/30 dark:bg-emerald-950/10">
-                <div class="stat-icon bg-emerald-100 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400">
+            <div class="stat border-palm-100 bg-palm-50/50 dark:border-palm-900/30 dark:bg-palm-950/10">
+                <div class="stat-icon bg-palm-100 text-palm-600 dark:bg-palm-950/30 dark:text-palm-400">
                     <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 </div>
                 <div class="min-w-0">
-                    <p class="stat-value text-emerald-700 dark:text-emerald-300">{{ $stats['activos'] }}</p>
-                    <p class="stat-label text-emerald-500/80 dark:text-emerald-500/70">Activos</p>
+                    <p class="stat-value text-palm-700 dark:text-palm-300">{{ $stats['activos'] }}</p>
+                    <p class="stat-label text-palm-500/80 dark:text-palm-500/70">Activos</p>
                 </div>
             </div>
-            <div class="stat border-violet-100 bg-violet-50/50 dark:border-violet-900/30 dark:bg-violet-950/10">
-                <div class="stat-icon bg-violet-100 text-violet-600 dark:bg-violet-950/30 dark:text-violet-400">
+            <div class="stat border-tide-100 bg-tide-50/50 dark:border-tide-900/30 dark:bg-tide-950/10">
+                <div class="stat-icon bg-tide-100 text-tide-600 dark:bg-tide-950/30 dark:text-tide-400">
                     <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a2 2 0 012-2h2a2 2 0 012 2v5m-4 0h4"/></svg>
                 </div>
                 <div class="min-w-0">
-                    <p class="stat-value text-violet-700 dark:text-violet-300">{{ $stats['colaboradores'] }}</p>
-                    <p class="stat-label text-violet-500/80 dark:text-violet-500/70">Colaboradores</p>
+                    <p class="stat-value text-tide-700 dark:text-tide-300">{{ $stats['colaboradores'] }}</p>
+                    <p class="stat-label text-tide-500/80 dark:text-tide-500/70">Colaboradores</p>
                 </div>
             </div>
-            <div class="stat border-rose-100 bg-rose-50/50 dark:border-rose-900/30 dark:bg-rose-950/10">
-                <div class="stat-icon bg-rose-100 text-rose-600 dark:bg-rose-950/30 dark:text-rose-400">
+            <div class="stat border-coral-100 bg-coral-50/50 dark:border-coral-900/30 dark:bg-coral-950/10">
+                <div class="stat-icon bg-coral-100 text-coral-600 dark:bg-coral-950/30 dark:text-coral-400">
                     <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
                 </div>
                 <div class="min-w-0">
-                    <p class="stat-value text-rose-700 dark:text-rose-300">{{ $stats['conPatologia'] }}</p>
-                    <p class="stat-label text-rose-500/80 dark:text-rose-500/70">Con patologías</p>
+                    <p class="stat-value text-coral-700 dark:text-coral-300">{{ $stats['conPatologia'] }}</p>
+                    <p class="stat-label text-coral-500/80 dark:text-coral-500/70">Con patologías</p>
                 </div>
             </div>
-            <div class="stat border-amber-100 bg-amber-50/50 dark:border-amber-900/30 dark:bg-amber-950/10">
-                <div class="stat-icon bg-amber-100 text-amber-600 dark:bg-amber-950/30 dark:text-amber-400">
+            <div class="stat border-sand-100 bg-sand-50/50 dark:border-sand-900/30 dark:bg-sand-950/10">
+                <div class="stat-icon bg-sand-100 text-sand-600 dark:bg-sand-950/30 dark:text-sand-400">
                     <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                 </div>
                 <div class="min-w-0">
-                    <p class="stat-value text-amber-700 dark:text-amber-300">{{ $stats['conExamenes'] }}</p>
-                    <p class="stat-label text-amber-500/80 dark:text-amber-500/70">Con exámenes</p>
+                    <p class="stat-value text-sand-700 dark:text-sand-300">{{ $stats['conExamenes'] }}</p>
+                    <p class="stat-label text-sand-500/80 dark:text-sand-500/70">Con exámenes</p>
                 </div>
             </div>
             <div class="stat border-teal-100 bg-teal-50/50 dark:border-teal-900/30 dark:bg-teal-950/10">
@@ -110,25 +112,25 @@
                 @if($this->filtrosActivos > 0)
                     <div class="mt-2.5 flex flex-wrap gap-1.5">
                         @if($this->buscar !== '')
-                            <span class="chip-sm bg-sky-50 text-sky-700 dark:bg-sky-950/20 dark:text-sky-400">
+                            <span class="chip-sm bg-ocean-50 text-ocean-700 dark:bg-ocean-950/20 dark:text-ocean-400">
                                 "{{ $this->buscar }}"
-                                <button wire:click="$set('buscar', '')" class="ml-0.5 hover:text-sky-900 dark:hover:text-sky-200">&times;</button>
+                                <button wire:click="$set('buscar', '')" class="ml-0.5 hover:text-ocean-900 dark:hover:text-ocean-200">&times;</button>
                             </span>
                         @endif
                         @if($this->areaFiltroId)
-                            <span class="chip-sm bg-violet-50 text-violet-700 dark:bg-violet-950/20 dark:text-violet-400">
+                            <span class="chip-sm bg-tide-50 text-tide-700 dark:bg-tide-950/20 dark:text-tide-400">
                                 {{ $this->areasParaFiltro->firstWhere('id', $this->areaFiltroId)?->nombre ?? 'Área #'.$this->areaFiltroId }}
                                 <button wire:click="$set('areaFiltroId', null)" class="ml-0.5">&times;</button>
                             </span>
                         @endif
                         @if($this->tipoFiltro)
-                            <span class="chip-sm bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400">
+                            <span class="chip-sm bg-palm-50 text-palm-700 dark:bg-palm-950/20 dark:text-palm-400">
                                 {{ $this->tipoFiltro }}
                                 <button wire:click="$set('tipoFiltro', null)" class="ml-0.5">&times;</button>
                             </span>
                         @endif
                         @if($this->estadoFiltro)
-                            <span class="chip-sm bg-amber-50 text-amber-700 dark:bg-amber-950/20 dark:text-amber-400">
+                            <span class="chip-sm bg-sand-50 text-sand-700 dark:bg-sand-950/20 dark:text-sand-400">
                                 {{ $this->estadoFiltro === 'activo' ? 'Activos' : 'Inactivos' }}
                                 <button wire:click="$set('estadoFiltro', null)" class="ml-0.5">&times;</button>
                             </span>
@@ -157,17 +159,17 @@
                                         <button wire:click="verDetalle({{ $p->id }})"
                                             class="flex w-full items-start gap-2.5 text-left">
                                             <span class="mt-1 h-2 w-2 shrink-0 rounded-full
-                                                {{ $p->tipo === 'colaborador' ? 'bg-emerald-400 shadow-sm shadow-emerald-400/30' : '' }}
-                                                {{ $p->tipo === 'aspirante' ? 'bg-amber-400 shadow-sm shadow-amber-400/30' : '' }}
-                                                {{ $p->tipo === 'huesped' ? 'bg-violet-400 shadow-sm shadow-violet-400/30' : '' }}
-                                                {{ $p->tipo === 'paciente' ? 'bg-sky-400 shadow-sm shadow-sky-400/30' : '' }}
+                                                {{ $p->tipo === 'colaborador' ? 'bg-palm-400 shadow-sm shadow-palm-400/30' : '' }}
+                                                {{ $p->tipo === 'aspirante' ? 'bg-sand-400 shadow-sm shadow-sand-400/30' : '' }}
+                                                {{ $p->tipo === 'huesped' ? 'bg-tide-400 shadow-sm shadow-tide-400/30' : '' }}
+                                                {{ $p->tipo === 'paciente' ? 'bg-ocean-400 shadow-sm shadow-ocean-400/30' : '' }}
                                                 {{ $p->tipo === 'externo' ? 'bg-gray-400 shadow-sm shadow-gray-400/30' : '' }}
                                                 {{ !$p->activo ? 'bg-red-400' : '' }}"></span>
                                             <div class="min-w-0">
                                                 <p class="truncate text-[13px] font-semibold text-gray-900 dark:text-white">
                                                     {{ $p->nombres }}
                                                     @if($p->patologias)
-                                                        <svg class="ml-1 inline-block h-3 w-3 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="Con patologías"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+                                                        <svg class="ml-1 inline-block h-3 w-3 text-coral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="Con patologías"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
                                                     @endif
                                                 </p>
                                                 <p class="mt-0.5 text-[11px] text-gray-400 dark:text-gray-500">
@@ -206,15 +208,15 @@
                                                 $examenVencido = $tieneExamen && !$examenVigente;
                                             @endphp
                                             @if($examenVigente)
-                                                <span class="chip bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-300">Exámenes OK</span>
+                                                <span class="chip bg-palm-50 text-palm-700 dark:bg-palm-950/30 dark:text-palm-300">Exámenes OK</span>
                                             @elseif($examenVencido)
                                                 <span class="chip bg-red-50 text-red-700 dark:bg-red-950/30 dark:text-red-300">Exámenes vencidos</span>
                                             @endif
                                             @if($p->vacunas)
-                                                <span class="chip bg-sky-50 text-sky-700 dark:bg-sky-950/30 dark:text-sky-300">Vacunado</span>
+                                                <span class="chip bg-ocean-50 text-ocean-700 dark:bg-ocean-950/30 dark:text-ocean-300">Vacunado</span>
                                             @endif
                                             @if($p->fichas_anteriores)
-                                                <span class="chip bg-violet-50 text-violet-700 dark:bg-violet-950/30 dark:text-violet-300">Ficha {{ $p->fichas_anteriores }}</span>
+                                                <span class="chip bg-tide-50 text-tide-700 dark:bg-tide-950/30 dark:text-tide-300">Ficha {{ $p->fichas_anteriores }}</span>
                                             @endif
                                         </div>
                                     </td>
@@ -222,7 +224,7 @@
                                     <td class="table-cell">
                                         <div class="flex items-center justify-end gap-1">
                                             <button wire:click="abrirModal({{ $p->id }})"
-                                                class="rounded-lg px-2.5 py-1.5 text-[11px] font-semibold text-sky-600 transition hover:bg-sky-50 dark:text-sky-400 dark:hover:bg-sky-950/20"
+                                                class="rounded-lg px-2.5 py-1.5 text-[11px] font-semibold text-ocean-600 transition hover:bg-ocean-50 dark:text-ocean-400 dark:hover:bg-ocean-950/20"
                                                 title="Editar">
                                                 <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                                             </button>
@@ -252,7 +254,7 @@
                                                     <div class="mt-1.5 space-y-1">
                                                         @foreach($examenes as $ex)
                                                             <span class="chip-sm
-                                                                {{ $ex['estado'] === 'vigente' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400' : '' }}
+                                                                {{ $ex['estado'] === 'vigente' ? 'bg-palm-50 text-palm-700 dark:bg-palm-950/20 dark:text-palm-400' : '' }}
                                                                 {{ $ex['estado'] === 'vencido' ? 'bg-red-50 text-red-700 dark:bg-red-950/20 dark:text-red-400' : '' }}
                                                                 {{ $ex['estado'] === 'pendiente' ? 'bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500' : '' }}">
                                                                 {{ $ex['nombre'] }}
@@ -268,7 +270,7 @@
                                                     <div class="mt-1.5 flex flex-wrap gap-1">
                                                         @foreach(range(2021, 2026) as $anio)
                                                             @php $vis = $det->visitas->firstWhere('anio', $anio); @endphp
-                                                            <span class="chip-sm {{ $vis ? 'bg-sky-50 text-sky-700 dark:bg-sky-950/20 dark:text-sky-400' : 'bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500' }}">
+                                                            <span class="chip-sm {{ $vis ? 'bg-ocean-50 text-ocean-700 dark:bg-ocean-950/20 dark:text-ocean-400' : 'bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500' }}">
                                                                 {{ $anio }}: {{ $vis?->fecha?->format('d/m/Y') ?: '—' }}
                                                             </span>
                                                         @endforeach
@@ -280,14 +282,14 @@
                                                     <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">Historial</p>
                                                     <div class="mt-1.5 space-y-1.5">
                                                         @if($det->patologias)
-                                                            <div class="flex items-start gap-1.5 rounded-lg border border-rose-100 bg-rose-50/50 p-2 dark:border-rose-900/30 dark:bg-rose-950/10">
-                                                                <svg class="mt-0.5 h-3.5 w-3.5 shrink-0 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+                                                            <div class="flex items-start gap-1.5 rounded-lg border border-coral-100 bg-coral-50/50 p-2 dark:border-coral-900/30 dark:bg-coral-950/10">
+                                                                <svg class="mt-0.5 h-3.5 w-3.5 shrink-0 text-coral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
                                                                 <p class="text-[11px] leading-relaxed text-gray-700 dark:text-gray-300">{{ $det->patologias }}</p>
                                                             </div>
                                                         @endif
                                                         @if($det->antecedentes)
-                                                            <div class="flex items-start gap-1.5 rounded-lg border border-amber-100 bg-amber-50/50 p-2 dark:border-amber-900/30 dark:bg-amber-950/10">
-                                                                <svg class="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                                            <div class="flex items-start gap-1.5 rounded-lg border border-sand-100 bg-sand-50/50 p-2 dark:border-sand-900/30 dark:bg-sand-950/10">
+                                                                <svg class="mt-0.5 h-3.5 w-3.5 shrink-0 text-sand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                                                 <p class="text-[11px] leading-relaxed text-gray-700 dark:text-gray-300">{{ $det->antecedentes }}</p>
                                                             </div>
                                                         @endif
@@ -357,7 +359,7 @@
                             @endif
                             @for($i = $inicio; $i <= $fin; $i++)
                                 <button wire:click="irPagina({{ $i }})"
-                                    class="rounded-lg px-2.5 py-1.5 text-xs font-semibold transition {{ $i === $actual ? 'bg-sky-600 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-800' }}">
+                                    class="rounded-lg px-2.5 py-1.5 text-xs font-semibold transition {{ $i === $actual ? 'bg-ocean-600 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-800' }}">
                                     {{ $i }}
                                 </button>
                             @endfor
@@ -395,8 +397,8 @@
                         <div class="flex min-w-0 items-center gap-2.5 sm:gap-3">
                             <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg sm:h-9 sm:w-9 sm:rounded-xl
                                 {{ $editandoId
-                                    ? 'bg-amber-100 text-amber-600 ring-1 ring-amber-200 dark:bg-amber-950/30 dark:text-amber-400 dark:ring-amber-800'
-                                    : 'bg-sky-100 text-sky-600 ring-1 ring-sky-200 dark:bg-sky-950/30 dark:text-sky-400 dark:ring-sky-800' }}">
+                                    ? 'bg-sand-100 text-sand-600 ring-1 ring-sand-200 dark:bg-sand-950/30 dark:text-sand-400 dark:ring-sand-800'
+                                    : 'bg-ocean-100 text-ocean-600 ring-1 ring-ocean-200 dark:bg-ocean-950/30 dark:text-ocean-400 dark:ring-ocean-800' }}">
                                 <svg class="h-4 w-4 sm:h-4.5 sm:w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="{{ $editandoId ? 'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z' : 'M12 4v16m8-8H4' }}"/>
@@ -423,7 +425,7 @@
 
                         {{-- SECTION: Datos personales --}}
                         <div class="form-section">
-                            <span class="form-section-label text-sky-600 dark:text-sky-400">
+                            <span class="form-section-label text-ocean-600 dark:text-ocean-400">
                                 <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                                 Datos personales
                             </span>
@@ -483,14 +485,14 @@
                                 </div>
                             </div>
                             <label class="flex items-center gap-2 text-xs font-medium text-gray-600 dark:text-gray-400">
-                                <input type="checkbox" wire:model="activo" class="h-4 w-4 rounded border-gray-300 text-sky-600 focus:ring-sky-500">
+                                <input type="checkbox" wire:model="activo" class="h-4 w-4 rounded border-gray-300 text-ocean-600 focus:ring-ocean-500">
                                 Activo
                             </label>
                         </div>
 
                         {{-- SECTION: Historial médico --}}
                         <div class="form-section">
-                            <span class="form-section-label text-rose-600 dark:text-rose-400">
+                            <span class="form-section-label text-coral-600 dark:text-coral-400">
                                 <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
                                 Historial médico
                             </span>
@@ -516,7 +518,7 @@
 
                         {{-- SECTION: Exámenes ocupacionales --}}
                         <div class="form-section">
-                            <span class="form-section-label text-amber-600 dark:text-amber-400">
+                            <span class="form-section-label text-sand-600 dark:text-sand-400">
                                 <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                                 Exámenes ocupacionales
                             </span>
@@ -534,7 +536,7 @@
                         <div x-data="{ abierto: {{ $editandoId ? 'true' : 'false' }} }">
                             <button type="button" x-on:click="abierto = !abierto"
                                 class="flex w-full items-center justify-between gap-2 px-4 py-3 text-left transition hover:bg-gray-50/50 sm:px-5 sm:py-3.5 dark:hover:bg-gray-950/30">
-                                <span class="form-section-label text-violet-600 dark:text-violet-400 !mb-0 after:hidden">
+                                <span class="form-section-label text-tide-600 dark:text-tide-400 !mb-0 after:hidden">
                                     <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                                     Visitas médicas anuales
                                 </span>
@@ -542,11 +544,11 @@
                                     fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/></svg>
                             </button>
                             <div x-show="abierto" x-collapse class="px-4 pb-3.5 sm:px-5 sm:pb-4">
-                                <div class="grid grid-cols-2 gap-2 rounded-xl border border-violet-100 bg-violet-50/30 p-3 sm:grid-cols-3 dark:border-violet-900/30 dark:bg-violet-950/10">
+                                <div class="grid grid-cols-2 gap-2 rounded-xl border border-tide-100 bg-tide-50/30 p-3 sm:grid-cols-3 dark:border-tide-900/30 dark:bg-tide-950/10">
                                     @foreach(range(2021, 2026) as $anio)
                                         <div>
-                                            <label class="mb-1 block text-[10px] font-bold uppercase text-violet-600 dark:text-violet-400">{{ $anio }}</label>
-                                            <input type="date" wire:model="visitasFechas.{{ $anio }}" class="input-xs border-violet-200 dark:border-violet-800">
+                                            <label class="mb-1 block text-[10px] font-bold uppercase text-tide-600 dark:text-tide-400">{{ $anio }}</label>
+                                            <input type="date" wire:model="visitasFechas.{{ $anio }}" class="input-xs border-tide-200 dark:border-tide-800">
                                         </div>
                                     @endforeach
                                 </div>

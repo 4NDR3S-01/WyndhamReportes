@@ -1,4 +1,6 @@
 <x-filament-panels::page>
+    <x-hero-card title="Partes Diarios" subtitle="Registra y consulta las atenciones médicas diarias" icon="heroicon-o-clipboard-document-list" color="ocean" />
+
     <div class="page-enter space-y-5">
 
         {{-- ============================================================
@@ -8,7 +10,7 @@
         <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
             {{-- Total --}}
             <div class="stat border-gray-100 bg-white dark:border-gray-800 dark:bg-gray-900/80">
-                <div class="stat-icon bg-sky-50 text-sky-600 dark:bg-sky-950/30 dark:text-sky-400">
+                <div class="stat-icon bg-ocean-50 text-ocean-600 dark:bg-ocean-950/30 dark:text-ocean-400">
                     <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 </div>
                 <div class="min-w-0">
@@ -17,43 +19,43 @@
                 </div>
             </div>
             {{-- Huéspedes --}}
-            <div class="stat border-amber-100 bg-amber-50/50 dark:border-amber-900/30 dark:bg-amber-950/10">
-                <div class="stat-icon bg-amber-100 text-amber-600 dark:bg-amber-950/30 dark:text-amber-400">
+            <div class="stat border-sand-100 bg-sand-50/50 dark:border-sand-900/30 dark:bg-sand-950/10">
+                <div class="stat-icon bg-sand-100 text-sand-600 dark:bg-sand-950/30 dark:text-sand-400">
                     <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a2 2 0 012-2h2a2 2 0 012 2v5m-4 0h4"/></svg>
                 </div>
                 <div class="min-w-0">
-                    <p class="stat-value text-amber-700 dark:text-amber-300">{{ $hoy['huespedes'] }}</p>
-                    <p class="stat-label text-amber-500/80 dark:text-amber-500/70">Huéspedes</p>
+                    <p class="stat-value text-sand-700 dark:text-sand-300">{{ $hoy['huespedes'] }}</p>
+                    <p class="stat-label text-sand-500/80 dark:text-sand-500/70">Huéspedes</p>
                 </div>
             </div>
             {{-- Colaboradores --}}
-            <div class="stat border-emerald-100 bg-emerald-50/50 dark:border-emerald-900/30 dark:bg-emerald-950/10">
-                <div class="stat-icon bg-emerald-100 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400">
+            <div class="stat border-palm-100 bg-palm-50/50 dark:border-palm-900/30 dark:bg-palm-950/10">
+                <div class="stat-icon bg-palm-100 text-palm-600 dark:bg-palm-950/30 dark:text-palm-400">
                     <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                 </div>
                 <div class="min-w-0">
-                    <p class="stat-value text-emerald-700 dark:text-emerald-300">{{ $hoy['colabs'] }}</p>
-                    <p class="stat-label text-emerald-500/80 dark:text-emerald-500/70">Colaboradores</p>
+                    <p class="stat-value text-palm-700 dark:text-palm-300">{{ $hoy['colabs'] }}</p>
+                    <p class="stat-label text-palm-500/80 dark:text-palm-500/70">Colaboradores</p>
                 </div>
             </div>
             {{-- Certificados --}}
-            <div class="stat border-orange-100 bg-orange-50/50 dark:border-orange-900/30 dark:bg-orange-950/10">
-                <div class="stat-icon bg-orange-100 text-orange-600 dark:bg-orange-950/30 dark:text-orange-400">
+            <div class="stat border-coral-100 bg-coral-50/50 dark:border-coral-900/30 dark:bg-coral-950/10">
+                <div class="stat-icon bg-coral-100 text-coral-600 dark:bg-coral-950/30 dark:text-coral-400">
                     <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                 </div>
                 <div class="min-w-0">
-                    <p class="stat-value text-orange-700 dark:text-orange-300">{{ $hoy['conCert'] }}</p>
-                    <p class="stat-label text-orange-500/80 dark:text-orange-500/70">Con Certificado</p>
+                    <p class="stat-value text-coral-700 dark:text-coral-300">{{ $hoy['conCert'] }}</p>
+                    <p class="stat-label text-coral-500/80 dark:text-coral-500/70">Con Certificado</p>
                 </div>
             </div>
             {{-- Áreas --}}
-            <div class="stat border-violet-100 bg-violet-50/50 dark:border-violet-900/30 dark:bg-violet-950/10">
-                <div class="stat-icon bg-violet-100 text-violet-600 dark:bg-violet-950/30 dark:text-violet-400">
+            <div class="stat border-tide-100 bg-tide-50/50 dark:border-tide-900/30 dark:bg-tide-950/10">
+                <div class="stat-icon bg-tide-100 text-tide-600 dark:bg-tide-950/30 dark:text-tide-400">
                     <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                 </div>
                 <div class="min-w-0">
-                    <p class="stat-value text-violet-700 dark:text-violet-300">{{ $hoy['areas'] }}</p>
-                    <p class="stat-label text-violet-500/80 dark:text-violet-500/70">Áreas Activas</p>
+                    <p class="stat-value text-tide-700 dark:text-tide-300">{{ $hoy['areas'] }}</p>
+                    <p class="stat-label text-tide-500/80 dark:text-tide-500/70">Áreas Activas</p>
                 </div>
             </div>
         </div>
@@ -72,8 +74,8 @@
                     <div class="flex items-center gap-3">
                         <span class="flex h-8 w-8 items-center justify-center rounded-xl
                             {{ $editandoId
-                                ? 'bg-amber-100 text-amber-600 ring-1 ring-amber-200 dark:bg-amber-950/30 dark:text-amber-400 dark:ring-amber-800'
-                                : 'bg-sky-100 text-sky-600 ring-1 ring-sky-200 dark:bg-sky-950/30 dark:text-sky-400 dark:ring-sky-800' }}">
+                                ? 'bg-sand-100 text-sand-600 ring-1 ring-sand-200 dark:bg-sand-950/30 dark:text-sand-400 dark:ring-sand-800'
+                                : 'bg-ocean-100 text-ocean-600 ring-1 ring-ocean-200 dark:bg-ocean-950/30 dark:text-ocean-400 dark:ring-ocean-800' }}">
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="{{ $editandoId ? 'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z' : 'M12 4v16m8-8H4' }}"/>
@@ -102,7 +104,7 @@
 
                     {{-- SECTION: Datos del Paciente --}}
                     <div class="form-section">
-                        <span class="form-section-label text-sky-600 dark:text-sky-400">
+                        <span class="form-section-label text-ocean-600 dark:text-ocean-400">
                             <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                             Datos del Paciente
                         </span>
@@ -148,9 +150,9 @@
                                     @else
                                         @foreach ($this->pacientes as $p)
                                             <button type="button" wire:click="$set('pacienteId', {{ $p->id }})"
-                                                class="flex w-full items-center gap-3 px-3.5 py-2.5 text-left text-xs transition hover:bg-sky-50 dark:hover:bg-sky-950/20">
+                                                class="flex w-full items-center gap-3 px-3.5 py-2.5 text-left text-xs transition hover:bg-ocean-50 dark:hover:bg-ocean-950/20">
                                                 <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg
-                                                    {{ $p->tipo === 'huesped' ? 'bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400' : 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400' }}">
+                                                    {{ $p->tipo === 'huesped' ? 'bg-sand-100 text-sand-600 dark:bg-sand-900/30 dark:text-sand-400' : 'bg-palm-100 text-palm-600 dark:bg-palm-900/30 dark:text-palm-400' }}">
                                                     <span class="text-[11px] font-bold">{{ Str::substr($p->nombres, 0, 2) }}</span>
                                                 </div>
                                                 <div class="min-w-0 flex-1">
@@ -164,7 +166,7 @@
                                                         {{ $p->area?->nombre ?: 'Sin área' }} · {{ $p->cargo?->nombre ?: 'Sin cargo' }}
                                                     </p>
                                                 </div>
-                                                <span class="chip {{ $p->tipo === 'huesped' ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-300' : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-300' }}">
+                                                <span class="chip {{ $p->tipo === 'huesped' ? 'bg-sand-50 text-sand-700 dark:bg-sand-950/30 dark:text-sand-300' : 'bg-palm-50 text-palm-700 dark:bg-palm-950/30 dark:text-palm-300' }}">
                                                     {{ $p->tipo === 'huesped' ? 'Huésped' : 'Colab' }}
                                                 </span>
                                             </button>
@@ -209,13 +211,13 @@
                                 @if($sel->vacunas || $sel->fichas_anteriores)
                                     <div class="flex flex-wrap gap-1.5">
                                         @if($sel->vacunas)
-                                            <span class="chip-sm bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400">
+                                            <span class="chip-sm bg-palm-50 text-palm-700 dark:bg-palm-950/20 dark:text-palm-400">
                                                 <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                                 Vacunas: {{ $sel->vacunas }}
                                             </span>
                                         @endif
                                         @if($sel->fichas_anteriores)
-                                            <span class="chip-sm bg-sky-50 text-sky-700 dark:bg-sky-950/20 dark:text-sky-400">
+                                            <span class="chip-sm bg-ocean-50 text-ocean-700 dark:bg-ocean-950/20 dark:text-ocean-400">
                                                 <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                                                 Fichas desde {{ $sel->fichas_anteriores }}
                                             </span>
@@ -229,7 +231,7 @@
                                         <p class="mb-1 text-[10px] font-bold text-gray-400 dark:text-gray-500">Fichas médicas anuales</p>
                                         <div class="flex flex-wrap gap-1">
                                             @foreach($visitasAnuales as $anio => $fecha)
-                                                <span class="chip-sm {{ $fecha ? 'bg-sky-50 text-sky-700 dark:bg-sky-950/20 dark:text-sky-400' : 'bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500' }}">
+                                                <span class="chip-sm {{ $fecha ? 'bg-ocean-50 text-ocean-700 dark:bg-ocean-950/20 dark:text-ocean-400' : 'bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500' }}">
                                                     {{ $anio }}: {{ $fecha ?: '—' }}
                                                 </span>
                                             @endforeach
@@ -243,7 +245,7 @@
                                         <div class="flex flex-wrap gap-1">
                                             @foreach($examenes as $ex)
                                                 <span class="chip-sm
-                                                    {{ $ex['estado'] === 'vigente' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400' : '' }}
+                                                    {{ $ex['estado'] === 'vigente' ? 'bg-palm-50 text-palm-700 dark:bg-palm-950/20 dark:text-palm-400' : '' }}
                                                     {{ $ex['estado'] === 'vencido' ? 'bg-red-50 text-red-700 dark:bg-red-950/20 dark:text-red-400' : '' }}
                                                     {{ $ex['estado'] === 'pendiente' ? 'bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500' : '' }}">
                                                     {{ $ex['nombre'] }}
@@ -286,10 +288,10 @@
                                 @endif
 
                                 @if($sel->antecedentes)
-                                    <div class="flex items-start gap-2 rounded-lg border border-amber-100 bg-amber-50/50 p-2.5 dark:border-amber-900/30 dark:bg-amber-950/10">
-                                        <svg class="mt-0.5 h-4 w-4 shrink-0 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    <div class="flex items-start gap-2 rounded-lg border border-sand-100 bg-sand-50/50 p-2.5 dark:border-sand-900/30 dark:bg-sand-950/10">
+                                        <svg class="mt-0.5 h-4 w-4 shrink-0 text-sand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                         <div class="min-w-0">
-                                            <p class="text-[10px] font-bold uppercase text-amber-600 dark:text-amber-400">Antecedentes</p>
+                                            <p class="text-[10px] font-bold uppercase text-sand-600 dark:text-sand-400">Antecedentes</p>
                                             <p class="mt-0.5 text-[11px] leading-relaxed text-gray-700 dark:text-gray-300">{{ $sel->antecedentes }}</p>
                                         </div>
                                     </div>
@@ -333,7 +335,7 @@
                                         Colaborador
                                     </button>
                                     <button type="button" wire:click="$set('tipoPaciente', 'huesped')"
-                                        class="pill {{ $tipoPaciente === 'huesped' ? 'pill-active ring-1 ring-amber-200 dark:ring-amber-800' : 'pill-inactive' }}">
+                                        class="pill {{ $tipoPaciente === 'huesped' ? 'pill-active ring-1 ring-sand-200 dark:ring-sand-800' : 'pill-inactive' }}">
                                         Huésped
                                     </button>
                                 </div>
@@ -354,9 +356,9 @@
                         {{-- Habitación (solo huéspedes) --}}
                         @if($tipoPaciente === 'huesped')
                             <div>
-                                <label class="mb-1 block text-[10px] font-bold uppercase text-amber-600 dark:text-amber-400">Nº Habitación</label>
+                                <label class="mb-1 block text-[10px] font-bold uppercase text-sand-600 dark:text-sand-400">Nº Habitación</label>
                                 <input wire:model="habitacion" placeholder="Ej: 301"
-                                    class="input border-amber-200 bg-amber-50/30 dark:border-amber-800 dark:bg-amber-950/10 focus:border-amber-400">
+                                    class="input border-sand-200 bg-sand-50/30 dark:border-sand-800 dark:bg-sand-950/10 focus:border-sand-400">
                             </div>
                         @endif
                     </div>
@@ -366,13 +368,13 @@
                         <button type="button" x-on:click="abierto = !abierto"
                             class="flex w-full items-center justify-between gap-2 px-5 py-3.5 text-left transition hover:bg-gray-50/50 dark:hover:bg-gray-950/30">
                             <div class="flex items-center gap-2.5">
-                                <span class="form-section-label text-orange-600 dark:text-orange-400 !mb-0 after:hidden">
+                                <span class="form-section-label text-coral-600 dark:text-coral-400 !mb-0 after:hidden">
                                     <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                                     Certificado Médico
                                 </span>
                                 @if($entidad_certificado_id)
                                     @php $entCert = $this->entidadCatalog->firstWhere('id', $entidad_certificado_id); @endphp
-                                    <span class="chip bg-orange-100 text-orange-700 dark:bg-orange-950/30 dark:text-orange-300">
+                                    <span class="chip bg-coral-100 text-coral-700 dark:bg-coral-950/30 dark:text-coral-300">
                                         {{ $entCert?->nombre ?? 'Certificado' }}
                                     </span>
                                 @endif
@@ -383,15 +385,15 @@
                             </svg>
                         </button>
                         <div x-show="abierto" x-collapse class="px-5 pb-4">
-                            <div class="space-y-2.5 rounded-xl border border-orange-100 bg-orange-50/30 p-3.5 dark:border-orange-900/30 dark:bg-orange-950/10">
+                            <div class="space-y-2.5 rounded-xl border border-coral-100 bg-coral-50/30 p-3.5 dark:border-coral-900/30 dark:bg-coral-950/10">
                                 <div class="grid gap-2.5 sm:grid-cols-2">
-                                    <select wire:model="entidad_certificado_id" class="input-sm focus:border-orange-400">
+                                    <select wire:model="entidad_certificado_id" class="input-sm focus:border-coral-400">
                                         <option value="">Tipo de certificado</option>
                                         @foreach ($this->entidadCatalog as $ec)
                                             <option value="{{ $ec->id }}">{{ $ec->nombre }}</option>
                                         @endforeach
                                     </select>
-                                    <select wire:model="tipo_certificado_id" class="input-sm focus:border-orange-400">
+                                    <select wire:model="tipo_certificado_id" class="input-sm focus:border-coral-400">
                                         <option value="">Subsidio</option>
                                         @foreach ($this->tipoCertCatalog as $tc)
                                             <option value="{{ $tc->id }}">{{ $tc->nombre }}</option>
@@ -399,21 +401,21 @@
                                     </select>
                                 </div>
                                 <div class="grid gap-2.5 sm:grid-cols-2">
-                                    <input type="number" step="0.5" wire:model="horas_certificado" placeholder="Horas" class="input-sm focus:border-orange-400">
-                                    <input type="number" wire:model="dias_certificado" placeholder="Días" class="input-sm focus:border-orange-400">
+                                    <input type="number" step="0.5" wire:model="horas_certificado" placeholder="Horas" class="input-sm focus:border-coral-400">
+                                    <input type="number" wire:model="dias_certificado" placeholder="Días" class="input-sm focus:border-coral-400">
                                 </div>
                                 <div class="grid gap-2.5 sm:grid-cols-2">
-                                    <input type="date" wire:model="fecha_inicio_certificado" class="input-sm focus:border-orange-400">
-                                    <input type="date" wire:model="fecha_fin_certificado" class="input-sm focus:border-orange-400">
+                                    <input type="date" wire:model="fecha_inicio_certificado" class="input-sm focus:border-coral-400">
+                                    <input type="date" wire:model="fecha_fin_certificado" class="input-sm focus:border-coral-400">
                                 </div>
-                                <input wire:model="medico_certifica" placeholder="Médico que certifica" class="input-sm focus:border-orange-400">
+                                <input wire:model="medico_certifica" placeholder="Médico que certifica" class="input-sm focus:border-coral-400">
                             </div>
                         </div>
                     </div>
 
                     {{-- SECTION: Atención --}}
                     <div class="form-section">
-                        <span class="form-section-label text-rose-600 dark:text-rose-400">
+                        <span class="form-section-label text-coral-600 dark:text-coral-400">
                             <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
                             Atención
                         </span>
@@ -440,12 +442,12 @@
                     {{-- SECTION: Medicación Entregada --}}
                     <div class="form-section">
                         <div class="flex items-center justify-between">
-                            <span class="form-section-label text-violet-600 dark:text-violet-400 after:!hidden">
+                            <span class="form-section-label text-tide-600 dark:text-tide-400 after:!hidden">
                                 <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
                                 Medicación Entregada
                             </span>
                             <button type="button" wire:click="agregarMedicamento"
-                                class="inline-flex items-center gap-1 rounded-lg bg-violet-50 px-2.5 py-1.5 text-[11px] font-semibold text-violet-600 transition hover:bg-violet-100 dark:bg-violet-950/20 dark:text-violet-400 dark:hover:bg-violet-950/40">
+                                class="inline-flex items-center gap-1 rounded-lg bg-tide-50 px-2.5 py-1.5 text-[11px] font-semibold text-tide-600 transition hover:bg-tide-100 dark:bg-tide-950/20 dark:text-tide-400 dark:hover:bg-tide-950/40">
                                 <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                                 Agregar
                             </button>
@@ -453,7 +455,7 @@
 
                         @foreach ($medicamentos as $i => $m)
                             <div class="flex items-start gap-2 rounded-xl border border-gray-100 bg-gray-50/60 p-3 dark:border-gray-800 dark:bg-gray-950/40">
-                                <span class="mt-2 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-violet-100 text-[10px] font-bold text-violet-600 dark:bg-violet-950/30 dark:text-violet-400">
+                                <span class="mt-2 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-tide-100 text-[10px] font-bold text-tide-600 dark:bg-tide-950/30 dark:text-tide-400">
                                     {{ $i + 1 }}
                                 </span>
                                 <div class="flex-1 space-y-2">
@@ -518,7 +520,7 @@
                     <button type="button" wire:click="toggleSoloHoy"
                         class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all duration-150
                         {{ $mostrarSoloHoy
-                            ? 'bg-sky-100 text-sky-700 shadow-sm ring-1 ring-sky-200 dark:bg-sky-950/30 dark:text-sky-400 dark:ring-sky-800'
+                            ? 'bg-ocean-100 text-ocean-700 shadow-sm ring-1 ring-ocean-200 dark:bg-ocean-950/30 dark:text-ocean-400 dark:ring-ocean-800'
                             : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700' }}">
                         <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                         Solo hoy
@@ -561,33 +563,33 @@
                     @if($this->filtrosActivos > 0)
                         <div class="mt-2.5 flex flex-wrap gap-1.5">
                             @if($this->buscar !== '')
-                                <span class="chip-sm bg-sky-50 text-sky-700 dark:bg-sky-950/20 dark:text-sky-400">
+                                <span class="chip-sm bg-ocean-50 text-ocean-700 dark:bg-ocean-950/20 dark:text-ocean-400">
                                     "{{ $this->buscar }}"
-                                    <button wire:click="$set('buscar', '')" class="ml-0.5 hover:text-sky-900 dark:hover:text-sky-200">&times;</button>
+                                    <button wire:click="$set('buscar', '')" class="ml-0.5 hover:text-ocean-900 dark:hover:text-ocean-200">&times;</button>
                                 </span>
                             @endif
                             @if($this->areaFiltroId)
-                                <span class="chip-sm bg-violet-50 text-violet-700 dark:bg-violet-950/20 dark:text-violet-400">
+                                <span class="chip-sm bg-tide-50 text-tide-700 dark:bg-tide-950/20 dark:text-tide-400">
                                     {{ $this->areaCatalog->firstWhere('id', $this->areaFiltroId)?->nombre ?? 'Área' }}
-                                    <button wire:click="$set('areaFiltroId', null)" class="ml-0.5 hover:text-violet-900">&times;</button>
+                                    <button wire:click="$set('areaFiltroId', null)" class="ml-0.5 hover:text-tide-900">&times;</button>
                                 </span>
                             @endif
                             @if($this->causaFiltroId)
-                                <span class="chip-sm bg-amber-50 text-amber-700 dark:bg-amber-950/20 dark:text-amber-400">
+                                <span class="chip-sm bg-sand-50 text-sand-700 dark:bg-sand-950/20 dark:text-sand-400">
                                     {{ $this->causaCatalog->firstWhere('id', $this->causaFiltroId)?->nombre ?? 'Causa' }}
-                                    <button wire:click="$set('causaFiltroId', null)" class="ml-0.5 hover:text-amber-900">&times;</button>
+                                    <button wire:click="$set('causaFiltroId', null)" class="ml-0.5 hover:text-sand-900">&times;</button>
                                 </span>
                             @endif
                             @if($this->tipoPacienteFiltro)
-                                <span class="chip-sm bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400">
+                                <span class="chip-sm bg-palm-50 text-palm-700 dark:bg-palm-950/20 dark:text-palm-400">
                                     {{ $this->tipoPacienteFiltro }}
-                                    <button wire:click="$set('tipoPacienteFiltro', null)" class="ml-0.5 hover:text-emerald-900">&times;</button>
+                                    <button wire:click="$set('tipoPacienteFiltro', null)" class="ml-0.5 hover:text-palm-900">&times;</button>
                                 </span>
                             @endif
                             @if($this->estadoFiltro)
-                                <span class="chip-sm bg-orange-50 text-orange-700 dark:bg-orange-950/20 dark:text-orange-400">
+                                <span class="chip-sm bg-coral-50 text-coral-700 dark:bg-coral-950/20 dark:text-coral-400">
                                     {{ $this->estadoFiltro === 'con_certificado' ? 'Con certificado' : 'Sin certificado' }}
-                                    <button wire:click="$set('estadoFiltro', null)" class="ml-0.5 hover:text-orange-900">&times;</button>
+                                    <button wire:click="$set('estadoFiltro', null)" class="ml-0.5 hover:text-coral-900">&times;</button>
                                 </span>
                             @endif
                         </div>
@@ -613,7 +615,7 @@
                                         <td class="table-cell">
                                             <div class="flex items-start gap-2.5">
                                                 <span class="mt-1 h-2 w-2 shrink-0 rounded-full
-                                                    {{ $p->tipo_paciente === 'huesped' ? 'bg-amber-400 shadow-sm shadow-amber-400/30' : 'bg-emerald-400 shadow-sm shadow-emerald-400/30' }}"></span>
+                                                    {{ $p->tipo_paciente === 'huesped' ? 'bg-sand-400 shadow-sm shadow-sand-400/30' : 'bg-palm-400 shadow-sm shadow-palm-400/30' }}"></span>
                                                 <div class="min-w-0">
                                                     <p class="truncate text-[13px] font-semibold text-gray-900 dark:text-white">
                                                         {{ $p->nombres }}
@@ -625,7 +627,7 @@
                                                         @if($p->turno)<span>·</span><span class="capitalize">{{ $p->turno }}</span>@endif
                                                     </div>
                                                     @if($p->tipo_paciente === 'huesped' && $p->habitacion)
-                                                        <p class="mt-0.5 text-[11px] font-medium text-amber-600 dark:text-amber-400">
+                                                        <p class="mt-0.5 text-[11px] font-medium text-sand-600 dark:text-sand-400">
                                                             Hab. {{ $p->habitacion }}
                                                         </p>
                                                     @endif
@@ -643,7 +645,7 @@
                                                 </p>
                                             @endif
                                             @if($p->entidadCertificado)
-                                                <span class="chip mt-1.5 bg-orange-50 text-orange-700 dark:bg-orange-950/30 dark:text-orange-300">
+                                                <span class="chip mt-1.5 bg-coral-50 text-coral-700 dark:bg-coral-950/30 dark:text-coral-300">
                                                     {{ $p->entidadCertificado->nombre }}
                                                 </span>
                                             @endif
@@ -652,7 +654,7 @@
                                         <td class="table-cell">
                                             <div class="flex flex-wrap gap-1">
                                                 @forelse ($p->medicamentos as $m)
-                                                    <span class="chip bg-violet-50 text-violet-700 dark:bg-violet-950/30 dark:text-violet-300">
+                                                    <span class="chip bg-tide-50 text-tide-700 dark:bg-tide-950/30 dark:text-tide-300">
                                                         {{ $m->medicamento?->nombre ?? $m->nombre_original }}
                                                         <span class="font-bold">&times;{{ $m->cantidad }}</span>
                                                     </span>
@@ -665,7 +667,7 @@
                                         <td class="table-cell">
                                             <div class="flex items-center justify-end gap-1 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
                                                 <button wire:click="editar({{ $p->id }})"
-                                                    class="rounded-lg px-2.5 py-1.5 text-[11px] font-semibold text-sky-600 transition hover:bg-sky-50 dark:text-sky-400 dark:hover:bg-sky-950/20">
+                                                    class="rounded-lg px-2.5 py-1.5 text-[11px] font-semibold text-ocean-600 transition hover:bg-ocean-50 dark:text-ocean-400 dark:hover:bg-ocean-950/20">
                                                     Editar
                                                 </button>
                                                 <button wire:click="solicitarEliminar({{ $p->id }})"
@@ -714,7 +716,7 @@
                                 @for($i = $inicio; $i <= $fin; $i++)
                                     <button wire:click="irPagina({{ $i }})"
                                         class="rounded-lg px-2.5 py-1.5 text-xs font-semibold transition
-                                        {{ $i === $actual ? 'bg-sky-600 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-800' }}">
+                                        {{ $i === $actual ? 'bg-ocean-600 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-800' }}">
                                         {{ $i }}
                                     </button>
                                 @endfor

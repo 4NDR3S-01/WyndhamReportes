@@ -22,6 +22,8 @@ class ReportesMedico extends Page
 
     protected static ?string $title = 'Reportes de medico';
 
+    protected ?string $heading = '';
+
     protected static ?string $slug = 'medico/reportes';
 
     protected static ?int $navigationSort = 3;

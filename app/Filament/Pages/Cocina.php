@@ -17,6 +17,8 @@ class Cocina extends Page
 
     protected static ?string $title = 'Dashboard de Cocina';
 
+    protected ?string $heading = '';
+
     protected static ?string $slug = 'cocina';
 
     protected static ?int $navigationSort = 1;
@@ -47,9 +49,7 @@ class Cocina extends Page
 
     protected function getHeaderWidgets(): array
     {
-        return [
-            \App\Filament\Widgets\CocinaStatsWidget::class,
-        ];
+        return [];
     }
 
     protected function getFooterWidgets(): array
@@ -58,6 +58,29 @@ class Cocina extends Page
             \App\Filament\Widgets\CocinaProductosChartWidget::class,
             \App\Filament\Widgets\CocinaConsumoDiarioWidget::class,
         ];
+    }
+
+    // ── Datos para stat cards inline ──
+    public function getRegistrosUltimaFechaProperty(): int
+    {
+        return (int) CocinaConsumo::query()
+            ->whereDate('fecha', $this->maxFecha)
+            ->count();
+    }
+
+    public function getProductosUltimaFechaProperty(): int
+    {
+        return (int) CocinaConsumo::query()
+            ->whereDate('fecha', $this->maxFecha)
+            ->distinct('producto_id')
+            ->count('producto_id');
+    }
+
+    public function getFechasRegistradasProperty(): int
+    {
+        return (int) CocinaConsumo::query()
+            ->distinct('fecha')
+            ->count('fecha');
     }
 
     public function getMinFechaProperty(): ?string

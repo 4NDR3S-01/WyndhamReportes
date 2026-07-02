@@ -2,45 +2,46 @@
     'title',
     'value',
     'icon',
-    'color' => 'primary',
+    'color' => 'brand',
+    'description' => null,
 ])
 
 @php
     $colorStyles = match ($color) {
-        'primary' => [
-            'wrapper' => 'border-primary-100 bg-primary-50/30 dark:border-primary-900/30 dark:bg-primary-900/10',
-            'title' => 'text-primary-600 dark:text-primary-400',
-            'icon_wrapper' => 'bg-primary-100 text-primary-600 dark:bg-primary-900/50 dark:text-primary-400',
+        'brand' => [
+            'wrapper' => 'border-brand-100 bg-brand-50/30 dark:border-brand-500/20 dark:bg-brand-500/10',
+            'title' => 'text-brand-600 dark:text-brand-500',
+            'icon_wrapper' => 'bg-brand-100 text-brand-600 dark:bg-brand-500/30 dark:text-brand-400',
         ],
-        'emerald' => [
-            'wrapper' => 'border-emerald-100 bg-emerald-50/30 dark:border-emerald-900/30 dark:bg-emerald-900/10',
-            'title' => 'text-emerald-600 dark:text-emerald-400',
-            'icon_wrapper' => 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-400',
+        'ocean' => [
+            'wrapper' => 'border-ocean-100 bg-ocean-50/30 dark:border-ocean-500/20 dark:bg-ocean-500/10',
+            'title' => 'text-ocean-600 dark:text-ocean-500',
+            'icon_wrapper' => 'bg-ocean-100 text-ocean-600 dark:bg-ocean-500/30 dark:text-ocean-400',
         ],
-        'amber' => [
-            'wrapper' => 'border-amber-100 bg-amber-50/30 dark:border-amber-900/30 dark:bg-amber-900/10',
-            'title' => 'text-amber-600 dark:text-amber-400',
-            'icon_wrapper' => 'bg-amber-100 text-amber-600 dark:bg-amber-900/50 dark:text-amber-400',
+        'coral' => [
+            'wrapper' => 'border-coral-100 bg-coral-50/30 dark:border-coral-500/20 dark:bg-coral-500/10',
+            'title' => 'text-coral-600 dark:text-coral-500',
+            'icon_wrapper' => 'bg-coral-100 text-coral-600 dark:bg-coral-500/30 dark:text-coral-400',
         ],
-        'rose' => [
-            'wrapper' => 'border-rose-100 bg-rose-50/30 dark:border-rose-900/30 dark:bg-rose-900/10',
-            'title' => 'text-rose-600 dark:text-rose-400',
-            'icon_wrapper' => 'bg-rose-100 text-rose-600 dark:bg-rose-900/50 dark:text-rose-400',
+        'sand' => [
+            'wrapper' => 'border-sand-100 bg-sand-50/30 dark:border-sand-500/20 dark:bg-sand-500/10',
+            'title' => 'text-sand-600 dark:text-sand-500',
+            'icon_wrapper' => 'bg-sand-100 text-sand-600 dark:bg-sand-500/30 dark:text-sand-400',
         ],
-        'indigo' => [
-            'wrapper' => 'border-indigo-100 bg-indigo-50/30 dark:border-indigo-900/30 dark:bg-indigo-900/10',
-            'title' => 'text-indigo-600 dark:text-indigo-400',
-            'icon_wrapper' => 'bg-indigo-100 text-indigo-600 dark:bg-indigo-900/50 dark:text-indigo-400',
+        'tide' => [
+            'wrapper' => 'border-tide-100 bg-tide-50/30 dark:border-tide-500/20 dark:bg-tide-500/10',
+            'title' => 'text-tide-600 dark:text-tide-500',
+            'icon_wrapper' => 'bg-tide-100 text-tide-600 dark:bg-tide-500/30 dark:text-tide-400',
         ],
-        'sky' => [
-            'wrapper' => 'border-sky-100 bg-sky-50/30 dark:border-sky-900/30 dark:bg-sky-900/10',
-            'title' => 'text-sky-600 dark:text-sky-400',
-            'icon_wrapper' => 'bg-sky-100 text-sky-600 dark:bg-sky-900/50 dark:text-sky-400',
+        'palm' => [
+            'wrapper' => 'border-palm-100 bg-palm-50/30 dark:border-palm-500/20 dark:bg-palm-500/10',
+            'title' => 'text-palm-600 dark:text-palm-500',
+            'icon_wrapper' => 'bg-palm-100 text-palm-600 dark:bg-palm-500/30 dark:text-palm-400',
         ],
         default => [
-            'wrapper' => 'border-gray-100 bg-gray-50/30 dark:border-gray-900/30 dark:bg-gray-900/10',
+            'wrapper' => 'border-gray-100 bg-gray-50/30 dark:border-gray-700 dark:bg-gray-800/30',
             'title' => 'text-gray-600 dark:text-gray-400',
-            'icon_wrapper' => 'bg-gray-100 text-gray-600 dark:bg-gray-900/50 dark:text-gray-400',
+            'icon_wrapper' => 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400',
         ],
     };
 @endphp
@@ -58,6 +59,9 @@
                     {{ $slot }}
                 @endif
             </p>
+            @if ($description)
+                <p class="mt-1 text-xs text-gray-400 dark:text-gray-500">{{ $description }}</p>
+            @endif
         </div>
         <div class="flex h-12 w-12 items-center justify-center rounded-full {{ $colorStyles['icon_wrapper'] }}">
             <x-dynamic-component :component="$icon" class="h-6 w-6" />

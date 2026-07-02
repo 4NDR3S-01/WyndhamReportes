@@ -18,13 +18,13 @@ class InicioChartWidget extends ChartWidget
                     'label' => 'Importación de Archivos',
                     'data' => [4, 7, 2, 8, 12, 5, 9],
                     'borderColor' => '#3b82f6', // Bright Blue
-                    'backgroundColor' => 'rgba(59, 130, 246, 0.1)',
+                    'backgroundColor' => 'rgba(11, 59, 96, 0.1)',
                 ],
                 [
                     'label' => 'Consumos Reportados',
                     'data' => [12, 19, 15, 22, 30, 24, 28],
-                    'borderColor' => '#10b981', // Emerald
-                    'backgroundColor' => 'rgba(16, 185, 129, 0.1)',
+                    'borderColor' => '#4D7C5E', // Emerald
+                    'backgroundColor' => 'rgba(77, 124, 94, 0.1)',
                 ],
             ],
             'labels' => ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],

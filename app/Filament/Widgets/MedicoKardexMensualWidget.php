@@ -58,15 +58,15 @@ class MedicoKardexMensualWidget extends ChartWidget
                 [
                     'label' => 'Atenciones',
                     'data' => $data,
-                    'borderColor' => '#0ea5e9',
-                    'backgroundColor' => 'rgba(14, 165, 233, 0.1)',
+                    'borderColor' => '#0E7490',
+                    'backgroundColor' => 'rgba(14, 116, 144, 0.1)',
                     'fill' => true,
                     'tension' => 0.3,
                 ],
                 [
                     'label' => 'Pacientes distintos',
                     'data' => $dataPacientes,
-                    'borderColor' => '#8b5cf6',
+                    'borderColor' => '#3B4C82',
                     'backgroundColor' => 'transparent',
                     'fill' => false,
                     'tension' => 0.3,

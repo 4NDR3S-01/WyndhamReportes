@@ -1,7 +1,5 @@
 <x-filament-panels::page>
-    <div class="flex items-center gap-3 pb-6">
-        <h2 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">Reportes Medico</h2>
-    </div>
+    <x-hero-card title="Reportes Médicos" subtitle="Exporta datos médicos y kardex en formato Excel" icon="heroicon-o-document-arrow-down" color="tide" />
 
     @if ($this->fechasDisponibles->isEmpty())
         <div class="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-gray-200 py-16 dark:border-gray-800">
@@ -13,27 +11,27 @@
     {{-- ACCIONES DE DESCARGA --}}
     @if ($this->fechasDisponibles->isNotEmpty())
         <div class="mb-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            <a href="#" wire:click.prevent="descargarKardexMensual" class="flex flex-col items-center gap-2 rounded-2xl border border-violet-200 bg-violet-50/60 p-5 text-center shadow-sm transition hover:bg-violet-100 dark:border-violet-900 dark:bg-violet-950/30 dark:hover:bg-violet-950/50">
-                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-600 text-white shadow-sm">
+            <a href="#" wire:click.prevent="descargarKardexMensual" class="flex flex-col items-center gap-2 rounded-2xl border border-tide-200 bg-tide-50/60 p-5 text-center shadow-sm transition hover:bg-tide-100 dark:border-tide-900 dark:bg-tide-950/30 dark:hover:bg-tide-950/50">
+                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-tide-600 text-white shadow-sm">
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-1m-4-4-4 4m0 0-4-4m4 4V4"/></svg>
                 </div>
-                <span class="text-sm font-semibold text-violet-700 dark:text-violet-300">KARDEX Mensual</span>
+                <span class="text-sm font-semibold text-tide-700 dark:text-tide-300">KARDEX Mensual</span>
                 <span class="text-xs text-gray-500 dark:text-gray-400">Excel multi-hoja por mes</span>
             </a>
 
-            <a href="#" wire:click.prevent="descargarParteDiarioRango" class="flex flex-col items-center gap-2 rounded-2xl border border-sky-200 bg-sky-50/60 p-5 text-center shadow-sm transition hover:bg-sky-100 dark:border-sky-900 dark:bg-sky-950/30 dark:hover:bg-sky-950/50">
-                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-600 text-white shadow-sm">
+            <a href="#" wire:click.prevent="descargarParteDiarioRango" class="flex flex-col items-center gap-2 rounded-2xl border border-ocean-200 bg-ocean-50/60 p-5 text-center shadow-sm transition hover:bg-ocean-100 dark:border-ocean-900 dark:bg-ocean-950/30 dark:hover:bg-ocean-950/50">
+                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-ocean-600 text-white shadow-sm">
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"/></svg>
                 </div>
-                <span class="text-sm font-semibold text-sky-700 dark:text-sky-300">Parte Diario</span>
+                <span class="text-sm font-semibold text-ocean-700 dark:text-ocean-300">Parte Diario</span>
                 <span class="text-xs text-gray-500 dark:text-gray-400">Excel por rango de fechas</span>
             </a>
 
-            <a href="#" wire:click.prevent="descargarKardex" class="flex flex-col items-center gap-2 rounded-2xl border border-emerald-200 bg-emerald-50/60 p-5 text-center shadow-sm transition hover:bg-emerald-100 dark:border-emerald-900 dark:bg-emerald-950/30 dark:hover:bg-emerald-950/50">
-                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-sm">
+            <a href="#" wire:click.prevent="descargarKardex" class="flex flex-col items-center gap-2 rounded-2xl border border-palm-200 bg-palm-50/60 p-5 text-center shadow-sm transition hover:bg-palm-100 dark:border-palm-900 dark:bg-palm-950/30 dark:hover:bg-palm-950/50">
+                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-palm-600 text-white shadow-sm">
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z"/></svg>
                 </div>
-                <span class="text-sm font-semibold text-emerald-700 dark:text-emerald-300">KARDEX Inventario</span>
+                <span class="text-sm font-semibold text-palm-700 dark:text-palm-300">KARDEX Inventario</span>
                 <span class="text-xs text-gray-500 dark:text-gray-400">Medicinas y equipos</span>
             </a>
 
@@ -59,15 +57,15 @@
             <div class="flex flex-wrap items-end gap-3 px-5 py-4">
                 <div>
                     <label class="text-xs font-medium text-gray-500 dark:text-gray-400">Desde</label>
-                    <input type="date" wire:model="desde" class="mt-1 block rounded-lg border-gray-300 text-sm shadow-sm focus:border-sky-500 focus:ring-sky-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white">
+                    <input type="date" wire:model="desde" class="mt-1 block rounded-lg border-gray-300 text-sm shadow-sm focus:border-ocean-500 focus:ring-ocean-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white">
                     @error('desde') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                 </div>
                 <div>
                     <label class="text-xs font-medium text-gray-500 dark:text-gray-400">Hasta</label>
-                    <input type="date" wire:model="hasta" class="mt-1 block rounded-lg border-gray-300 text-sm shadow-sm focus:border-sky-500 focus:ring-sky-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white">
+                    <input type="date" wire:model="hasta" class="mt-1 block rounded-lg border-gray-300 text-sm shadow-sm focus:border-ocean-500 focus:ring-ocean-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white">
                     @error('hasta') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                 </div>
-                <a href="#" wire:click.prevent="descargarParteDiarioRango" class="inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-sky-700">
+                <a href="#" wire:click.prevent="descargarParteDiarioRango" class="inline-flex items-center rounded-lg bg-ocean-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-ocean-700">
                     <svg class="mr-1.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0-3-3m3 3 3-3m2 8H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z"/></svg>
                     Aplicar
                 </a>
@@ -77,14 +75,14 @@
 
     {{-- KARDEX POR MES - PRINCIPAL --}}
     @if ($this->kardexMensualDetallado->isNotEmpty())
-        <div class="rounded-2xl border border-violet-200 bg-white shadow-sm dark:border-violet-900 dark:bg-gray-900">
-            <div class="border-b border-violet-100 px-5 py-4 dark:border-violet-900">
+        <div class="rounded-2xl border border-tide-200 bg-white shadow-sm dark:border-tide-900 dark:bg-gray-900">
+            <div class="border-b border-tide-100 px-5 py-4 dark:border-tide-900">
                 <div class="flex items-center justify-between gap-2">
                     <div>
                         <h3 class="text-base font-semibold text-gray-950 dark:text-white">KARDEX Mensual</h3>
                         <p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">{{ $this->kardexMensualDetallado->count() }} meses &middot; Generado desde los partes diarios</p>
                     </div>
-                    <a href="#" wire:click.prevent="descargarKardexMensual" class="inline-flex items-center rounded-lg bg-violet-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-violet-700">
+                    <a href="#" wire:click.prevent="descargarKardexMensual" class="inline-flex items-center rounded-lg bg-tide-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-tide-700">
                         <svg class="mr-1.5 h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-1m-4-4-4 4m0 0-4-4m4 4V4"/></svg>
                         Descargar Excel
                     </a>
@@ -94,7 +92,7 @@
                 @foreach ($this->kardexMensualDetallado as $mes)
                     <details class="group">
                         <summary class="flex cursor-pointer items-center gap-3 px-5 py-4 text-sm font-semibold text-gray-700 dark:text-gray-300 select-none hover:bg-gray-50 dark:hover:bg-gray-950/50">
-                            <svg class="h-4 w-4 shrink-0 text-violet-500 transition group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/></svg>
+                            <svg class="h-4 w-4 shrink-0 text-tide-500 transition group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/></svg>
                             <span class="flex-1 text-base text-gray-900 dark:text-white">{{ $mes->mes }}</span>
                             <div class="flex items-center gap-3 text-xs font-normal text-gray-500 dark:text-gray-400">
                                 <span>{{ $mes->atenciones }} atenciones</span>
@@ -118,13 +116,13 @@
                                     </div>
                                 </div>
 
-                                <div class="rounded-xl border border-violet-100 bg-violet-50/40 p-4 dark:border-violet-900 dark:bg-violet-950/20">
-                                    <h4 class="mb-3 text-xs font-semibold uppercase tracking-wide text-violet-600 dark:text-violet-400">Medicamentos</h4>
+                                <div class="rounded-xl border border-tide-100 bg-tide-50/40 p-4 dark:border-tide-900 dark:bg-tide-950/20">
+                                    <h4 class="mb-3 text-xs font-semibold uppercase tracking-wide text-tide-600 dark:text-tide-400">Medicamentos</h4>
                                     <div class="space-y-2">
                                         @foreach ($mes->medicamentos as $nombre => $count)
                                             <div class="flex items-center justify-between text-sm">
                                                 <span class="truncate pr-2 text-gray-700 dark:text-gray-300">{{ $nombre }}</span>
-                                                <span class="shrink-0 rounded-full bg-violet-100 px-2 py-0.5 text-xs font-semibold text-violet-700 dark:bg-violet-900 dark:text-violet-300">{{ $count }}</span>
+                                                <span class="shrink-0 rounded-full bg-tide-100 px-2 py-0.5 text-xs font-semibold text-tide-700 dark:bg-tide-900 dark:text-tide-300">{{ $count }}</span>
                                             </div>
                                         @endforeach
                                     </div>
@@ -189,7 +187,7 @@
                         <h3 class="text-base font-semibold text-gray-950 dark:text-white">KARDEX Inventario</h3>
                         <p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">Importado desde la hoja KARDEX del Excel</p>
                     </div>
-                    <a href="#" wire:click.prevent="descargarKardex" class="inline-flex items-center rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-700">
+                    <a href="#" wire:click.prevent="descargarKardex" class="inline-flex items-center rounded-lg bg-palm-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-palm-700">
                         <svg class="mr-1.5 h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0-3-3m3 3 3-3m2 8H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z"/></svg>
                         Descargar
                     </a>

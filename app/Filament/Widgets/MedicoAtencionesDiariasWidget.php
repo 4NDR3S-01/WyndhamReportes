@@ -52,8 +52,8 @@ class MedicoAtencionesDiariasWidget extends ChartWidget
                 [
                     'label' => 'Atenciones',
                     'data' => $data,
-                    'borderColor' => '#0ea5e9',
-                    'backgroundColor' => 'rgba(14, 165, 233, 0.1)',
+                    'borderColor' => '#0E7490',
+                    'backgroundColor' => 'rgba(14, 116, 144, 0.1)',
                     'fill' => true,
                     'tension' => 0.3,
                 ],

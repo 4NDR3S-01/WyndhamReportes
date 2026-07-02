@@ -16,6 +16,7 @@ class MedicoInventario extends Page
     protected static string|\UnitEnum|null $navigationGroup = 'Medico';
     protected static ?string $navigationLabel = 'Inventario';
     protected static ?string $title = 'Inventario medico';
+    protected ?string $heading = '';
     protected static ?string $slug = 'medico/inventario';
     protected static ?int $navigationSort = 7;
     protected string $view = 'filament.pages.medico-inventario';

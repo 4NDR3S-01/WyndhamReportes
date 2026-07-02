@@ -28,6 +28,7 @@ class MedicoCatalogos extends Page
     protected static string|\UnitEnum|null $navigationGroup = 'Medico';
     protected static ?string $navigationLabel = 'Base médica';
     protected static ?string $title = 'Base médica';
+    protected ?string $heading = '';
     protected static ?string $slug = 'medico/base-medica';
     protected static ?int $navigationSort = 5;
     protected string $view = 'filament.pages.medico-catalogos';

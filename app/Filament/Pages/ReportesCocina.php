@@ -18,6 +18,8 @@ class ReportesCocina extends Page
 
     protected static ?string $title = 'Reportes de cocina';
 
+    protected ?string $heading = '';
+
     protected static ?string $slug = 'cocina/reportes';
 
     protected static ?int $navigationSort = 4;

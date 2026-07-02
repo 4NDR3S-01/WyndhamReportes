@@ -14,7 +14,9 @@ class Inicio extends Page
 {
     protected static string $routePath = '/';
 
-    protected static ?string $title = '';
+    protected static ?string $title = 'Inicio';
+
+    protected ?string $heading = '';
 
     protected static ?string $navigationLabel = 'Inicio';
 

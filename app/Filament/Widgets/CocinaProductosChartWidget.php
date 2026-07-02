@@ -31,7 +31,7 @@ class CocinaProductosChartWidget extends ChartWidget
             ->limit(10)
             ->get();
 
-        $colors = ['#0ea5e9', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#f97316', '#84cc16', '#6366f1'];
+        $colors = ['#0E7490', '#A68064', '#4D7C5E', '#ef4444', '#3B4C82', '#ee7e62', '#2f9bb3', '#D9704A', '#6a9e7b', '#3B4C82'];
 
         $datasets = [];
         foreach ($productos as $i => $item) {

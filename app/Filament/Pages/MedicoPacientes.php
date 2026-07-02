@@ -22,6 +22,8 @@ class MedicoPacientes extends Page
 
     protected static ?string $title = 'Personas';
 
+    protected ?string $heading = '';
+
     protected static ?string $slug = 'medico/pacientes';
 
     protected static ?int $navigationSort = 3;

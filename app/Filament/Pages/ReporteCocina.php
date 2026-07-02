@@ -26,6 +26,8 @@ class ReporteCocina extends Page
 
     protected static ?string $title = 'Subir datos de cocina';
 
+    protected ?string $heading = '';
+
     protected static ?string $slug = 'cocina/subir-datos';
 
     protected static ?int $navigationSort = 3;

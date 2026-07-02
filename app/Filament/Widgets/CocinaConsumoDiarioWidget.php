@@ -76,8 +76,8 @@ class CocinaConsumoDiarioWidget extends ChartWidget
                     [
                         'label' => $producto?->nombre ?? 'Producto seleccionado',
                         'data' => $data,
-                        'borderColor' => '#0ea5e9',
-                        'backgroundColor' => 'rgba(14, 165, 233, 0.1)',
+                        'borderColor' => '#0E7490',
+                        'backgroundColor' => 'rgba(14, 116, 144, 0.1)',
                         'fill' => true,
                         'tension' => 0.3,
                     ],
@@ -98,7 +98,7 @@ class CocinaConsumoDiarioWidget extends ChartWidget
         }
 
         $productos = CocinaProducto::query()->whereIn('id', $topIds)->get()->keyBy('id');
-        $colors = ['#0ea5e9', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6'];
+        $colors = ['#0E7490', '#A68064', '#4D7C5E', '#ef4444', '#3B4C82'];
 
         $datasets = [];
         foreach ($topIds as $i => $pid) {

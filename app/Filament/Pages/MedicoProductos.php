@@ -16,6 +16,7 @@ class MedicoProductos extends Page
     protected static string|\UnitEnum|null $navigationGroup = 'Medico';
     protected static ?string $navigationLabel = 'Medicinas y equipos';
     protected static ?string $title = 'Medicinas y equipos';
+    protected ?string $heading = '';
     protected static ?string $slug = 'medico/productos';
     protected static ?int $navigationSort = 6;
     protected string $view = 'filament.pages.medico-productos';

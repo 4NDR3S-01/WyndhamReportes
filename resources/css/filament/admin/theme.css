@@ -2,6 +2,7 @@
 
 @source '../../../../app/Filament/**/*';
 @source '../../../../resources/views/filament/**/*';
+@source '../../../../resources/views/components/**/*';
 
 /* ============================================================
    MEDICAL SYSTEM — Design Tokens & System
@@ -21,6 +22,85 @@
     --color-medical-800: #075985;
     --color-medical-900: #0c4a6e;
     --color-medical-950: #082f49;
+
+    /* ---- Coastal palette (Wyndham Manta) ---- */
+    /* Brand — Deep navy #0B3B60 */
+    --color-brand-50: #f0f4f8;
+    --color-brand-100: #d9e2ec;
+    --color-brand-200: #b3c5d9;
+    --color-brand-300: #8da8c6;
+    --color-brand-400: #4d7099;
+    --color-brand-500: #0B3B60;
+    --color-brand-600: #09304F;
+    --color-brand-700: #07263E;
+    --color-brand-800: #051C2E;
+    --color-brand-900: #03121E;
+    --color-brand-950: #010A12;
+
+    /* Ocean — Coastal teal #0E7490 */
+    --color-ocean-50: #ecf7f9;
+    --color-ocean-100: #cfe9ee;
+    --color-ocean-200: #a5d7e0;
+    --color-ocean-300: #6dbecd;
+    --color-ocean-400: #2f9bb3;
+    --color-ocean-500: #0E7490;
+    --color-ocean-600: #0B5F75;
+    --color-ocean-700: #094B5D;
+    --color-ocean-800: #073745;
+    --color-ocean-900: #04232C;
+    --color-ocean-950: #02171E;
+
+    /* Coral — Pacific sunset #D9704A */
+    --color-coral-50: #fef5f2;
+    --color-coral-100: #fde3dc;
+    --color-coral-200: #fbc7b9;
+    --color-coral-300: #f8a38d;
+    --color-coral-400: #ee7e62;
+    --color-coral-500: #D9704A;
+    --color-coral-600: #C45D38;
+    --color-coral-700: #A0482C;
+    --color-coral-800: #7A3420;
+    --color-coral-900: #522114;
+    --color-coral-950: #2E100A;
+
+    /* Sand — Warm beach #A68064 */
+    --color-sand-50: #f9f6f3;
+    --color-sand-100: #f0e8df;
+    --color-sand-200: #e2d1c1;
+    --color-sand-300: #cfb59e;
+    --color-sand-400: #bb9a7f;
+    --color-sand-500: #A68064;
+    --color-sand-600: #8C6A50;
+    --color-sand-700: #6F5440;
+    --color-sand-800: #523E30;
+    --color-sand-900: #352820;
+    --color-sand-950: #1E1610;
+
+    /* Tide — Evening indigo #3B4C82 */
+    --color-tide-50: #f1f3f9;
+    --color-tide-100: #dde1ef;
+    --color-tide-200: #bcc3e0;
+    --color-tide-300: #929dcb;
+    --color-tide-400: #6876b3;
+    --color-tide-500: #3B4C82;
+    --color-tide-600: #2E3D6A;
+    --color-tide-700: #232F52;
+    --color-tide-800: #18213A;
+    --color-tide-900: #0E1322;
+    --color-tide-950: #060912;
+
+    /* Palm — Tropical green #4D7C5E */
+    --color-palm-50: #f1f7f3;
+    --color-palm-100: #d9e9de;
+    --color-palm-200: #b5d4bf;
+    --color-palm-300: #88bb98;
+    --color-palm-400: #6a9e7b;
+    --color-palm-500: #4D7C5E;
+    --color-palm-600: #3D664C;
+    --color-palm-700: #2F503B;
+    --color-palm-800: #213A2A;
+    --color-palm-900: #13241A;
+    --color-palm-950: #0A150E;
 
     /* Surface tokens */
     --color-surface: #f8fafc;
@@ -106,16 +186,16 @@
         @apply block w-full rounded-xl border-gray-200 bg-white px-3.5 py-2.5 text-sm
                shadow-sm transition-all duration-150
                placeholder:text-gray-400
-               focus:border-sky-400 focus:ring-2 focus:ring-sky-500/10
+               focus:border-ocean-400 focus:ring-2 focus:ring-ocean-500/10
                dark:border-gray-700 dark:bg-gray-900 dark:text-white
                dark:placeholder:text-gray-500
-               dark:focus:border-sky-500 dark:focus:ring-sky-400/10;
+               dark:focus:border-ocean-500 dark:focus:ring-ocean-400/10;
     }
     .input-sm {
         @apply block w-full rounded-lg border-gray-200 bg-white px-3 py-2 text-xs
                shadow-sm transition-all duration-150
                placeholder:text-gray-400
-               focus:border-sky-400 focus:ring-2 focus:ring-sky-500/10
+               focus:border-ocean-400 focus:ring-2 focus:ring-ocean-500/10
                dark:border-gray-700 dark:bg-gray-900 dark:text-white
                dark:placeholder:text-gray-500;
     }
@@ -123,7 +203,7 @@
         @apply block w-full rounded-md border-gray-200 bg-white px-2.5 py-1.5 text-xs
                shadow-sm transition-all duration-150
                placeholder:text-gray-400
-               focus:border-sky-400 focus:ring-2 focus:ring-sky-500/10
+               focus:border-ocean-400 focus:ring-2 focus:ring-ocean-500/10
                dark:border-gray-700 dark:bg-gray-900 dark:text-white;
     }
 
@@ -131,7 +211,7 @@
     .select-sm {
         @apply h-9 rounded-lg border-gray-200 bg-white pr-8 text-xs
                shadow-sm transition-all duration-150
-               focus:border-sky-400 focus:ring-2 focus:ring-sky-500/10
+               focus:border-ocean-400 focus:ring-2 focus:ring-ocean-500/10
                dark:border-gray-700 dark:bg-gray-900 dark:text-white;
     }
 
@@ -156,9 +236,9 @@
                text-sm font-semibold transition-all duration-150
                focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-900
                disabled:opacity-50 disabled:cursor-not-allowed
-               bg-sky-600 text-white shadow-sm
-               hover:bg-sky-700 hover:shadow-md
-               focus:ring-sky-500
+               bg-ocean-600 text-white shadow-sm
+               hover:bg-ocean-700 hover:shadow-md
+               focus:ring-ocean-500
                active:scale-[0.98];
     }
     .btn-ghost {
@@ -205,7 +285,7 @@
     }
     .table-row {
         @apply border-b border-gray-50 transition-colors
-               hover:bg-sky-50/30 dark:border-gray-800/50 dark:hover:bg-sky-950/10;
+               hover:bg-ocean-50/30 dark:border-gray-800/50 dark:hover:bg-ocean-950/10;
     }
     .table-cell {
         @apply px-4 py-3 align-middle;
@@ -216,19 +296,19 @@
         @apply h-9 w-32 rounded-lg border-gray-200 bg-white px-2.5 text-xs
                shadow-sm transition-all duration-150
                placeholder:text-gray-400
-               focus:border-sky-400 focus:ring-2 focus:ring-sky-500/10
+               focus:border-ocean-400 focus:ring-2 focus:ring-ocean-500/10
                dark:border-gray-700 dark:bg-gray-900 dark:text-white;
     }
     .filter-select-sm {
         @apply h-9 rounded-lg border-gray-200 bg-white pr-8 text-xs
                shadow-sm transition-all duration-150
-               focus:border-sky-400 focus:ring-2 focus:ring-sky-500/10
+               focus:border-ocean-400 focus:ring-2 focus:ring-ocean-500/10
                dark:border-gray-700 dark:bg-gray-900 dark:text-white;
     }
     .filter-search {
         @apply flex h-9 flex-1 items-center gap-1.5 rounded-lg border
                border-gray-200 bg-white px-3 shadow-sm transition-all duration-150
-               focus-within:border-sky-400 focus-within:ring-2 focus-within:ring-sky-500/10
+               focus-within:border-ocean-400 focus-within:ring-2 focus-within:ring-ocean-500/10
                dark:border-gray-700 dark:bg-gray-900;
     }
     .filter-search input {

@@ -27,6 +27,8 @@ class MedicoPartesDiarios extends Page
 
     protected static ?string $title = 'Partes diarios';
 
+    protected ?string $heading = '';
+
     protected static ?string $slug = 'medico/partes-diarios';
 
     protected static ?int $navigationSort = 2;
