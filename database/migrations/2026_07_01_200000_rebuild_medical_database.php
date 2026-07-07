@@ -75,26 +75,8 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('cirugias_generales', function (Blueprint $table): void {
-            $table->id();
-            $table->string('nombre')->unique();
-            $table->boolean('activo')->default(true);
-            $table->timestamps();
-        });
-
-        Schema::create('flebologias_vasculares', function (Blueprint $table): void {
-            $table->id();
-            $table->string('nombre')->unique();
-            $table->boolean('activo')->default(true);
-            $table->timestamps();
-        });
-
-        Schema::create('atenciones_medicas', function (Blueprint $table): void {
-            $table->id();
-            $table->string('nombre')->unique();
-            $table->boolean('activo')->default(true);
-            $table->timestamps();
-        });
+        // cirugias_generales, flebologias_vasculares, atenciones_medicas eliminadas (Fase 4)
+        // Catálogos huérfanos sin FK desde ninguna otra tabla.
 
         Schema::create('incidentes', function (Blueprint $table): void {
             $table->id();
@@ -261,44 +243,13 @@ return new class extends Migration
             $table->index('fecha_movimiento');
         });
 
-        Schema::create('medico_kardex_cierres', function (Blueprint $table): void {
-            $table->id();
-            $table->string('periodo', 7)->nullable();
-            $table->date('fecha_inicio');
-            $table->date('fecha_fin');
-            $table->string('estado', 20)->default('abierto');
-            $table->foreignId('generado_por')->nullable()->constrained('users')->nullOnDelete();
-            $table->timestamp('cerrado_en')->nullable();
-            $table->text('observaciones')->nullable();
-            $table->timestamps();
-
-            $table->unique(['fecha_inicio', 'fecha_fin']);
-            $table->index(['periodo', 'estado']);
-        });
-
-        Schema::create('medico_kardex_cierre_items', function (Blueprint $table): void {
-            $table->id();
-            $table->foreignId('cierre_id')->constrained('medico_kardex_cierres')->cascadeOnDelete();
-            $table->foreignId('producto_id')->nullable()->constrained('medico_productos')->nullOnDelete();
-            $table->string('tipo', 30)->default('medicina');
-            $table->string('nombre');
-            $table->decimal('saldo_anterior', 12, 2)->default(0);
-            $table->decimal('ingresos', 12, 2)->default(0);
-            $table->decimal('egresos', 12, 2)->default(0);
-            $table->decimal('total', 12, 2)->default(0);
-            $table->date('fecha_caducidad')->nullable();
-            $table->timestamps();
-
-            $table->unique(['cierre_id', 'nombre']);
-            $table->index(['tipo', 'nombre']);
-        });
+        // Tablas medico_kardex_cierres / medico_kardex_cierre_items eliminadas (Fase 3)
+        // El kardex mensual ahora se calcula en memoria desde los movimientos.
 
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('medico_kardex_cierre_items');
-        Schema::dropIfExists('medico_kardex_cierres');
         Schema::dropIfExists('medico_kardex_movimientos');
         Schema::dropIfExists('medico_kardex');
         Schema::dropIfExists('medico_producto_aliases');
@@ -309,9 +260,6 @@ return new class extends Migration
         Schema::dropIfExists('medico_paciente_examenes');
         Schema::dropIfExists('medico_pacientes');
         Schema::dropIfExists('incidentes');
-        Schema::dropIfExists('atenciones_medicas');
-        Schema::dropIfExists('flebologias_vasculares');
-        Schema::dropIfExists('cirugias_generales');
         Schema::dropIfExists('tipos_salida');
         Schema::dropIfExists('tipos_descanso');
         Schema::dropIfExists('entidades_certificado');

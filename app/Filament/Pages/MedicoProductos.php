@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Models\Medicamento;
 use App\Models\MedicoProducto;
 use BackedEnum;
 use Filament\Notifications\Notification;
@@ -19,6 +20,9 @@ class MedicoProductos extends Page
     protected ?string $heading = '';
     protected static ?string $slug = 'medico/productos';
     protected static ?int $navigationSort = 6;
+
+    // Fusionado en MedicoInventario — ya no aparece en navegación
+    protected static bool $shouldRegisterNavigation = false;
     protected string $view = 'filament.pages.medico-productos';
     protected Width|string|null $maxContentWidth = Width::Full;
 
@@ -29,6 +33,7 @@ class MedicoProductos extends Page
     public bool $modalProductoAbierto = false;
     public string $tipo = 'medicina';
     public string $nombre = '';
+    public ?int $medicamento_id = null;
     public ?float $stock_minimo = 0;
     public ?string $fecha_caducidad = null;
     public bool $activo = true;
@@ -43,6 +48,7 @@ class MedicoProductos extends Page
             [
                 'tipo' => $this->tipo,
                 'nombre' => trim($this->nombre),
+                'medicamento_id' => $this->medicamento_id,
                 'stock_minimo' => $this->stock_minimo ?: 0,
                 'fecha_caducidad' => $this->fecha_caducidad,
                 'activo' => $this->activo,
@@ -74,6 +80,7 @@ class MedicoProductos extends Page
         $this->editandoId = $p->id;
         $this->tipo = $p->tipo;
         $this->nombre = $p->nombre;
+        $this->medicamento_id = $p->medicamento_id;
         $this->stock_minimo = $p->stock_minimo;
         $this->fecha_caducidad = $p->fecha_caducidad?->format('Y-m-d');
         $this->activo = $p->activo;
@@ -106,6 +113,7 @@ class MedicoProductos extends Page
         $this->editandoId = null;
         $this->tipo = 'medicina';
         $this->nombre = '';
+        $this->medicamento_id = null;
         $this->stock_minimo = 0;
         $this->fecha_caducidad = null;
         $this->activo = true;
@@ -115,6 +123,7 @@ class MedicoProductos extends Page
     public function getProductosProperty(): Collection
     {
         return MedicoProducto::query()
+            ->with('medicamento')
             ->when($this->buscar !== '', fn ($q) => $q->where('nombre', 'like', '%' . $this->buscar . '%'))
             ->when($this->tipoFiltro !== 'todos', fn ($q) => $q->where('tipo', $this->tipoFiltro))
             ->when($this->estado === 'activos', fn ($q) => $q->where('activo', true))
@@ -166,5 +175,13 @@ class MedicoProductos extends Page
             ->when($this->estado === 'activos', fn ($q) => $q->where('activo', true))
             ->when($this->estado === 'inactivos', fn ($q) => $q->where('activo', false))
             ->count();
+    }
+
+    public function getMedicamentosCatalogProperty(): Collection
+    {
+        return Medicamento::query()
+            ->where('activo', true)
+            ->orderBy('nombre')
+            ->get(['id', 'nombre']);
     }
 }

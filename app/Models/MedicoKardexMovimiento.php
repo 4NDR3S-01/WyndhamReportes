@@ -7,7 +7,7 @@ class MedicoKardexMovimiento extends Model
 {
     protected $table = 'medico_kardex_movimientos';
     protected $fillable = [
-        'kardex_id', 'producto_id', 'tipo', 'origen', 'cantidad',
+        'kardex_id', 'producto_id', 'parte_diario_id', 'tipo', 'origen', 'cantidad',
         'fecha_movimiento', 'personal_responsable', 'observacion',
     ];
     protected function casts(): array
@@ -19,4 +19,5 @@ class MedicoKardexMovimiento extends Model
     }
     public function kardex(): BelongsTo { return $this->belongsTo(MedicoKardex::class); }
     public function producto(): BelongsTo { return $this->belongsTo(MedicoProducto::class); }
+    public function parteDiario(): BelongsTo { return $this->belongsTo(MedicoParteDiario::class); }
 }

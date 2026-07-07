@@ -2,7 +2,6 @@
 
 namespace App\Filament\Pages;
 
-use App\Models\MedicoKardexCierre;
 use App\Services\Medico\KardexMensualService;
 use BackedEnum;
 use Carbon\Carbon;
@@ -20,19 +19,34 @@ class MedicoKardexMensual extends Page
     protected static ?string $title = 'Kardex mensual';
     protected ?string $heading = '';
     protected static ?string $slug = 'medico/kardex-mensual';
-    protected static ?int $navigationSort = 8;
+    protected static ?int $navigationSort = 6;
     protected string $view = 'filament.pages.medico-kardex-mensual';
 
+    // ============================================================
+    // Estado del formulario
+    // ============================================================
     public string $mes;
     public string $desde;
     public string $hasta;
-    public ?int $cierreId = null;
+
+    // ============================================================
+    // Kardex generado (en memoria)
+    // ============================================================
+    /** @var array<int, array>|null */
+    public ?array $items = null;
+    public bool $cerrado = false;
+    public ?string $kardexDesde = null;
+    public ?string $kardexHasta = null;
+
+    // ============================================================
+    // Historial
+    // ============================================================
+    public ?string $historialSeleccionado = null;
 
     public function mount(): void
     {
         $this->mes = now()->format('Y-m');
         $this->aplicarMes();
-        $this->cierreId = MedicoKardexCierre::query()->latest('id')->value('id');
     }
 
     public function aplicarMes(): void
@@ -44,58 +58,76 @@ class MedicoKardexMensual extends Page
 
     public function generar(KardexMensualService $service): void
     {
-        $this->validate(['desde' => ['required', 'date'], 'hasta' => ['required', 'date', 'after_or_equal:desde']]);
-        $cierre = $service->generar($this->desde, $this->hasta, cerrar: false);
-        $this->cierreId = $cierre->id;
-        Notification::make()->title('Kardex generado')->success()->send();
+        $this->validate([
+            'desde' => ['required', 'date'],
+            'hasta' => ['required', 'date', 'after_or_equal:desde'],
+        ]);
+
+        $this->items = $service->generar($this->desde, $this->hasta);
+        $this->kardexDesde = $this->desde;
+        $this->kardexHasta = $this->hasta;
+        $this->cerrado = false;
+
+        Notification::make()->title('Kardex generado — ' . count($this->items) . ' productos')->success()->send();
     }
 
-    public function cerrar(KardexMensualService $service): void
+    public function cerrar(): void
     {
-        $this->validate(['desde' => ['required', 'date'], 'hasta' => ['required', 'date', 'after_or_equal:desde']]);
-        $cierre = $service->generar($this->desde, $this->hasta, cerrar: true);
-        $this->cierreId = $cierre->id;
-        Notification::make()->title('Kardex cerrado')->success()->send();
+        if (! $this->items) {
+            Notification::make()->title('Primero genera un Kardex')->warning()->send();
+            return;
+        }
+        $this->cerrado = true;
+        Notification::make()->title('Kardex cerrado (no se modificará)')->success()->send();
     }
 
-    public function reabrir(int $id): void
+    public function reabrir(): void
     {
-        MedicoKardexCierre::query()->findOrFail($id)->update(['estado' => 'abierto', 'cerrado_en' => null]);
-        Notification::make()->title('Kardex reabierto')->warning()->send();
+        $this->cerrado = false;
+        Notification::make()->title('Kardex reabierto para edición')->warning()->send();
+    }
+
+    public function cargarHistorial(string $ym): void
+    {
+        $fecha = Carbon::parse($ym . '-01');
+        $this->historialSeleccionado = $ym;
+        $this->desde = $fecha->copy()->startOfMonth()->toDateString();
+        $this->hasta = $fecha->copy()->endOfMonth()->toDateString();
+        $this->mes = $ym;
     }
 
     public function exportar(): mixed
     {
-        $cierre = $this->cierre;
-        if (! $cierre) {
+        if (! $this->items) {
             Notification::make()->title('Primero genera un Kardex')->warning()->send();
             return null;
         }
 
+        $inicioStr = Carbon::parse($this->kardexDesde)->format('d/m/Y');
+        $finStr = Carbon::parse($this->kardexHasta)->format('d/m/Y');
+
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('KARDEX');
-        $sheet->setCellValue('A1', 'DISPENSARIO MEDICO');
-        $sheet->setCellValue('A2', 'KARDEX ARQUEO MENSUAL');
-        $sheet->setCellValue('A3', 'DEL ' . $cierre->fecha_inicio->format('d/m/Y') . ' AL ' . $cierre->fecha_fin->format('d/m/Y'));
+        $sheet->fromArray(['DISPENSARIO MEDICO'], null, 'A1');
+        $sheet->fromArray(['KARDEX ARQUEO MENSUAL'], null, 'A2');
+        $sheet->fromArray(["DEL {$inicioStr} AL {$finStr}"], null, 'A3');
 
-        $headers = ['MEDICINAS / EQUIPOS', 'SALDO ANTERIOR', 'INGRESOS', 'EGRESOS', 'TOTAL', 'FECHA DE CADUCIDAD', 'FECHA INICIO MES', 'FECHA FIN MES'];
-        foreach ($headers as $i => $header) {
-            $sheet->setCellValue(chr(65 + $i) . '5', $header);
-        }
+        $headers = ['MEDICINAS / EQUIPOS', 'SALDO ANTERIOR', 'INGRESOS', 'EGRESOS', 'TOTAL', 'FECHA DE CADUCIDAD', 'FECHA INICIO', 'FECHA FIN'];
+        $sheet->fromArray($headers, null, 'A5');
         $sheet->getStyle('A1:A3')->getFont()->setBold(true);
         $sheet->getStyle('A5:H5')->getFont()->setBold(true);
 
         $row = 6;
-        foreach ($cierre->items as $item) {
-            $sheet->setCellValue("A{$row}", $item->nombre);
-            $sheet->setCellValue("B{$row}", $item->saldo_anterior);
-            $sheet->setCellValue("C{$row}", $item->ingresos);
-            $sheet->setCellValue("D{$row}", $item->egresos);
-            $sheet->setCellValue("E{$row}", $item->total);
-            $sheet->setCellValue("F{$row}", $item->fecha_caducidad?->format('Y-m-d'));
-            $sheet->setCellValue("G{$row}", $cierre->fecha_inicio->format('Y-m-d'));
-            $sheet->setCellValue("H{$row}", $cierre->fecha_fin->format('Y-m-d'));
+        foreach ($this->items as $item) {
+            $sheet->setCellValue("A{$row}", $item['nombre']);
+            $sheet->setCellValue("B{$row}", $item['saldo_anterior']);
+            $sheet->setCellValue("C{$row}", $item['ingresos']);
+            $sheet->setCellValue("D{$row}", $item['egresos']);
+            $sheet->setCellValue("E{$row}", $item['total']);
+            $sheet->setCellValue("F{$row}", $item['fecha_caducidad'] ?? '');
+            $sheet->setCellValue("G{$row}", $this->kardexDesde);
+            $sheet->setCellValue("H{$row}", $this->kardexHasta);
             $row++;
         }
 
@@ -103,20 +135,40 @@ class MedicoKardexMensual extends Page
             $sheet->getColumnDimension($column)->setWidth($column === 'A' ? 34 : 18);
         }
 
-        $path = storage_path("app/tmp/kardex-medico-{$cierre->fecha_inicio->format('Ymd')}-{$cierre->fecha_fin->format('Ymd')}.xlsx");
+        $filename = 'kardex-medico-' . Carbon::parse($this->kardexDesde)->format('Ymd') . '-' . Carbon::parse($this->kardexHasta)->format('Ymd') . '.xlsx';
+        $path = storage_path("app/tmp/{$filename}");
         @mkdir(dirname($path), 0777, true);
         (new Xlsx($spreadsheet))->save($path);
 
-        return response()->download($path, basename($path))->deleteFileAfterSend();
+        return response()->download($path, $filename)->deleteFileAfterSend();
     }
 
-    public function getCierresProperty(): Collection
+    // ============================================================
+    // Computed
+    // ============================================================
+
+    public function getMesesDisponiblesProperty(): Collection
     {
-        return MedicoKardexCierre::query()->withCount('items')->latest('fecha_inicio')->limit(20)->get();
+        return app(KardexMensualService::class)->mesesDisponibles();
     }
 
-    public function getCierreProperty(): ?MedicoKardexCierre
+    public function getItemsCountProperty(): int
     {
-        return $this->cierreId ? MedicoKardexCierre::query()->with('items')->find($this->cierreId) : null;
+        return count($this->items ?? []);
+    }
+
+    public function getTotalIngresosProperty(): float
+    {
+        return collect($this->items ?? [])->sum('ingresos');
+    }
+
+    public function getTotalEgresosProperty(): float
+    {
+        return collect($this->items ?? [])->sum('egresos');
+    }
+
+    public function getTotalSaldoProperty(): float
+    {
+        return collect($this->items ?? [])->sum('total');
     }
 }

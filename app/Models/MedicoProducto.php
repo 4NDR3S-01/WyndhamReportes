@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
@@ -11,6 +12,7 @@ class MedicoProducto extends Model
     protected $table = 'medico_productos';
 
     protected $fillable = [
+        'medicamento_id',
         'tipo',
         'nombre',
         'stock_minimo',
@@ -26,6 +28,11 @@ class MedicoProducto extends Model
             'fecha_caducidad' => 'date',
             'activo' => 'boolean',
         ];
+    }
+
+    public function medicamento(): BelongsTo
+    {
+        return $this->belongsTo(Medicamento::class);
     }
 
     public function aliases(): HasMany

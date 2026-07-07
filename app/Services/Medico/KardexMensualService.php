@@ -3,17 +3,29 @@
 namespace App\Services\Medico;
 
 use App\Models\MedicoKardex;
-use App\Models\MedicoKardexCierre;
-use App\Models\MedicoKardexCierreItem;
 use App\Models\MedicoKardexMovimiento;
 use App\Models\MedicoProducto;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * Genera kardex mensual calculado en memoria (sin persistir).
+ *
+ * Las tablas medico_kardex_cierres / medico_kardex_cierre_items eran
+ * snapshots redundantes que se regeneraban cada vez. Ahora el kardex
+ * se calcula bajo demanda desde los movimientos reales.
+ */
 class KardexMensualService
 {
-    public function generar(string $desde, string $hasta, bool $cerrar = false): MedicoKardexCierre
+    /**
+     * Genera los items del kardex para un rango de fechas.
+     *
+     * @return array<int, array{producto_id:int, tipo:string, nombre:string,
+     *   saldo_anterior:float, ingresos:float, egresos:float, total:float,
+     *   fecha_caducidad:?string}>
+     */
+    public function generar(string $desde, string $hasta): array
     {
         $inicio = Carbon::parse($desde)->startOfDay();
         $fin = Carbon::parse($hasta)->startOfDay();
@@ -22,54 +34,39 @@ class KardexMensualService
             throw new \InvalidArgumentException('La fecha hasta debe ser mayor o igual a desde.');
         }
 
-        return DB::transaction(function () use ($inicio, $fin, $cerrar): MedicoKardexCierre {
-            $cierre = MedicoKardexCierre::query()->firstOrCreate(
-                ['fecha_inicio' => $inicio->toDateString(), 'fecha_fin' => $fin->toDateString()],
-                ['periodo' => $inicio->format('Y-m'), 'generado_por' => auth()->id(), 'estado' => 'abierto'],
-            );
+        $items = [];
 
-            if ($cierre->estado === 'cerrado' && ! $cerrar) {
-                return $cierre->load('items');
-            }
+        foreach (MedicoProducto::query()->orderBy('tipo')->orderBy('nombre')->get() as $producto) {
+            $saldoBase = $this->saldoBaseProducto($producto, $inicio->toDateString());
+            $movimientosAnteriores = $this->movimientosProductoHasta($producto, $inicio->copy()->subDay()->toDateString());
+            $saldoAnterior = $saldoBase + $movimientosAnteriores;
 
-            $cierre->items()->delete();
+            $ingresos = $this->sumaMovimientos($producto, $inicio->toDateString(), $fin->toDateString(), ['ingreso']);
+            $ajustesPos = $this->sumaAjustes($producto, $inicio->toDateString(), $fin->toDateString(), positivo: true);
+            $egresos = $this->sumaMovimientos($producto, $inicio->toDateString(), $fin->toDateString(), ['salida']);
+            $ajustesNeg = abs($this->sumaAjustes($producto, $inicio->toDateString(), $fin->toDateString(), positivo: false));
 
-            foreach (MedicoProducto::query()->orderBy('tipo')->orderBy('nombre')->get() as $producto) {
-                $saldoBase = $this->saldoBaseProducto($producto, $inicio->toDateString());
-                $movimientosAntes = $this->movimientosProductoHasta($producto, null, $inicio->copy()->subDay()->toDateString());
-                $saldoAnterior = $saldoBase + $movimientosAntes;
+            $totalIngresos = $ingresos + $ajustesPos;
+            $totalEgresos = $egresos + $ajustesNeg;
 
-                $ingresos = $this->sumaMovimientos($producto, $inicio->toDateString(), $fin->toDateString(), ['ingreso']);
-                $ajustesPositivos = $this->sumaAjustes($producto, $inicio->toDateString(), $fin->toDateString(), positivo: true);
-                $egresos = $this->sumaMovimientos($producto, $inicio->toDateString(), $fin->toDateString(), ['salida']);
-                $ajustesNegativos = abs($this->sumaAjustes($producto, $inicio->toDateString(), $fin->toDateString(), positivo: false));
-                $totalIngresos = $ingresos + $ajustesPositivos;
-                $totalEgresos = $egresos + $ajustesNegativos;
+            $items[] = [
+                'producto_id'     => $producto->id,
+                'tipo'            => $producto->tipo,
+                'nombre'          => $producto->nombre,
+                'saldo_anterior'  => $saldoAnterior,
+                'ingresos'        => $totalIngresos,
+                'egresos'         => $totalEgresos,
+                'total'           => $saldoAnterior + $totalIngresos - $totalEgresos,
+                'fecha_caducidad' => $producto->fecha_caducidad?->toDateString(),
+            ];
+        }
 
-                MedicoKardexCierreItem::create([
-                    'cierre_id' => $cierre->id,
-                    'producto_id' => $producto->id,
-                    'tipo' => $producto->tipo,
-                    'nombre' => $producto->nombre,
-                    'saldo_anterior' => $saldoAnterior,
-                    'ingresos' => $totalIngresos,
-                    'egresos' => $totalEgresos,
-                    'total' => $saldoAnterior + $totalIngresos - $totalEgresos,
-                    'fecha_caducidad' => $producto->fecha_caducidad,
-                ]);
-            }
-
-            $cierre->update([
-                'periodo' => $inicio->format('Y-m'),
-                'generado_por' => auth()->id(),
-                'estado' => $cerrar ? 'cerrado' : 'abierto',
-                'cerrado_en' => $cerrar ? now() : null,
-            ]);
-
-            return $cierre->load('items');
-        });
+        return $items;
     }
 
+    /**
+     * Meses con movimientos (para el selector de historial).
+     */
     public function mesesDisponibles(): Collection
     {
         return MedicoKardexMovimiento::query()
@@ -79,6 +76,10 @@ class KardexMensualService
             ->pluck('ym')
             ->filter();
     }
+
+    // ============================================================
+    // Helpers internos
+    // ============================================================
 
     private function saldoBaseProducto(MedicoProducto $producto, string $antesDe): float
     {
@@ -100,21 +101,15 @@ class KardexMensualService
         return (float) ($kardex?->total ?? 0);
     }
 
-    private function movimientosProductoHasta(MedicoProducto $producto, ?string $desde, string $hasta): float
+    private function movimientosProductoHasta(MedicoProducto $producto, string $hasta): float
     {
         $query = MedicoKardexMovimiento::query()
             ->where('producto_id', $producto->id)
             ->whereDate('fecha_movimiento', '<=', $hasta);
 
-        if ($desde) {
-            $query->whereDate('fecha_movimiento', '>=', $desde);
-        }
-
-        $ingresos = (clone $query)->where('tipo', 'ingreso')->sum('cantidad');
-        $salidas = (clone $query)->where('tipo', 'salida')->sum('cantidad');
-        $ajustes = (clone $query)->where('tipo', 'ajuste')->sum('cantidad');
-
-        return (float) $ingresos - (float) $salidas + (float) $ajustes;
+        return (float) (clone $query)->where('tipo', 'ingreso')->sum('cantidad')
+             - (float) (clone $query)->where('tipo', 'salida')->sum('cantidad')
+             + (float) (clone $query)->where('tipo', 'ajuste')->sum('cantidad');
     }
 
     private function sumaMovimientos(MedicoProducto $producto, string $desde, string $hasta, array $tipos): float

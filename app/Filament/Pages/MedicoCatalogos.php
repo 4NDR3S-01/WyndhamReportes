@@ -3,13 +3,10 @@
 namespace App\Filament\Pages;
 
 use App\Models\Area;
-use App\Models\AtencionMedica;
 use App\Models\Cargo;
 use App\Models\Causa;
-use App\Models\CirugiaGeneral;
 use App\Models\Diagnostico;
 use App\Models\EntidadCertificado;
-use App\Models\FlebologiaVascular;
 use App\Models\Incidente;
 use App\Models\Medicamento;
 use App\Models\TipoCertificado;
@@ -30,7 +27,7 @@ class MedicoCatalogos extends Page
     protected static ?string $title = 'Base médica';
     protected ?string $heading = '';
     protected static ?string $slug = 'medico/base-medica';
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 4;
     protected string $view = 'filament.pages.medico-catalogos';
     protected Width|string|null $maxContentWidth = Width::Full;
 
@@ -59,10 +56,7 @@ class MedicoCatalogos extends Page
         'entidad_certificado'    => 'Entidades certificado',
         'tipo_descanso'          => 'Tipos de descanso',
         'tipo_salida'            => 'Tipos de salida',
-        'medicamento'            => 'Medicamentos',
-        'cirugia_general'        => 'Cirugía general',
-        'flebologia_vascular'    => 'Flebología vascular',
-        'atencion_medica'        => 'Atención médica',
+        'medicamento'            => 'Medicamentos y Productos',
         'incidente'              => 'Incidentes',
     ];
 
@@ -76,9 +70,6 @@ class MedicoCatalogos extends Page
         'tipo_descanso'         => 'Unidad del descanso médico: horas o días.',
         'tipo_salida'           => 'Resultado de la atención o derivación.',
         'medicamento'           => 'Lista base importada desde la hoja BASE DE DATOS.',
-        'cirugia_general'       => 'Opciones clínicas relacionadas con cirugía general.',
-        'flebologia_vascular'   => 'Opciones clínicas relacionadas con flebología vascular.',
-        'atencion_medica'       => 'Motivos frecuentes de atención general.',
         'incidente'             => 'Tipos de incidente registrados por el dispensario.',
     ];
 
@@ -94,9 +85,6 @@ class MedicoCatalogos extends Page
             'tipo_descanso'       => TipoDescanso::class,
             'tipo_salida'         => TipoSalida::class,
             'medicamento'         => Medicamento::class,
-            'cirugia_general'     => CirugiaGeneral::class,
-            'flebologia_vascular' => FlebologiaVascular::class,
-            'atencion_medica'     => AtencionMedica::class,
             'incidente'           => Incidente::class,
         };
     }

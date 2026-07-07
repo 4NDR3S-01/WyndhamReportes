@@ -203,6 +203,21 @@
                             @error('nombre') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                         </div>
 
+                        @if($tipo === 'medicina')
+                        <div>
+                            <label class="text-xs font-medium text-gray-600 dark:text-gray-300">
+                                Vincular con catálogo clínico
+                                <span class="font-normal text-gray-400">(para descuento automático de inventario)</span>
+                            </label>
+                            <select wire:model="medicamento_id" class="mt-1 block w-full rounded-xl border-gray-300 bg-white text-sm shadow-sm focus:border-palm-500 focus:ring-palm-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white">
+                                <option value="">— Sin vincular —</option>
+                                @foreach($this->medicamentosCatalog as $med)
+                                    <option value="{{ $med->id }}">{{ $med->nombre }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        @endif
+
                         <div>
                             <label class="text-xs font-medium text-gray-600 dark:text-gray-300">Fecha de caducidad</label>
                             <input type="date" wire:model="fecha_caducidad" class="mt-1 block w-full rounded-xl border-gray-300 bg-white text-sm shadow-sm focus:border-palm-500 focus:ring-palm-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white">

@@ -13,7 +13,10 @@ use App\Models\MedicoPacienteExamen;
 use App\Models\MedicoPacienteVisita;
 use App\Models\MedicoParteDiario;
 use App\Models\MedicoParteMedicamento;
+use App\Models\MedicoKardexMovimiento;
+use App\Models\MedicoProducto;
 use App\Models\TipoCertificado;
+use App\Services\Medico\InventarioMedicoService;
 use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -319,7 +322,7 @@ class MedicoPartesDiarios extends Page
         Notification::make()->title("«{$nombreNormalizado}» creado y seleccionado")->success()->send();
     }
 
-    public function guardar(): void
+    public function guardar(InventarioMedicoService $inventarioService): void
     {
         $this->validate([
             'fecha'           => ['required', 'date'],
@@ -382,6 +385,34 @@ class MedicoPartesDiarios extends Page
                 'nombre_original' => $med?->nombre ?? 'Desconocido',
                 'cantidad'        => (float) ($m['cantidad'] ?? 1),
             ]);
+        }
+
+        // --- Registrar salidas de inventario (dispensación real) ---
+        // Si es edición, eliminar movimientos anteriores de esta consulta
+        if ($this->editandoId) {
+            MedicoKardexMovimiento::query()
+                ->where('parte_diario_id', $parte->id)
+                ->delete();
+        }
+
+        foreach ($meds as $m) {
+            $productosVinculados = MedicoProducto::query()
+                ->where('medicamento_id', $m['medicamento_id'])
+                ->where('activo', true)
+                ->get();
+
+            foreach ($productosVinculados as $producto) {
+                $inventarioService->registrarMovimientoProducto(
+                    producto: $producto,
+                    tipo: 'salida',
+                    cantidad: (float) ($m['cantidad'] ?? 1),
+                    fecha: $this->fecha,
+                    responsable: $this->nombres,
+                    origen: 'parte_diario',
+                    parte: $parte,
+                    observacion: "Dispensado en atención a {$this->nombres}",
+                );
+            }
         }
 
         // Vincular o crear paciente — usar pacienteId si ya se seleccionó
@@ -472,6 +503,12 @@ class MedicoPartesDiarios extends Page
 
         $parte = MedicoParteDiario::query()->findOrFail($this->eliminandoId);
         $parte->medicamentos()->delete();
+
+        // Revertir movimientos de inventario generados por esta consulta
+        MedicoKardexMovimiento::query()
+            ->where('parte_diario_id', $parte->id)
+            ->delete();
+
         $parte->delete();
 
         $this->cancelarEliminar();

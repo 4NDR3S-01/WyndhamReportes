@@ -26,7 +26,7 @@ class ReportesMedico extends Page
 
     protected static ?string $slug = 'medico/reportes';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 7;
 
     protected string $view = 'filament.pages.reportes-medico';
 

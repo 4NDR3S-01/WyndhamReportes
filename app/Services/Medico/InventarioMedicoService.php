@@ -24,6 +24,7 @@ class InventarioMedicoService
         return MedicoKardexMovimiento::query()->create([
             'kardex_id'            => $kardex->id,
             'producto_id'          => $producto->id,
+            'parte_diario_id'      => $parte?->id,
             'tipo'                 => $tipo,
             'origen'               => $origen,
             'cantidad'             => $cantidad,
