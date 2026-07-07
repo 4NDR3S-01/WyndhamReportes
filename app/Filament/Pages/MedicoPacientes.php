@@ -147,7 +147,7 @@ class MedicoPacientes extends Page
 
     public function guardar(): void
     {
-        $validated = $this->validate([
+        $this->validate([
             'nombres' => ['required', 'string', 'max:255'],
             'cedula'  => ['nullable', 'string', 'max:20'],
             'edad'    => ['nullable', 'integer', 'min:0', 'max:150'],

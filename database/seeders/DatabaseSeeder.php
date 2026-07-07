@@ -28,7 +28,16 @@ class DatabaseSeeder extends Seeder
         // Poblar catálogos desde Excel
         $this->call(MedicoCatalogosSeeder::class);
 
+        // Crear productos de inventario vinculados a cada medicamento
+        $this->call(MedicoProductosInventarioSeeder::class);
+
         // Poblar pacientes de la nómina
         $this->call(MedicoNominaSeeder::class);
+
+        // Importar partes diarios desde el Excel
+        $this->call(MedicoPartesDiariosSeeder::class);
+
+        // Importar datos reales del KARDEX 2026 (saldos, egresos, caducidad)
+        $this->call(MedicoKardexSeeder::class);
     }
 }

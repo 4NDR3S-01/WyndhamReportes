@@ -6,17 +6,7 @@
         :subtitle="$this->minFecha
             ? \Carbon\Carbon::parse($this->minFecha)->format('d/m/Y') . ' — ' . \Carbon\Carbon::parse($this->maxFecha)->format('d/m/Y') . ' · ' . number_format($this->total, 0, ',', '.') . ' registros · ' . $this->archivos . ' archivo' . ($this->archivos !== 1 ? 's' : '')
             : 'Sin datos registrados actualmente'"
-    >
-        <div class="flex items-center gap-4 rounded-2xl border border-palm-100 bg-white px-5 py-3 shadow-sm"
-             x-data="{ time: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) }"
-             x-init="setInterval(() => time = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }), 1000)">
-            <x-heroicon-o-clock class="h-7 w-7 text-palm-400" />
-            <div>
-                <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400">{{ now()->translatedFormat('l, d \d\e F') }}</p>
-                <p class="text-xl font-bold tracking-tight text-gray-900" x-text="time"></p>
-            </div>
-        </div>
-    </x-hero-card>
+    />
 
     {{-- Stats KPI — justo debajo del título --}}
     <div class="mb-8 grid gap-6 sm:grid-cols-4">

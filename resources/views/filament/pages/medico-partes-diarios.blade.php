@@ -16,7 +16,7 @@
         ============================================================ --}}
         @php $hoy = $this->estadisticasHoy; @endphp
         <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-            <x-stat-card title="Atenciones Hoy" :value="$hoy['total']" icon="heroicon-o-document-text" color="ocean" />
+            <x-stat-card title="{{ $mostrarSoloHoy ? 'Atenciones Hoy' : 'Atenciones' }}" :value="$hoy['total']" icon="heroicon-o-document-text" color="ocean" />
             <x-stat-card title="Huéspedes" :value="$hoy['huespedes']" icon="heroicon-o-building-office-2" color="sand" />
             <x-stat-card title="Colaboradores" :value="$hoy['colabs']" icon="heroicon-o-users" color="palm" />
             <x-stat-card title="Con Certificado" :value="$hoy['conCert']" icon="heroicon-o-shield-check" color="coral" />

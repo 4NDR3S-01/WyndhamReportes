@@ -6,17 +6,7 @@
             subtitle="Bienvenido al sistema de control y reportes de Wyndham."
             icon="heroicon-o-sparkles"
             color="brand"
-        >
-            <div class="flex items-center gap-4 rounded-2xl border border-brand-100 bg-white px-5 py-3 shadow-sm"
-                 x-data="{ time: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) }"
-                 x-init="setInterval(() => time = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }), 1000)">
-                <x-heroicon-o-clock class="h-7 w-7 text-brand-400" />
-                <div>
-                    <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400">{{ now()->translatedFormat('l, d \d\e F') }}</p>
-                    <p class="text-xl font-bold tracking-tight text-gray-900" x-text="time"></p>
-                </div>
-            </div>
-        </x-hero-card>
+        />
 
         <!-- Tarjetas de Estadísticas (Colores Pasteles Corregidos) -->
         <h3 class="mb-4 text-lg font-semibold text-gray-950 dark:text-white">Resumen General</h3>

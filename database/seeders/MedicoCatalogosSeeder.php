@@ -26,9 +26,6 @@ class MedicoCatalogosSeeder extends Seeder
         'L' => 'tipos_descanso',
         'N' => 'tipos_salida',
         'P' => 'diagnosticos',
-        'R' => 'cirugias_generales',
-        'T' => 'flebologias_vasculares',
-        'V' => 'atenciones_medicas',
         'X' => 'incidentes',
     ];
 
@@ -73,6 +70,10 @@ class MedicoCatalogosSeeder extends Seeder
         if ($this->command) {
             $this->command->info("Total: {$totalInsertados} registros insertados en " . count(self::CATALOG_MAP) . " catálogos.");
         }
+
+        // Reportar posibles duplicados fuzzy en catálogos clave
+        $this->reportarSimilares('medicamentos');
+        $this->reportarSimilares('diagnosticos');
     }
 
     private function extraerValores($sheet, string $columna, int $maxRow): array
@@ -144,16 +145,53 @@ class MedicoCatalogosSeeder extends Seeder
     }
 
     /**
-     * Normaliza un valor: trim, uppercase, remover acentos problemáticos.
+     * Normaliza un valor: trim, uppercase, remover acentos, puntuación y caracteres especiales.
+     * Maneja inconsistencias comunes en datos de Excel.
      */
     private function normalizar(string $valor): string
     {
         $valor = trim($valor);
-        // Remover múltiples espacios
-        $valor = preg_replace('/\s+/', ' ', $valor);
-        // Convertir a mayúsculas para consistencia
+
+        // Convertir a mayúsculas
         $valor = mb_strtoupper($valor, 'UTF-8');
+
+        // Remover acentos y diacríticos (Á→A, É→E, etc.)
+        $valor = $this->quitarAcentos($valor);
+
+        // Reemplazar guiones y barras por espacios (PARACETAMOL-500MG → PARACETAMOL 500MG)
+        $valor = preg_replace('/[\-\/\|\\\\]+/', ' ', $valor);
+
+        // Remover puntuación excepto espacios y números
+        $valor = preg_replace('/[,.!;:¿?¡"\'#@&*()\[\]{}<>]/u', '', $valor);
+
+        // Normalizar paréntesis sobrantes como espacios
+        $valor = str_replace(['(', ')', '[', ']'], ' ', $valor);
+
+        // Colapsar múltiples espacios en uno solo
+        $valor = preg_replace('/\s+/', ' ', $valor);
+
+        // Trim final por si la puntuación dejó espacios en los bordes
+        $valor = trim($valor);
+
         return $valor;
+    }
+
+    /**
+     * Quita acentos y diacríticos de un string UTF-8.
+     */
+    private function quitarAcentos(string $texto): string
+    {
+        $mapa = [
+            'Á' => 'A', 'À' => 'A', 'Â' => 'A', 'Ã' => 'A', 'Ä' => 'A', 'Å' => 'A',
+            'É' => 'E', 'È' => 'E', 'Ê' => 'E', 'Ë' => 'E',
+            'Í' => 'I', 'Ì' => 'I', 'Î' => 'I', 'Ï' => 'I',
+            'Ó' => 'O', 'Ò' => 'O', 'Ô' => 'O', 'Õ' => 'O', 'Ö' => 'O', 'Ø' => 'O',
+            'Ú' => 'U', 'Ù' => 'U', 'Û' => 'U', 'Ü' => 'U',
+            'Ý' => 'Y', 'Ÿ' => 'Y',
+            'Ç' => 'C', 'Ñ' => 'N',
+        ];
+
+        return strtr($texto, $mapa);
     }
 
     private function insertarCatalogo(string $tabla, array $valores): int
@@ -174,5 +212,36 @@ class MedicoCatalogosSeeder extends Seeder
         }
 
         return $insertados;
+    }
+
+    /**
+     * Detecta y reporta nombres muy similares en un catálogo
+     * que podrían ser duplicados por error de tipeo.
+     */
+    private function reportarSimilares(string $tabla): void
+    {
+        if (! $this->command) return;
+
+        $nombres = DB::table($tabla)->pluck('nombre')->sort()->values()->all();
+        $similares = [];
+
+        for ($i = 0; $i < count($nombres); $i++) {
+            for ($j = $i + 1; $j < count($nombres); $j++) {
+                $dist = levenshtein($nombres[$i], $nombres[$j]);
+                $maxLen = max(mb_strlen($nombres[$i]), mb_strlen($nombres[$j]));
+
+                // Solo reportar si la distancia es ≤ 20% de la longitud máxima
+                if ($maxLen > 3 && $dist > 0 && $dist <= ceil($maxLen * 0.2)) {
+                    $similares[] = "    \"{$nombres[$i]}\" ↔ \"{$nombres[$j]}\" (distancia: {$dist})";
+                }
+            }
+        }
+
+        if ($similares) {
+            $this->command->warn("  ⚠ Posibles duplicados en <comment>{$tabla}</comment>:");
+            foreach ($similares as $s) {
+                $this->command->line($s);
+            }
+        }
     }
 }

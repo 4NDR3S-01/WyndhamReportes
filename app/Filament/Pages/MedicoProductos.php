@@ -15,8 +15,8 @@ class MedicoProductos extends Page
 {
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-beaker';
     protected static string|\UnitEnum|null $navigationGroup = 'Medico';
-    protected static ?string $navigationLabel = 'Medicinas y equipos';
-    protected static ?string $title = 'Medicinas y equipos';
+    protected static ?string $navigationLabel = 'Medicinas e insumos';
+    protected static ?string $title = 'Medicinas e insumos';
     protected ?string $heading = '';
     protected static ?string $slug = 'medico/productos';
     protected static ?int $navigationSort = 6;
@@ -56,7 +56,7 @@ class MedicoProductos extends Page
             ],
         );
 
-        $label = $producto->tipo === 'equipo' ? 'Equipo' : 'Medicina';
+        $label = $producto->tipo === 'insumo' ? 'Insumo' : 'Medicina';
 
         $this->cerrarModalProducto();
         Notification::make()->title("{$label} guardado")->success()->send();
@@ -144,9 +144,9 @@ class MedicoProductos extends Page
         return (int) MedicoProducto::query()->where('tipo', 'medicina')->count();
     }
 
-    public function getTotalEquiposProperty(): int
+    public function getTotalInsumosProperty(): int
     {
-        return (int) MedicoProducto::query()->where('tipo', 'equipo')->count();
+        return (int) MedicoProducto::query()->where('tipo', 'insumo')->count();
     }
 
     public function getStockBajoProperty(): int

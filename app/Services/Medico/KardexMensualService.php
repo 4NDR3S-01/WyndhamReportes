@@ -70,11 +70,12 @@ class KardexMensualService
     public function mesesDisponibles(): Collection
     {
         return MedicoKardexMovimiento::query()
-            ->selectRaw("strftime('%Y-%m', fecha_movimiento) as ym")
-            ->groupBy('ym')
-            ->orderBy('ym', 'desc')
-            ->pluck('ym')
-            ->filter();
+            ->select('fecha_movimiento')
+            ->orderBy('fecha_movimiento', 'desc')
+            ->get()
+            ->map(fn ($m) => Carbon::parse($m->fecha_movimiento)->format('Y-m'))
+            ->unique()
+            ->values();
     }
 
     // ============================================================

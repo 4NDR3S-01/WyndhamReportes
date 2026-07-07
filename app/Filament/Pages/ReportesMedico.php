@@ -334,10 +334,16 @@ class ReportesMedico extends Page
     public function getSemanasProperty(): Collection
     {
         $fechas = MedicoParteDiario::query()
-            ->selectRaw("strftime('%Y-%W', fecha) as semana, MIN(fecha) as inicio, MAX(fecha) as fin")
-            ->groupBy('semana')
-            ->orderBy('inicio')
-            ->get();
+            ->select('fecha')
+            ->orderBy('fecha')
+            ->get()
+            ->groupBy(fn ($p) => Carbon::parse($p->fecha)->format('o-\WW'))
+            ->map(fn ($grupo) => (object) [
+                'inicio' => Carbon::parse($grupo->min('fecha'))->startOfWeek()->toDateString(),
+                'fin'    => Carbon::parse($grupo->max('fecha'))->endOfWeek()->toDateString(),
+            ])
+            ->sortBy('inicio')
+            ->values();
 
         return $fechas->map(function ($f) {
             $atenciones = (int) MedicoParteDiario::query()
@@ -362,8 +368,16 @@ class ReportesMedico extends Page
         $spreadsheet = new Spreadsheet();
 
         $meses = MedicoParteDiario::query()
-            ->selectRaw("strftime('%Y-%m', fecha) as ym, MIN(fecha) as inicio, MAX(fecha) as fin")
-            ->groupBy('ym')->orderBy('ym')->get();
+            ->select('fecha')
+            ->orderBy('fecha')
+            ->get()
+            ->groupBy(fn ($p) => Carbon::parse($p->fecha)->format('Y-m'))
+            ->map(fn ($grupo) => (object) [
+                'inicio' => $grupo->min('fecha'),
+                'fin'    => $grupo->max('fecha'),
+            ])
+            ->sortBy('inicio')
+            ->values();
 
         $first = true;
         foreach ($meses as $i => $m) {
@@ -465,8 +479,17 @@ class ReportesMedico extends Page
         if (MedicoParteDiario::query()->count() === 0) return collect();
 
         $meses = MedicoParteDiario::query()
-            ->selectRaw("strftime('%Y-%m', fecha) as ym, MIN(fecha) as inicio, MAX(fecha) as fin")
-            ->groupBy('ym')->orderBy('ym', 'desc')->get();
+            ->select('fecha')
+            ->orderBy('fecha')
+            ->get()
+            ->groupBy(fn ($p) => Carbon::parse($p->fecha)->format('Y-m'))
+            ->map(fn ($grupo) => (object) [
+                'ym'     => Carbon::parse($grupo->min('fecha'))->format('Y-m'),
+                'inicio' => $grupo->min('fecha'),
+                'fin'    => $grupo->max('fecha'),
+            ])
+            ->sortByDesc('ym')
+            ->values();
 
         return $meses->map(function ($m) {
             $query = MedicoParteDiario::query()
@@ -525,10 +548,17 @@ class ReportesMedico extends Page
         }
 
         $meses = MedicoParteDiario::query()
-            ->selectRaw("strftime('%Y-%m', fecha) as ym, MIN(fecha) as inicio, MAX(fecha) as fin")
-            ->groupBy('ym')
-            ->orderBy('ym', 'desc')
-            ->get();
+            ->select('fecha')
+            ->orderBy('fecha')
+            ->get()
+            ->groupBy(fn ($p) => Carbon::parse($p->fecha)->format('Y-m'))
+            ->map(fn ($grupo) => (object) [
+                'ym'     => Carbon::parse($grupo->min('fecha'))->format('Y-m'),
+                'inicio' => $grupo->min('fecha'),
+                'fin'    => $grupo->max('fecha'),
+            ])
+            ->sortByDesc('ym')
+            ->values();
 
         return $meses->map(function ($m) {
             $query = MedicoParteDiario::query()

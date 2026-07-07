@@ -32,14 +32,14 @@
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z"/></svg>
                 </div>
                 <span class="text-sm font-semibold text-palm-700 dark:text-palm-300">KARDEX Inventario</span>
-                <span class="text-xs text-gray-500 dark:text-gray-400">Medicinas y equipos</span>
+                <span class="text-xs text-gray-500 dark:text-gray-400">Medicinas e insumos</span>
             </a>
 
-            <a href="#" wire:click.prevent="descargarKardexConMovimientos" class="flex flex-col items-center gap-2 rounded-2xl border border-teal-200 bg-teal-50/60 p-5 text-center shadow-sm transition hover:bg-teal-100 dark:border-teal-900 dark:bg-teal-950/30 dark:hover:bg-teal-950/50">
-                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-600 text-white shadow-sm">
+            <a href="#" wire:click.prevent="descargarKardexConMovimientos" class="flex flex-col items-center gap-2 rounded-2xl border border-coral-200 bg-coral-50/60 p-5 text-center shadow-sm transition hover:bg-coral-100 dark:border-coral-900 dark:bg-coral-950/30 dark:hover:bg-coral-950/50">
+                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-coral-600 text-white shadow-sm">
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3z"/></svg>
                 </div>
-                <span class="text-sm font-semibold text-teal-700 dark:text-teal-300">KARDEX Movimientos</span>
+                <span class="text-sm font-semibold text-coral-700 dark:text-coral-300">KARDEX Movimientos</span>
                 <span class="text-xs text-gray-500 dark:text-gray-400">Saldo real y salidas</span>
             </a>
 
@@ -218,7 +218,7 @@
                                     @foreach ($items as $item)
                                         <tr class="border-b border-gray-50 dark:border-gray-800/50">
                                             <td class="py-1.5 pr-3 font-medium text-gray-900 dark:text-white">{{ $item->nombre }}</td>
-                                            <td class="py-1.5 pr-3 text-gray-500 dark:text-gray-400">{{ $item->tipo === 'equipo' ? 'Equipo' : 'Medicina' }}</td>
+                                            <td class="py-1.5 pr-3 text-gray-500 dark:text-gray-400">{{ $item->tipo === 'insumo' ? 'Insumo' : 'Medicina' }}</td>
                                             <td class="py-1.5 pr-3 text-right text-gray-600 dark:text-gray-400">{{ $item->saldo_anterior }}</td>
                                             <td class="py-1.5 pr-3 text-right text-gray-600 dark:text-gray-400">{{ $item->ingresos }}</td>
                                             <td class="py-1.5 pr-3 text-right text-gray-600 dark:text-gray-400">{{ $item->egresos }}</td>
@@ -237,14 +237,14 @@
 
     {{-- MOVIMIENTOS KARDEX --}}
     @if ($this->kardexMovimientos->isNotEmpty())
-        <div class="mt-4 rounded-2xl border border-teal-200 bg-white shadow-sm dark:border-teal-900 dark:bg-gray-900">
-            <div class="border-b border-teal-100 px-5 py-4 dark:border-teal-900">
+        <div class="mt-4 rounded-2xl border border-coral-200 bg-white shadow-sm dark:border-coral-900 dark:bg-gray-900">
+            <div class="border-b border-coral-100 px-5 py-4 dark:border-coral-900">
                 <div class="flex items-center justify-between gap-2">
                     <div>
                         <h3 class="text-base font-semibold text-gray-950 dark:text-white">Movimientos de KARDEX</h3>
-                        <p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">Ultimas salidas generadas desde los partes diarios</p>
+                        <p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">Últimas salidas generadas desde los partes diarios</p>
                     </div>
-                    <a href="#" wire:click.prevent="descargarKardexConMovimientos" class="inline-flex items-center rounded-lg bg-teal-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-teal-700">
+                    <a href="#" wire:click.prevent="descargarKardexConMovimientos" class="inline-flex items-center rounded-lg bg-coral-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-coral-700">
                         Descargar Excel
                     </a>
                 </div>
@@ -252,23 +252,29 @@
             <div class="overflow-x-auto">
                 <table class="min-w-full text-sm">
                     <thead>
-                        <tr class="border-b border-teal-100 bg-teal-50 dark:border-teal-900 dark:bg-teal-950/30">
-                            <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-teal-700 dark:text-teal-300">Fecha</th>
-                            <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-teal-700 dark:text-teal-300">Medicamento</th>
-                            <th class="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-teal-700 dark:text-teal-300">Cantidad</th>
-                            <th class="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-teal-700 dark:text-teal-300">Saldo</th>
-                            <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-teal-700 dark:text-teal-300">Responsable</th>
-                            <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-teal-700 dark:text-teal-300">Paciente</th>
+                        <tr class="border-b border-coral-100 bg-coral-50 dark:border-coral-900 dark:bg-coral-950/30">
+                            <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-coral-700 dark:text-coral-300">Fecha</th>
+                            <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-coral-700 dark:text-coral-300">Producto</th>
+                            <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-coral-700 dark:text-coral-300">Tipo</th>
+                            <th class="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-coral-700 dark:text-coral-300">Cantidad</th>
+                            <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-coral-700 dark:text-coral-300">Origen</th>
+                            <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-coral-700 dark:text-coral-300">Paciente</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($this->kardexMovimientos as $mov)
                             <tr class="border-b border-gray-100 dark:border-gray-800">
                                 <td class="px-5 py-3 text-sm text-gray-700 dark:text-gray-300">{{ $mov->fecha_movimiento?->format('d/m/Y') }}</td>
-                                <td class="px-5 py-3 text-sm font-medium text-gray-950 dark:text-white">{{ $mov->medicamento_nombre }}</td>
-                                <td class="px-5 py-3 text-right text-sm text-gray-700 dark:text-gray-300">{{ $mov->cantidad }}</td>
-                                <td class="px-5 py-3 text-right text-sm font-semibold text-gray-950 dark:text-white">{{ $mov->saldo_resultante }}</td>
-                                <td class="px-5 py-3 text-sm text-gray-700 dark:text-gray-300">{{ $mov->personal_responsable ?: '-' }}</td>
+                                <td class="px-5 py-3 text-sm font-medium text-gray-950 dark:text-white">{{ $mov->producto?->nombre ?? $mov->kardex?->nombre ?? '—' }}</td>
+                                <td class="px-5 py-3 text-sm text-gray-700 dark:text-gray-300">
+                                    <span class="chip-sm {{ $mov->tipo === 'ingreso' ? 'bg-palm-100 text-palm-700' : ($mov->tipo === 'salida' ? 'bg-red-100 text-red-700' : 'bg-sand-100 text-sand-700') }}">
+                                        {{ $mov->tipo }}
+                                    </span>
+                                </td>
+                                <td class="px-5 py-3 text-right text-sm font-semibold text-gray-950 dark:text-white">{{ $mov->cantidad }}</td>
+                                <td class="px-5 py-3 text-sm text-gray-700 dark:text-gray-300">
+                                    {{ $mov->origen === 'parte_diario' ? '🏥 Consulta' : '✋ Manual' }}
+                                </td>
                                 <td class="px-5 py-3 text-sm text-gray-700 dark:text-gray-300">{{ $mov->parteDiario?->nombres ?: '-' }}</td>
                             </tr>
                         @endforeach

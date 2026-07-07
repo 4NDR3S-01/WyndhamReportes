@@ -15,15 +15,22 @@ return new class extends Migration
         });
 
         // Vincular productos existentes con medicamentos por coincidencia de nombre
-        DB::statement("
-            UPDATE medico_productos mp
-            SET medicamento_id = (
-                SELECT m.id FROM medicamentos m
-                WHERE LOWER(m.nombre) = LOWER(mp.nombre)
-                LIMIT 1
-            )
-            WHERE mp.medicamento_id IS NULL
-        ");
+        // Se usa PHP en lugar de SQL crudo para compatibilidad SQLite/MySQL
+        $productos = DB::table('medico_productos')
+            ->whereNull('medicamento_id')
+            ->get(['id', 'nombre']);
+
+        foreach ($productos as $producto) {
+            $medicamento = DB::table('medicamentos')
+                ->where(DB::raw('LOWER(nombre)'), '=', mb_strtolower($producto->nombre))
+                ->first();
+
+            if ($medicamento) {
+                DB::table('medico_productos')
+                    ->where('id', $producto->id)
+                    ->update(['medicamento_id' => $medicamento->id]);
+            }
+        }
     }
 
     public function down(): void

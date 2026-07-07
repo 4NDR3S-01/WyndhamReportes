@@ -78,7 +78,7 @@
                         <tr class="table-row">
                             <td class="table-cell">
                                 <p class="font-semibold text-gray-900 dark:text-white">{{ $item['nombre'] }}</p>
-                                <p class="text-[10px] text-gray-400">{{ $item['tipo'] === 'medicina' ? 'Medicina' : 'Equipo' }}</p>
+                                <p class="text-[10px] text-gray-400">{{ $item['tipo'] === 'medicina' ? 'Medicina' : 'Insumo' }}</p>
                             </td>
                             <td class="table-cell text-right tabular-nums text-gray-600 dark:text-gray-400">
                                 {{ number_format($item['saldo_anterior'], 2, ',', '.') }}

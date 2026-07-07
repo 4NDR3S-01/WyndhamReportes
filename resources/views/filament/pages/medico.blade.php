@@ -7,17 +7,7 @@
         :subtitle="$this->total
             ? 'Mostrando datos desde el ' . \Carbon\Carbon::parse($this->minFecha)->format('d/m/Y') . ' al ' . \Carbon\Carbon::parse($this->maxFecha)->format('d/m/Y')
             : 'Sin datos registrados actualmente'"
-    >
-        <div class="flex items-center gap-4 rounded-2xl border border-coral-100 bg-white px-5 py-3 shadow-sm"
-             x-data="{ time: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) }"
-             x-init="setInterval(() => time = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }), 1000)">
-            <x-heroicon-o-clock class="h-7 w-7 text-coral-400" />
-            <div>
-                <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400">{{ now()->translatedFormat('l, d \d\e F') }}</p>
-                <p class="text-xl font-bold tracking-tight text-gray-900" x-text="time"></p>
-            </div>
-        </div>
-    </x-hero-card>
+    />
 
     <!-- Tarjetas de Estadísticas (Colores Pasteles) -->
     <h3 class="mb-4 text-lg font-semibold text-gray-950 dark:text-white">Resumen de Atenciones</h3>
@@ -152,15 +142,15 @@
                 </button>
             @endif
 
-            @if ($this->equipos->isNotEmpty())
-                <button type="button" x-on:click="$dispatch('open-modal', { id: 'modal-kardex-equipos' })" class="flex items-center justify-between rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition hover:border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:border-gray-800 dark:bg-gray-900 dark:hover:bg-gray-800/80">
+            @if ($this->insumos->isNotEmpty())
+                <button type="button" x-on:click="$dispatch('open-modal', { id: 'modal-kardex-insumos' })" class="flex items-center justify-between rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition hover:border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:border-gray-800 dark:bg-gray-900 dark:hover:bg-gray-800/80">
                     <div class="flex items-center gap-3">
                         <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
-                            <x-heroicon-o-briefcase class="h-5 w-5" />
+                            <x-heroicon-o-building-office-2 class="h-5 w-5" />
                         </div>
                         <div class="text-left">
-                            <p class="text-sm font-bold text-gray-900 dark:text-white">Kardex de Equipos</p>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">Inventario de instrumental</p>
+                            <p class="text-sm font-bold text-gray-900 dark:text-white">Kardex de Insumos</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Insumos y suministros médicos</p>
                         </div>
                     </div>
                     <x-heroicon-m-chevron-right class="h-5 w-5 text-gray-400" />
@@ -329,10 +319,10 @@
                         <tr class="border-b border-gray-100 dark:border-gray-800">
                             <th class="py-2 text-left text-xs font-medium text-gray-500">Fecha</th>
                             <th class="py-2 text-left text-xs font-medium text-gray-500">Medicamento</th>
+                            <th class="py-2 text-left text-xs font-medium text-gray-500">Tipo</th>
                             <th class="py-2 text-right text-xs font-medium text-gray-500">Cantidad</th>
-                            <th class="py-2 text-right text-xs font-medium text-gray-500">Saldo</th>
-                            <th class="py-2 text-left text-xs font-medium text-gray-500">Responsable</th>
-                            <th class="py-2 text-left text-xs font-medium text-gray-500">Paciente</th>
+                            <th class="py-2 text-left text-xs font-medium text-gray-500">Origen</th>
+                            <th class="py-2 text-left text-xs font-medium text-gray-500">Detalle</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -340,10 +330,16 @@
                             <tr class="border-b border-gray-50 dark:border-gray-800/50">
                                 <td class="py-2 pr-3 text-gray-600 dark:text-gray-400">{{ $mov->fecha_movimiento?->format('d/m/Y') }}</td>
                                 <td class="py-2 pr-3 font-medium text-gray-900 dark:text-white">{{ $mov->kardex?->nombre ?? $mov->producto?->nombre ?? '-' }}</td>
-                                <td class="py-2 pr-3 text-right text-gray-600 dark:text-gray-400">{{ $mov->cantidad }}</td>
-                                <td class="py-2 pr-3 text-right font-semibold text-gray-900 dark:text-white">{{ $mov->origen }}</td>
-                                <td class="py-2 pr-3 text-gray-600 dark:text-gray-400">{{ $mov->personal_responsable ?: '-' }}</td>
-                                <td class="py-2 pr-3 text-gray-600 dark:text-gray-400">{{ $mov->observacion ?: '-' }}</td>
+                                <td class="py-2 pr-3">
+                                    <span class="chip-sm {{ $mov->tipo === 'ingreso' ? 'bg-palm-100 text-palm-700' : ($mov->tipo === 'salida' ? 'bg-red-100 text-red-700' : 'bg-sand-100 text-sand-700') }}">
+                                        {{ $mov->tipo }}
+                                    </span>
+                                </td>
+                                <td class="py-2 pr-3 text-right font-semibold text-gray-900 dark:text-white">{{ $mov->cantidad }}</td>
+                                <td class="py-2 pr-3 text-gray-600 dark:text-gray-400">
+                                    {{ $mov->origen === 'parte_diario' ? '🏥 Consulta' : '✋ Manual' }}
+                                </td>
+                                <td class="py-2 pr-3 text-gray-600 dark:text-gray-400">{{ $mov->parteDiario?->nombres ?? $mov->observacion ?: '-' }}</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -393,19 +389,19 @@
             </div>
         </x-filament::modal>
 
-        @if ($this->equipos->isNotEmpty())
-            <x-filament::modal id="modal-kardex-equipos" width="3xl">
-                <x-slot name="heading">Kardex Inventario — Equipos</x-slot>
+        @if ($this->insumos->isNotEmpty())
+            <x-filament::modal id="modal-kardex-insumos" width="3xl">
+                <x-slot name="heading">Kardex Inventario — Insumos</x-slot>
                 <div class="mt-4 overflow-x-auto max-h-[60vh]">
                     <table class="min-w-full text-sm">
                         <thead class="sticky top-0 bg-white dark:bg-gray-900">
                             <tr class="border-b border-gray-200 dark:border-gray-700">
-                                <th class="py-2 text-left text-xs font-medium text-gray-500">Equipo</th>
+                                <th class="py-2 text-left text-xs font-medium text-gray-500">Insumo</th>
                                 <th class="py-2 text-right text-xs font-medium text-gray-500">Cantidad</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($this->equipos as $eq)
+                            @foreach ($this->insumos as $eq)
                                 <tr class="border-b border-gray-50 dark:border-gray-800/50 hover:bg-gray-50 dark:hover:bg-gray-800/30">
                                     <td class="py-2 pr-3 font-medium text-gray-900 dark:text-white">{{ $eq->nombre }}</td>
                                     <td class="py-2 pr-3 text-right font-semibold text-gray-900 dark:text-white">{{ $eq->total }}</td>

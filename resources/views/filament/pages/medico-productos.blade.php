@@ -1,5 +1,5 @@
 <x-filament-panels::page>
-    <x-hero-card title="Medicinas y Equipos" subtitle="Gestiona el catálogo de productos, stock mínimo y fechas de caducidad" icon="heroicon-o-beaker" color="brand" />
+    <x-hero-card title="Medicinas y Insumos" subtitle="Gestiona el catálogo de productos, stock mínimo y fechas de caducidad" icon="heroicon-o-beaker" color="brand" />
 
     <div class="space-y-4">
         <section class="rounded-3xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-5">
@@ -10,7 +10,7 @@
                             Inventario medico
                         </span>
                         <span class="inline-flex rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-300">
-                            Medicinas y equipos
+                            Medicinas e insumos
                         </span>
                     </div>
                 </div>
@@ -25,8 +25,8 @@
                         <p class="mt-1 truncate text-2xl font-black tracking-tight text-palm-700 dark:text-palm-300">{{ number_format($this->totalMedicinas, 0, ',', '.') }}</p>
                     </div>
                     <div class="min-w-0 rounded-2xl border border-ocean-100 bg-ocean-50/70 p-3 text-center dark:border-ocean-900 dark:bg-ocean-950/20">
-                        <p class="truncate text-[10px] font-semibold uppercase tracking-wide text-ocean-700 dark:text-ocean-300">Equipos</p>
-                        <p class="mt-1 truncate text-2xl font-black tracking-tight text-ocean-700 dark:text-ocean-300">{{ number_format($this->totalEquipos, 0, ',', '.') }}</p>
+                        <p class="truncate text-[10px] font-semibold uppercase tracking-wide text-ocean-700 dark:text-ocean-300">Insumos</p>
+                        <p class="mt-1 truncate text-2xl font-black tracking-tight text-ocean-700 dark:text-ocean-300">{{ number_format($this->totalInsumos, 0, ',', '.') }}</p>
                     </div>
                     <div class="min-w-0 rounded-2xl border border-red-100 bg-red-50/70 p-3 text-center dark:border-red-900 dark:bg-red-950/20">
                         <p class="truncate text-[10px] font-semibold uppercase tracking-wide text-red-700 dark:text-red-300">Stock bajo</p>
@@ -65,7 +65,7 @@
                         <select wire:model.live="tipoFiltro" class="h-10 rounded-xl border-gray-300 bg-white text-sm font-medium text-gray-700 shadow-sm focus:border-palm-500 focus:ring-1 focus:ring-palm-500/20 dark:border-gray-700 dark:bg-gray-950 dark:text-white sm:w-32" style="color-scheme: light dark;">
                             <option class="bg-white text-gray-900 dark:bg-gray-950 dark:text-white" value="todos">Todos</option>
                             <option class="bg-white text-gray-900 dark:bg-gray-950 dark:text-white" value="medicina">Medicinas</option>
-                            <option class="bg-white text-gray-900 dark:bg-gray-950 dark:text-white" value="equipo">Equipos</option>
+                            <option class="bg-white text-gray-900 dark:bg-gray-950 dark:text-white" value="insumo">Insumos</option>
                         </select>
 
                         <select wire:model.live="estado" class="h-10 rounded-xl border-gray-300 bg-white text-sm font-medium text-gray-700 shadow-sm focus:border-palm-500 focus:ring-1 focus:ring-palm-500/20 dark:border-gray-700 dark:bg-gray-950 dark:text-white sm:w-32" style="color-scheme: light dark;">
@@ -89,7 +89,7 @@
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 7 10 17l-5-5" /></svg>
                     </div>
                     <h4 class="mt-4 font-semibold text-gray-950 dark:text-white">Sin productos para los filtros actuales</h4>
-                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Cambia los filtros o registra una nueva medicina/equipo.</p>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Cambia los filtros o registra una nueva medicina/insumo.</p>
                 </div>
             @else
                 <div class="max-h-[650px] overflow-auto">
@@ -113,8 +113,8 @@
                                 <tr class="transition hover:bg-palm-50/40 dark:hover:bg-palm-950/10">
                                     <td class="px-4 py-3 sm:px-5">
                                         <div class="flex min-w-0 items-start gap-3">
-                                            <div class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl {{ $p->tipo === 'equipo' ? 'bg-ocean-50 text-ocean-700 dark:bg-ocean-950/40 dark:text-ocean-300' : 'bg-palm-50 text-palm-700 dark:bg-palm-950/40 dark:text-palm-300' }}">
-                                                @if ($p->tipo === 'equipo')
+                                            <div class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl {{ $p->tipo === 'insumo' ? 'bg-ocean-50 text-ocean-700 dark:bg-ocean-950/40 dark:text-ocean-300' : 'bg-palm-50 text-palm-700 dark:bg-palm-950/40 dark:text-palm-300' }}">
+                                                @if ($p->tipo === 'insumo')
                                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-6h6v6m-9 4h12a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-3.5a2 2 0 0 0-1.6.8L12 7 11.1 5.8A2 2 0 0 0 9.5 5H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z" /></svg>
                                                 @else
                                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.5 14.25 14.25 19.5a5.25 5.25 0 0 1-7.42-7.42l5.25-5.25a5.25 5.25 0 0 1 7.42 7.42ZM8.25 15.75l7.5-7.5" /></svg>
@@ -123,7 +123,7 @@
                                             <div class="min-w-0">
                                                 <p class="font-semibold text-gray-950 dark:text-white">{{ $p->nombre }}</p>
                                                 <div class="mt-1 flex flex-wrap items-center gap-1.5">
-                                                    <span class="rounded-full px-2 py-0.5 text-[11px] font-semibold {{ $p->tipo === 'equipo' ? 'bg-ocean-50 text-ocean-700 dark:bg-ocean-950/40 dark:text-ocean-300' : 'bg-palm-50 text-palm-700 dark:bg-palm-950/40 dark:text-palm-300' }}">{{ $p->tipo === 'equipo' ? 'Equipo' : 'Medicina' }}</span>
+                                                    <span class="rounded-full px-2 py-0.5 text-[11px] font-semibold {{ $p->tipo === 'insumo' ? 'bg-ocean-50 text-ocean-700 dark:bg-ocean-950/40 dark:text-ocean-300' : 'bg-palm-50 text-palm-700 dark:bg-palm-950/40 dark:text-palm-300' }}">{{ $p->tipo === 'insumo' ? 'Insumo' : 'Medicina' }}</span>
                                                     <span class="text-xs text-gray-500 dark:text-gray-400">Min. {{ fmod($p->stock_minimo, 1) == 0 ? number_format($p->stock_minimo, 0, ',', '.') : number_format($p->stock_minimo, 1, ',', '.') }}</span>
                                                     @if (! $p->activo)
                                                         <span class="rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-semibold text-gray-500 dark:bg-gray-800 dark:text-gray-400">Inactivo</span>
@@ -173,7 +173,7 @@
                                 </div>
                                 <div class="min-w-0">
                                     <h3 class="text-base font-semibold text-gray-950 dark:text-white">{{ $editandoId ? 'Editar producto' : 'Nuevo producto' }}</h3>
-                                    <p class="mt-1 text-sm leading-5 text-gray-500 dark:text-gray-400">Registra medicinas o equipos usados por el dispensario.</p>
+                                    <p class="mt-1 text-sm leading-5 text-gray-500 dark:text-gray-400">Registra medicinas o insumos usados por el dispensario.</p>
                                 </div>
                             </div>
                             <button type="button" wire:click="cerrarModalProducto" class="rounded-full p-2 text-gray-400 transition hover:bg-white hover:text-gray-700 hover:shadow-sm dark:hover:bg-gray-800 dark:hover:text-gray-200">
@@ -188,7 +188,7 @@
                                 <label class="text-xs font-medium text-gray-600 dark:text-gray-300">Tipo</label>
                                 <select wire:model="tipo" class="mt-1 block w-full rounded-xl border-gray-300 bg-white text-sm shadow-sm focus:border-palm-500 focus:ring-palm-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white">
                                     <option value="medicina">Medicina</option>
-                                    <option value="equipo">Equipo</option>
+                                    <option value="insumo">Insumo</option>
                                 </select>
                             </div>
                             <div>

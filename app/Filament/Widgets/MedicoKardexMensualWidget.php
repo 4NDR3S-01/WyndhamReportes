@@ -29,10 +29,17 @@ class MedicoKardexMensualWidget extends ChartWidget
         }
 
         $meses = MedicoParteDiario::query()
-            ->selectRaw("strftime('%Y-%m', fecha) as ym, MIN(fecha) as inicio, COUNT(*) as total")
-            ->groupBy('ym')
-            ->orderBy('ym')
-            ->get();
+            ->select('fecha')
+            ->orderBy('fecha')
+            ->get()
+            ->groupBy(fn ($p) => Carbon::parse($p->fecha)->format('Y-m'))
+            ->map(fn ($grupo, $ym) => (object) [
+                'ym'     => $ym,
+                'inicio' => $grupo->min('fecha'),
+                'total'  => $grupo->count(),
+            ])
+            ->sortBy('ym')
+            ->values();
 
         $labels = [];
         $data = [];
@@ -42,15 +49,15 @@ class MedicoKardexMensualWidget extends ChartWidget
         }
 
         $pacientes = MedicoParteDiario::query()
-            ->selectRaw("strftime('%Y-%m', fecha) as ym, COUNT(DISTINCT nombres) as total")
-            ->groupBy('ym')
-            ->orderBy('ym')
+            ->select('fecha', 'nombres')
+            ->orderBy('fecha')
             ->get()
-            ->keyBy('ym');
+            ->groupBy(fn ($p) => Carbon::parse($p->fecha)->format('Y-m'))
+            ->map(fn ($grupo) => $grupo->unique('nombres')->count());
 
         $dataPacientes = [];
         foreach ($meses as $m) {
-            $dataPacientes[] = isset($pacientes[$m->ym]) ? (int) $pacientes[$m->ym]->total : null;
+            $dataPacientes[] = $pacientes[$m->ym] ?? null;
         }
 
         return [

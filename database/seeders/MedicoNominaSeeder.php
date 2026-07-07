@@ -30,7 +30,7 @@ class MedicoNominaSeeder extends Seeder
 
         for ($r = 2; $r <= $maxRow; $r++) {
             $cedula = $this->normalizarCedula($copia->getCell('B' . $r)->getValue());
-            $nombre = $this->normalizar($copia->getCell('C' . $r)->getValue());
+            $nombre = $this->normalizarNombrePersona($copia->getCell('C' . $r)->getValue());
 
             if ($cedula === '' || $nombre === '') {
                 continue;
@@ -76,7 +76,7 @@ class MedicoNominaSeeder extends Seeder
         $nominaCount = 0;
         for ($r = 3; $r <= $maxRow; $r++) {
             $cedula = $this->normalizarCedula($nomina->getCell('B' . $r)->getValue());
-            $nombre = $this->normalizar($nomina->getCell('C' . $r)->getValue());
+            $nombre = $this->normalizarNombrePersona($nomina->getCell('C' . $r)->getValue());
 
             if ($cedula === '' || $nombre === '') {
                 continue;
@@ -245,11 +245,48 @@ class MedicoNominaSeeder extends Seeder
     // HELPERS
     // ============================================================
 
+    /**
+     * Normaliza nombres de catálogo (área, cargo): mismo algoritmo que MedicoCatalogosSeeder
+     * para que el lookup por nombre funcione correctamente.
+     */
     private function normalizar(mixed $valor): string
+    {
+        $v = trim((string) $valor);
+        $v = mb_strtoupper($v, 'UTF-8');
+        // Quitar acentos
+        $v = $this->quitarAcentos($v);
+        // Reemplazar guiones y barras por espacios
+        $v = preg_replace('/[\-\/\|\\\\]+/', ' ', $v);
+        // Remover puntuación
+        $v = preg_replace('/[,.!;:¿?¡"\'#@&*()\[\]{}<>]/u', '', $v);
+        $v = str_replace(['(', ')', '[', ']'], ' ', $v);
+        // Colapsar espacios
+        $v = preg_replace('/\s+/', ' ', $v);
+        return trim($v);
+    }
+
+    /**
+     * Normaliza nombres de persona: mantiene estructura pero limpia espacios.
+     */
+    private function normalizarNombrePersona(mixed $valor): string
     {
         $v = trim((string) $valor);
         $v = preg_replace('/\s+/', ' ', $v);
         return mb_strtoupper($v, 'UTF-8');
+    }
+
+    private function quitarAcentos(string $texto): string
+    {
+        $mapa = [
+            'Á' => 'A', 'À' => 'A', 'Â' => 'A', 'Ã' => 'A', 'Ä' => 'A', 'Å' => 'A',
+            'É' => 'E', 'È' => 'E', 'Ê' => 'E', 'Ë' => 'E',
+            'Í' => 'I', 'Ì' => 'I', 'Î' => 'I', 'Ï' => 'I',
+            'Ó' => 'O', 'Ò' => 'O', 'Ô' => 'O', 'Õ' => 'O', 'Ö' => 'O', 'Ø' => 'O',
+            'Ú' => 'U', 'Ù' => 'U', 'Û' => 'U', 'Ü' => 'U',
+            'Ý' => 'Y', 'Ÿ' => 'Y',
+            'Ç' => 'C', 'Ñ' => 'N',
+        ];
+        return strtr($texto, $mapa);
     }
 
     private function normalizarTexto(mixed $valor): ?string

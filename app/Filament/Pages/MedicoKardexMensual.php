@@ -113,7 +113,7 @@ class MedicoKardexMensual extends Page
         $sheet->fromArray(['KARDEX ARQUEO MENSUAL'], null, 'A2');
         $sheet->fromArray(["DEL {$inicioStr} AL {$finStr}"], null, 'A3');
 
-        $headers = ['MEDICINAS / EQUIPOS', 'SALDO ANTERIOR', 'INGRESOS', 'EGRESOS', 'TOTAL', 'FECHA DE CADUCIDAD', 'FECHA INICIO', 'FECHA FIN'];
+        $headers = ['MEDICINAS / INSUMOS', 'SALDO ANTERIOR', 'INGRESOS', 'EGRESOS', 'TOTAL', 'FECHA DE CADUCIDAD', 'FECHA INICIO', 'FECHA FIN'];
         $sheet->fromArray($headers, null, 'A5');
         $sheet->getStyle('A1:A3')->getFont()->setBold(true);
         $sheet->getStyle('A5:H5')->getFont()->setBold(true);

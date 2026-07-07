@@ -51,7 +51,7 @@ class MedicoInventario extends Page
     // FILTROS
     // ============================================================
     public string $buscar = '';
-    public string $tipoFiltro = 'todos';   // todos|medicina|equipo
+    public string $tipoFiltro = 'todos';   // todos|medicina|insumo
     public string $estadoFiltro = 'activos'; // activos|inactivos|todos
 
     public function mount(): void
@@ -120,11 +120,13 @@ class MedicoInventario extends Page
     {
         $this->validate(['productoNombre' => ['required', 'string', 'max:255']]);
 
-        MedicoProducto::query()->updateOrCreate(
+        $nombreNormalizado = mb_strtoupper(trim($this->productoNombre));
+
+        $producto = MedicoProducto::query()->updateOrCreate(
             ['id' => $this->editandoId],
             [
                 'tipo' => $this->productoTipo,
-                'nombre' => trim($this->productoNombre),
+                'nombre' => $nombreNormalizado,
                 'medicamento_id' => $this->productoMedicamentoId,
                 'stock_minimo' => $this->productoStockMinimo ?: 0,
                 'fecha_caducidad' => $this->productoFechaCaducidad,
@@ -133,15 +135,84 @@ class MedicoInventario extends Page
             ],
         );
 
-        $label = $this->productoTipo === 'equipo' ? 'Equipo' : 'Medicina';
+        // ── SINCRONIZAR: producto → catálogo medicamentos (todos los tipos) ──
+        $this->sincronizarProductoAMedicamento($producto, $nombreNormalizado);
+
+        $label = $this->productoTipo === 'insumo' ? 'Insumo' : 'Medicina';
         $this->cerrarModalProducto();
         Notification::make()->title("{$label} guardado")->success()->send();
+    }
+
+    /**
+     * Crea o vincula un Medicamento en el catálogo clínico para un producto del inventario.
+     */
+    private function sincronizarProductoAMedicamento(MedicoProducto $producto, string $nombreNormalizado): void
+    {
+        // Si ya está vinculado, verificar que el medicamento existe y el nombre coincide
+        if ($producto->medicamento_id) {
+            $med = Medicamento::query()->find($producto->medicamento_id);
+            if ($med) {
+                // Mantener nombres sincronizados (el más reciente prevalece)
+                if ($med->nombre !== $nombreNormalizado) {
+                    $med->update(['nombre' => $nombreNormalizado]);
+                }
+                return;
+            }
+            // medicamento_id apunta a un registro eliminado → limpiar
+            $producto->update(['medicamento_id' => null]);
+        }
+
+        // Buscar medicamento por nombre exacto
+        $medicamento = Medicamento::query()
+            ->where('nombre', $nombreNormalizado)
+            ->first();
+
+        if ($medicamento) {
+            $producto->update(['medicamento_id' => $medicamento->id]);
+            return;
+        }
+
+        // Buscar por nombre normalizado (fuzzy)
+        $norm = MedicoProducto::normalizarNombre($nombreNormalizado);
+        $todos = Medicamento::query()->where('activo', true)->get();
+        $mejor = null;
+        $mejorDist = PHP_INT_MAX;
+
+        foreach ($todos as $m) {
+            $dist = levenshtein($norm, MedicoProducto::normalizarNombre($m->nombre));
+            if ($dist < $mejorDist && $dist <= 2) {
+                $mejorDist = $dist;
+                $mejor = $m;
+            }
+        }
+
+        if ($mejor) {
+            $producto->update(['medicamento_id' => $mejor->id]);
+            return;
+        }
+
+        // No existe → crear nuevo medicamento en el catálogo
+        $nuevoMed = Medicamento::query()->create([
+            'nombre' => $nombreNormalizado,
+            'activo' => true,
+        ]);
+
+        $producto->update(['medicamento_id' => $nuevoMed->id]);
     }
 
     public function alternarProducto(int $id): void
     {
         $p = MedicoProducto::query()->findOrFail($id);
-        $p->update(['activo' => ! $p->activo]);
+        $nuevoEstado = ! $p->activo;
+        $p->update(['activo' => $nuevoEstado]);
+
+        // Sincronizar estado a medicamento vinculado (inventario → catálogo)
+        if ($p->medicamento_id && $p->tipo === 'medicina') {
+            Medicamento::query()
+                ->where('id', $p->medicamento_id)
+                ->update(['activo' => $nuevoEstado]);
+        }
+
         Notification::make()->title($p->activo ? 'Producto activado' : 'Producto desactivado')->success()->send();
     }
 
@@ -228,9 +299,9 @@ class MedicoInventario extends Page
         return (int) MedicoProducto::query()->where('tipo', 'medicina')->count();
     }
 
-    public function getTotalEquiposProperty(): int
+    public function getTotalInsumosProperty(): int
     {
-        return (int) MedicoProducto::query()->where('tipo', 'equipo')->count();
+        return (int) MedicoProducto::query()->where('tipo', 'insumo')->count();
     }
 
     public function getStockBajoProperty(): int

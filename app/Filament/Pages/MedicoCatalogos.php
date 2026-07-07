@@ -9,6 +9,7 @@ use App\Models\Diagnostico;
 use App\Models\EntidadCertificado;
 use App\Models\Incidente;
 use App\Models\Medicamento;
+use App\Models\MedicoProducto;
 use App\Models\TipoCertificado;
 use App\Models\TipoDescanso;
 use App\Models\TipoSalida;
@@ -100,7 +101,7 @@ class MedicoCatalogos extends Page
 
         $modelClass = $this->getModelClass($this->tipo);
 
-        $modelClass::query()->updateOrCreate(
+        $registro = $modelClass::query()->updateOrCreate(
             ['id' => $this->editandoId],
             [
                 'nombre' => mb_strtoupper(trim($this->nombre)),
@@ -108,10 +109,44 @@ class MedicoCatalogos extends Page
             ],
         );
 
+        // ── SINCRONIZAR: medicamento → inventario ──
+        if ($this->tipo === 'medicamento') {
+            $this->sincronizarMedicamentoAInventario($registro);
+        }
+
         $label = str($this->tipos[$this->tipo] ?? 'Registro')->singular()->lower()->ucfirst();
 
         $this->cerrarModal();
         Notification::make()->title("{$label} guardado")->success()->send();
+    }
+
+    /**
+     * Crea o vincula un MedicoProducto para un medicamento del catálogo.
+     */
+    private function sincronizarMedicamentoAInventario(Model $medicamento): void
+    {
+        $producto = MedicoProducto::resolverPorNombre($medicamento->nombre);
+
+        if (! $producto) {
+            // Crear producto nuevo vinculado
+            MedicoProducto::query()->create([
+                'medicamento_id' => $medicamento->id,
+                'tipo'           => 'medicina',
+                'nombre'         => $medicamento->nombre,
+                'stock_minimo'   => 0,
+                'activo'         => $medicamento->activo,
+            ]);
+        } elseif (! $producto->medicamento_id) {
+            // Producto existe sin vínculo → vincular
+            $producto->update([
+                'medicamento_id' => $medicamento->id,
+                'activo'         => $medicamento->activo,
+            ]);
+        } elseif ($producto->medicamento_id !== $medicamento->id) {
+            // Producto vinculado a OTRO medicamento → crear alias y vincular este también
+            // (caso raro: nombres iguales pero IDs diferentes)
+            $producto->update(['medicamento_id' => $medicamento->id]);
+        }
     }
 
     public function abrirModalNuevo(): void
@@ -140,7 +175,15 @@ class MedicoCatalogos extends Page
     {
         $modelClass = $this->getModelClass($this->tipo);
         $item = $modelClass::query()->findOrFail($id);
-        $item->update(['activo' => ! $item->activo]);
+        $nuevoEstado = ! $item->activo;
+        $item->update(['activo' => $nuevoEstado]);
+
+        // Sincronizar estado a productos vinculados (medicamentos → inventario)
+        if ($this->tipo === 'medicamento' && $item instanceof Medicamento) {
+            MedicoProducto::query()
+                ->where('medicamento_id', $item->id)
+                ->update(['activo' => $nuevoEstado]);
+        }
     }
 
     public function solicitarEliminar(int $id): void
@@ -271,7 +314,7 @@ class MedicoCatalogos extends Page
     {
         $result = [];
 
-        foreach ($this->tipos as $key => $label) {
+        foreach ($this->tipos as $key => $_) {
             try {
                 $modelClass = $this->getModelClass($key);
                 $result[$key] = (int) $modelClass::query()->count();
@@ -287,7 +330,7 @@ class MedicoCatalogos extends Page
     {
         $result = [];
 
-        foreach ($this->tipos as $key => $label) {
+        foreach ($this->tipos as $key => $_) {
             try {
                 $modelClass = $this->getModelClass($key);
                 $result[$key] = (int) $modelClass::query()->where('activo', true)->count();

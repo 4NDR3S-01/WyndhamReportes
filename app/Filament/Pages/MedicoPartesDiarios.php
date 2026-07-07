@@ -343,11 +343,6 @@ class MedicoPartesDiarios extends Page
             ->filter(fn ($m) => ! empty($m['medicamento_id']))
             ->values();
 
-        if ($meds->isEmpty()) {
-            $this->addError('medicamentos.0.medicamento_id', 'Debe agregar al menos un medicamento.');
-            return;
-        }
-
         $parte = MedicoParteDiario::query()->updateOrCreate(
             ['id' => $this->editandoId],
             [
@@ -799,8 +794,19 @@ class MedicoPartesDiarios extends Page
 
     public function getEstadisticasHoyProperty(): array
     {
-        $hoy = now()->toDateString();
-        $base = MedicoParteDiario::query()->whereDate('fecha', $hoy);
+        $base = MedicoParteDiario::query();
+
+        // Mismo filtro de fecha que la lista, sin los filtros de búsqueda
+        if ($this->mostrarSoloHoy) {
+            $base->whereDate('fecha', now()->toDateString());
+        } else {
+            if ($this->desde) {
+                $base->whereDate('fecha', '>=', $this->desde);
+            }
+            if ($this->hasta) {
+                $base->whereDate('fecha', '<=', $this->hasta);
+            }
+        }
 
         return [
             'total'     => (int) (clone $base)->count(),

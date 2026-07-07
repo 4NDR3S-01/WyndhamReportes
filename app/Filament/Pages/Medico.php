@@ -103,14 +103,16 @@ class Medico extends Page
     public function getMesesDisponiblesProperty(): Collection
     {
         return MedicoParteDiario::query()
-            ->selectRaw("strftime('%Y-%m', fecha) as ym, MIN(fecha) as inicio")
-            ->groupBy('ym')
-            ->orderBy('ym', 'desc')
+            ->select('fecha')
+            ->orderBy('fecha')
             ->get()
-            ->map(fn ($m) => (object) [
-                'ym' => $m->ym,
-                'label' => Carbon::parse($m->inicio)->translatedFormat('F Y'),
-            ]);
+            ->groupBy(fn ($p) => Carbon::parse($p->fecha)->format('Y-m'))
+            ->map(fn ($grupo) => (object) [
+                'ym'    => Carbon::parse($grupo->min('fecha'))->format('Y-m'),
+                'label' => Carbon::parse($grupo->min('fecha'))->translatedFormat('F Y'),
+            ])
+            ->sortByDesc('ym')
+            ->values();
     }
 
     public function getResumenDelMesProperty(): object
@@ -225,10 +227,10 @@ class Medico extends Page
             ->values();
     }
 
-    public function getEquiposProperty(): Collection
+    public function getInsumosProperty(): Collection
     {
         return MedicoKardex::query()
-            ->where('tipo', 'equipo')
+            ->where('tipo', 'insumo')
             ->orderBy('nombre')
             ->orderByDesc('fecha_fin')
             ->orderByDesc('id')
@@ -240,7 +242,7 @@ class Medico extends Page
     public function getMovimientosRecientesProperty(): Collection
     {
         return MedicoKardexMovimiento::query()
-            ->with(['kardex', 'producto'])
+            ->with(['kardex', 'producto', 'parteDiario'])
             ->latest('fecha_movimiento')
             ->latest('id')
             ->limit(20)

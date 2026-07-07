@@ -1,5 +1,5 @@
 <x-filament-panels::page>
-    <x-hero-card title="Personas" subtitle="Gestiona pacientes, colaboradores y huéspedes del dispensario médico" icon="heroicon-o-user-group" color="sand" />
+    <x-hero-card title="Pacientes" subtitle="Gestiona pacientes, colaboradores y huéspedes del dispensario médico" icon="heroicon-o-user-group" color="sand" />
 
     <div class="page-enter space-y-5">
 
@@ -53,13 +53,13 @@
                     <p class="stat-label text-sand-500/80 dark:text-sand-500/70">Con exámenes</p>
                 </div>
             </div>
-            <div class="stat border-teal-100 bg-teal-50/50 dark:border-teal-900/30 dark:bg-teal-950/10">
-                <div class="stat-icon bg-teal-100 text-teal-600 dark:bg-teal-950/30 dark:text-teal-400">
+            <div class="stat border-tide-100 bg-tide-50/50 dark:border-tide-900/30 dark:bg-tide-950/10">
+                <div class="stat-icon bg-tide-100 text-tide-600 dark:bg-tide-950/30 dark:text-tide-400">
                     <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
                 </div>
                 <div class="min-w-0">
-                    <p class="stat-value text-teal-700 dark:text-teal-300">{{ $stats['conTelefono'] }}</p>
-                    <p class="stat-label text-teal-500/80 dark:text-teal-500/70">Con teléfono</p>
+                    <p class="stat-value text-tide-700 dark:text-tide-300">{{ $stats['conTelefono'] }}</p>
+                    <p class="stat-label text-tide-500/80 dark:text-tide-500/70">Con teléfono</p>
                 </div>
             </div>
         </div>
@@ -190,7 +190,7 @@
                                             {{ $p->cargo?->nombre ?: '—' }}
                                         </p>
                                         @if($p->telefono)
-                                            <p class="mt-0.5 text-[11px] text-teal-600 dark:text-teal-400">{{ $p->telefono }}</p>
+                                            <p class="mt-0.5 text-[11px] text-tide-600 dark:text-tide-400">{{ $p->telefono }}</p>
                                         @endif
                                     </td>
                                     {{-- Datos médicos --}}
@@ -304,7 +304,7 @@
                                                     <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">Info</p>
                                                     <div class="mt-1.5 space-y-1 text-[11px] text-gray-600 dark:text-gray-400">
                                                         @if($det->telefono)
-                                                            <p class="flex items-center gap-1"><span class="font-medium text-teal-600 dark:text-teal-400">Tel:</span> {{ $det->telefono }}</p>
+                                                            <p class="flex items-center gap-1"><span class="font-medium text-tide-600 dark:text-tide-400">Tel:</span> {{ $det->telefono }}</p>
                                                         @endif
                                                         @if($det->vacunas)
                                                             <p><span class="font-medium">Vacunas:</span> {{ $det->vacunas }}</p>
