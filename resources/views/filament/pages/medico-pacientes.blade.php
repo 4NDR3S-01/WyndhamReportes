@@ -21,60 +21,12 @@
         ============================================================ --}}
         @php $stats = $this->estadisticas; @endphp
         <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
-            <div class="stat border-gray-100 bg-white dark:border-gray-800 dark:bg-gray-900/80">
-                <div class="stat-icon bg-ocean-50 text-ocean-600 dark:bg-ocean-950/30 dark:text-ocean-400">
-                    <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                </div>
-                <div class="min-w-0">
-                    <p class="stat-value text-gray-900 dark:text-white">{{ $stats['total'] }}</p>
-                    <p class="stat-label text-gray-400 dark:text-gray-500">Total registros</p>
-                </div>
-            </div>
-            <div class="stat border-palm-100 bg-palm-50/50 dark:border-palm-900/30 dark:bg-palm-950/10">
-                <div class="stat-icon bg-palm-100 text-palm-600 dark:bg-palm-950/30 dark:text-palm-400">
-                    <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                </div>
-                <div class="min-w-0">
-                    <p class="stat-value text-palm-700 dark:text-palm-300">{{ $stats['activos'] }}</p>
-                    <p class="stat-label text-palm-500/80 dark:text-palm-500/70">Activos</p>
-                </div>
-            </div>
-            <div class="stat border-tide-100 bg-tide-50/50 dark:border-tide-900/30 dark:bg-tide-950/10">
-                <div class="stat-icon bg-tide-100 text-tide-600 dark:bg-tide-950/30 dark:text-tide-400">
-                    <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a2 2 0 012-2h2a2 2 0 012 2v5m-4 0h4"/></svg>
-                </div>
-                <div class="min-w-0">
-                    <p class="stat-value text-tide-700 dark:text-tide-300">{{ $stats['colaboradores'] }}</p>
-                    <p class="stat-label text-tide-500/80 dark:text-tide-500/70">Colaboradores</p>
-                </div>
-            </div>
-            <div class="stat border-coral-100 bg-coral-50/50 dark:border-coral-900/30 dark:bg-coral-950/10">
-                <div class="stat-icon bg-coral-100 text-coral-600 dark:bg-coral-950/30 dark:text-coral-400">
-                    <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-                </div>
-                <div class="min-w-0">
-                    <p class="stat-value text-coral-700 dark:text-coral-300">{{ $stats['conPatologia'] }}</p>
-                    <p class="stat-label text-coral-500/80 dark:text-coral-500/70">Con patologías</p>
-                </div>
-            </div>
-            <div class="stat border-sand-100 bg-sand-50/50 dark:border-sand-900/30 dark:bg-sand-950/10">
-                <div class="stat-icon bg-sand-100 text-sand-600 dark:bg-sand-950/30 dark:text-sand-400">
-                    <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                </div>
-                <div class="min-w-0">
-                    <p class="stat-value text-sand-700 dark:text-sand-300">{{ $stats['conExamenes'] }}</p>
-                    <p class="stat-label text-sand-500/80 dark:text-sand-500/70">Con exámenes</p>
-                </div>
-            </div>
-            <div class="stat border-tide-100 bg-tide-50/50 dark:border-tide-900/30 dark:bg-tide-950/10">
-                <div class="stat-icon bg-tide-100 text-tide-600 dark:bg-tide-950/30 dark:text-tide-400">
-                    <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
-                </div>
-                <div class="min-w-0">
-                    <p class="stat-value text-tide-700 dark:text-tide-300">{{ $stats['conTelefono'] }}</p>
-                    <p class="stat-label text-tide-500/80 dark:text-tide-500/70">Con teléfono</p>
-                </div>
-            </div>
+            <x-stat-card title="Total registros" :value="$stats['total']" icon="heroicon-o-users" color="ocean" />
+            <x-stat-card title="Activos" :value="$stats['activos']" icon="heroicon-o-check-circle" color="palm" />
+            <x-stat-card title="Colaboradores" :value="$stats['colaboradores']" icon="heroicon-o-building-office-2" color="tide" />
+            <x-stat-card title="Con patologías" :value="$stats['conPatologia']" icon="heroicon-o-heart" color="coral" />
+            <x-stat-card title="Con exámenes" :value="$stats['conExamenes']" icon="heroicon-o-shield-check" color="sand" />
+            <x-stat-card title="Con teléfono" :value="$stats['conTelefono']" icon="heroicon-o-phone" color="tide" />
         </div>
 
         {{-- ============================================================

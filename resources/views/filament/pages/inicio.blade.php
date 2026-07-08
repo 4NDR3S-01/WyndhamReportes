@@ -8,47 +8,12 @@
             color="brand"
         />
 
-        <!-- Tarjetas de Estadísticas (Colores Pasteles Corregidos) -->
+        <!-- Tarjetas de Estadísticas (Colores Pasteles) -->
         <h3 class="mb-4 text-lg font-semibold text-gray-950 dark:text-white">Resumen General</h3>
         <div class="grid gap-6 sm:grid-cols-3">
-            <!-- Archivos -->
-            <div class="rounded-2xl border border-primary-100 bg-primary-50/30 p-6 shadow-sm transition hover:shadow-md dark:border-primary-900/30 dark:bg-primary-900/10">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-primary-600 dark:text-primary-400">Archivos importados</p>
-                        <p class="mt-2 text-4xl font-bold text-gray-900 dark:text-white">{{ number_format($this->totalArchivos, 0, ',', '.') }}</p>
-                    </div>
-                    <div class="flex h-12 w-12 items-center justify-center rounded-full bg-primary-100 text-primary-600 dark:bg-primary-900/50 dark:text-primary-400">
-                        <x-heroicon-o-document-text class="h-6 w-6" />
-                    </div>
-                </div>
-            </div>
-
-            <!-- Consumos -->
-            <div class="rounded-2xl border border-palm-100 bg-palm-50/30 p-6 shadow-sm transition hover:shadow-md dark:border-palm-900/30 dark:bg-palm-900/10">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-palm-600 dark:text-palm-400">Consumos cargados</p>
-                        <p class="mt-2 text-4xl font-bold text-gray-900 dark:text-white">{{ number_format($this->totalConsumos, 0, ',', '.') }}</p>
-                    </div>
-                    <div class="flex h-12 w-12 items-center justify-center rounded-full bg-palm-100 text-palm-600 dark:bg-palm-900/50 dark:text-palm-400">
-                        <x-heroicon-o-shopping-cart class="h-6 w-6" />
-                    </div>
-                </div>
-            </div>
-
-            <!-- Productos -->
-            <div class="rounded-2xl border border-sand-100 bg-sand-50/30 p-6 shadow-sm transition hover:shadow-md dark:border-sand-900/30 dark:bg-sand-900/10">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-sand-600 dark:text-sand-400">Productos detectados</p>
-                        <p class="mt-2 text-4xl font-bold text-gray-900 dark:text-white">{{ number_format($this->totalProductos, 0, ',', '.') }}</p>
-                    </div>
-                    <div class="flex h-12 w-12 items-center justify-center rounded-full bg-sand-100 text-sand-600 dark:bg-sand-900/50 dark:text-sand-400">
-                        <x-heroicon-o-tag class="h-6 w-6" />
-                    </div>
-                </div>
-            </div>
+            <x-stat-card title="Archivos importados" :value="number_format($this->totalArchivos, 0, ',', '.')" icon="heroicon-o-document-text" color="brand" />
+            <x-stat-card title="Consumos cargados" :value="number_format($this->totalConsumos, 0, ',', '.')" icon="heroicon-o-shopping-cart" color="palm" />
+            <x-stat-card title="Productos detectados" :value="number_format($this->totalProductos, 0, ',', '.')" icon="heroicon-o-tag" color="sand" />
         </div>
 
         <!-- Módulos - Quick Actions -->

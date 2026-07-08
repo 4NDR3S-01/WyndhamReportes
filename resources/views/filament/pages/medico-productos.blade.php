@@ -14,41 +14,14 @@
         </button>
     </x-hero-card>
 
-    <div class="space-y-4">
-        <section class="rounded-3xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-5">
-            <div class="flex flex-col gap-4 2xl:flex-row 2xl:items-center 2xl:justify-between">
-                <div class="min-w-0">
-                    <div class="flex flex-wrap items-center gap-2">
-                        <span class="inline-flex rounded-full bg-palm-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-palm-700 ring-1 ring-palm-100 dark:bg-palm-950/40 dark:text-palm-300 dark:ring-palm-900">
-                            Inventario medico
-                        </span>
-                        <span class="inline-flex rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-300">
-                            Medicinas e insumos
-                        </span>
-                    </div>
-                </div>
+    <div class="page-enter space-y-4">
 
-                <div class="grid w-full gap-3 2xl:max-w-[560px]" style="grid-template-columns: repeat(4, minmax(0, 1fr));">
-                    <div class="min-w-0 rounded-2xl border border-gray-100 bg-gray-50/80 p-3 text-center dark:border-gray-800 dark:bg-gray-950/50">
-                        <p class="truncate text-[10px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Total</p>
-                        <p class="mt-1 truncate text-2xl font-black tracking-tight text-gray-950 dark:text-white">{{ number_format($this->totalProductos, 0, ',', '.') }}</p>
-                    </div>
-                    <div class="min-w-0 rounded-2xl border border-palm-100 bg-palm-50/70 p-3 text-center dark:border-palm-900 dark:bg-palm-950/20">
-                        <p class="truncate text-[10px] font-semibold uppercase tracking-wide text-palm-700 dark:text-palm-300">Medicinas</p>
-                        <p class="mt-1 truncate text-2xl font-black tracking-tight text-palm-700 dark:text-palm-300">{{ number_format($this->totalMedicinas, 0, ',', '.') }}</p>
-                    </div>
-                    <div class="min-w-0 rounded-2xl border border-ocean-100 bg-ocean-50/70 p-3 text-center dark:border-ocean-900 dark:bg-ocean-950/20">
-                        <p class="truncate text-[10px] font-semibold uppercase tracking-wide text-ocean-700 dark:text-ocean-300">Insumos</p>
-                        <p class="mt-1 truncate text-2xl font-black tracking-tight text-ocean-700 dark:text-ocean-300">{{ number_format($this->totalInsumos, 0, ',', '.') }}</p>
-                    </div>
-                    <div class="min-w-0 rounded-2xl border border-red-100 bg-red-50/70 p-3 text-center dark:border-red-900 dark:bg-red-950/20">
-                        <p class="truncate text-[10px] font-semibold uppercase tracking-wide text-red-700 dark:text-red-300">Stock bajo</p>
-                        <p class="mt-1 truncate text-2xl font-black tracking-tight text-red-700 dark:text-red-300">{{ number_format($this->stockBajo, 0, ',', '.') }}</p>
-                    </div>
-
-                </div>
-            </div>
-        </section>
+        <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <x-stat-card title="Total" :value="number_format($this->totalProductos, 0, ',', '.')" icon="heroicon-o-cube" color="brand" />
+            <x-stat-card title="Medicinas" :value="number_format($this->totalMedicinas, 0, ',', '.')" icon="heroicon-o-clipboard-document-list" color="palm" />
+            <x-stat-card title="Insumos" :value="number_format($this->totalInsumos, 0, ',', '.')" icon="heroicon-o-wrench-screwdriver" color="ocean" />
+            <x-stat-card title="Stock bajo" :value="number_format($this->stockBajo, 0, ',', '.')" icon="heroicon-o-exclamation-triangle" color="red" />
+        </div>
 
         <section class="min-w-0 overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
             <div class="border-b border-gray-100 px-4 py-4 dark:border-gray-800 sm:px-5">

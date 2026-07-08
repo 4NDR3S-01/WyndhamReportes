@@ -14,36 +14,13 @@
         </button>
     </x-hero-card>
 
-    <div class="space-y-4">
-        <section class="rounded-3xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-5">
-            <div class="flex flex-col gap-4 2xl:flex-row 2xl:items-center 2xl:justify-between">
-                <div class="min-w-0">
-                    <div class="flex flex-wrap items-center gap-2">
-                        <span class="inline-flex rounded-full bg-ocean-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-ocean-700 ring-1 ring-ocean-100 dark:bg-ocean-950/40 dark:text-ocean-300 dark:ring-ocean-900">
-                            Base operativa
-                        </span>
-                        <span class="inline-flex rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-300">
-                            {{ $tipos[$tipo] ?? $tipo }}
-                        </span>
-                    </div>
-                </div>
+    <div class="page-enter space-y-4">
 
-                <div class="grid w-full gap-3 2xl:max-w-[460px]" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
-                    <div class="min-w-0 rounded-2xl border border-gray-100 bg-gray-50/80 p-3 text-center dark:border-gray-800 dark:bg-gray-950/50">
-                        <p class="truncate text-[10px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Total</p>
-                        <p class="mt-1 truncate text-2xl font-black tracking-tight text-gray-950 dark:text-white">{{ number_format($this->totalSeccion, 0, ',', '.') }}</p>
-                    </div>
-                    <div class="min-w-0 rounded-2xl border border-palm-100 bg-palm-50/70 p-3 text-center dark:border-palm-900 dark:bg-palm-950/20">
-                        <p class="truncate text-[10px] font-semibold uppercase tracking-wide text-palm-700 dark:text-palm-300">Activos</p>
-                        <p class="mt-1 truncate text-2xl font-black tracking-tight text-palm-700 dark:text-palm-300">{{ number_format($this->activosSeccion, 0, ',', '.') }}</p>
-                    </div>
-                    <div class="min-w-0 rounded-2xl border border-gray-100 bg-white p-3 text-center dark:border-gray-800 dark:bg-gray-950/40">
-                        <p class="truncate text-[10px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Ocultos</p>
-                        <p class="mt-1 truncate text-2xl font-black tracking-tight text-gray-700 dark:text-gray-300">{{ number_format($this->ocultosSeccion, 0, ',', '.') }}</p>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <div class="grid gap-3 sm:grid-cols-3">
+            <x-stat-card title="Total" :value="number_format($this->totalSeccion, 0, ',', '.')" icon="heroicon-o-document-text" color="brand" />
+            <x-stat-card title="Activos" :value="number_format($this->activosSeccion, 0, ',', '.')" icon="heroicon-o-check-circle" color="palm" />
+            <x-stat-card title="Ocultos" :value="number_format($this->ocultosSeccion, 0, ',', '.')" icon="heroicon-o-eye-slash" color="tide" />
+        </div>
 
         <section class="rounded-3xl border border-gray-200 bg-white p-3 shadow-sm dark:border-gray-800 dark:bg-gray-900">
             <div class="grid gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">

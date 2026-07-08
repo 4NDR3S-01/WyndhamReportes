@@ -38,6 +38,11 @@
             'title' => 'text-palm-600 dark:text-palm-500',
             'icon_wrapper' => 'bg-palm-100 text-palm-600 dark:bg-palm-500/30 dark:text-palm-400',
         ],
+        'red' => [
+            'wrapper' => 'border-red-100 bg-red-50/30 dark:border-red-500/20 dark:bg-red-500/10',
+            'title' => 'text-red-600 dark:text-red-500',
+            'icon_wrapper' => 'bg-red-100 text-red-600 dark:bg-red-500/30 dark:text-red-400',
+        ],
         default => [
             'wrapper' => 'border-gray-100 bg-gray-50/30 dark:border-gray-700 dark:bg-gray-800/30',
             'title' => 'text-gray-600 dark:text-gray-400',
