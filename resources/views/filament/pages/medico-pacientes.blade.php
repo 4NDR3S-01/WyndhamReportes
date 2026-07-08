@@ -1,11 +1,16 @@
 <x-filament-panels::page>
     <x-hero-card title="Pacientes" subtitle="Gestiona pacientes, colaboradores y huéspedes del dispensario médico" icon="heroicon-o-user-group" color="sand">
         <button type="button" wire:click="abrirModal"
+            wire:loading.attr="disabled" wire:target="abrirModal"
             class="btn-primary text-sm !rounded-xl !px-5 !py-3">
-            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg wire:loading.remove wire:target="abrirModal" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
             </svg>
-            Nuevo registro
+            <svg wire:loading wire:target="abrirModal" class="h-5 w-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display:none">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+            </svg>
+            <span wire:loading.remove wire:target="abrirModal">Nuevo registro</span>
+            <span wire:loading wire:target="abrirModal" style="display:none">Abriendo…</span>
         </button>
     </x-hero-card>
 
@@ -393,10 +398,10 @@
         ============================================================ --}}
         @if($modalAbierto)
             <div class="modal-overlay" wire:click.self="cerrarModal" x-data
-                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter="transition ease-out duration-100"
                  x-transition:enter-start="opacity-0"
                  x-transition:enter-end="opacity-100"
-                 x-transition:leave="transition ease-in duration-100"
+                 x-transition:leave="transition ease-in duration-75"
                  x-transition:leave-start="opacity-100"
                  x-transition:leave-end="opacity-0"
                  x-on:keydown.escape.window="$wire.cerrarModal()">
@@ -594,10 +599,10 @@
         ============================================================ --}}
         @if($modalEliminarAbierto)
             <div class="modal-overlay" wire:click.self="cancelarEliminar" x-data
-                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter="transition ease-out duration-100"
                  x-transition:enter-start="opacity-0"
                  x-transition:enter-end="opacity-100"
-                 x-transition:leave="transition ease-in duration-100"
+                 x-transition:leave="transition ease-in duration-75"
                  x-transition:leave-start="opacity-100"
                  x-transition:leave-end="opacity-0"
                  x-on:keydown.escape.window="$wire.cancelarEliminar()">

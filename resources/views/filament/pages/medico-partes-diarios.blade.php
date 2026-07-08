@@ -1,11 +1,16 @@
 <x-filament-panels::page>
     <x-hero-card title="Partes Diarios" subtitle="Registra y consulta las atenciones médicas diarias" icon="heroicon-o-clipboard-document-list" color="ocean">
         <button type="button" wire:click="abrirModalAtencion"
+            wire:loading.attr="disabled" wire:target="abrirModalAtencion"
             class="btn-primary text-sm !rounded-xl !px-5 !py-3">
-            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg wire:loading.remove wire:target="abrirModalAtencion" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
             </svg>
-            Nueva Atención
+            <svg wire:loading wire:target="abrirModalAtencion" class="h-5 w-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display:none">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+            </svg>
+            <span wire:loading.remove wire:target="abrirModalAtencion">Nueva Atenci&oacute;n</span>
+            <span wire:loading wire:target="abrirModalAtencion" style="display:none">Abriendo…</span>
         </button>
     </x-hero-card>
 
@@ -299,10 +304,10 @@
         ============================================================ --}}
         @if($modalAtencionAbierto)
             <div class="modal-overlay" wire:click.self="cerrarModalAtencion" x-data
-                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter="transition ease-out duration-100"
                  x-transition:enter-start="opacity-0"
                  x-transition:enter-end="opacity-100"
-                 x-transition:leave="transition ease-in duration-100"
+                 x-transition:leave="transition ease-in duration-75"
                  x-transition:leave-start="opacity-100"
                  x-transition:leave-end="opacity-0">
                 <div class="modal-panel !max-w-5xl w-full mx-auto sm:px-0" @click.stop
@@ -433,10 +438,10 @@
 
                                         {{-- Dropdown --}}
                                         <div x-show="abierto"
-                                            x-transition:enter="transition ease-out duration-150"
+                                            x-transition:enter="transition ease-out duration-100"
                                             x-transition:enter-start="opacity-0 -translate-y-1"
                                             x-transition:enter-end="opacity-100 translate-y-0"
-                                            x-transition:leave="transition ease-in duration-100"
+                                            x-transition:leave="transition ease-in duration-75"
                                             x-transition:leave-start="opacity-100 translate-y-0"
                                             x-transition:leave-end="opacity-0 -translate-y-1"
                                             x-ref="dropdown"
@@ -682,7 +687,7 @@
 
                                 {{-- Habitación (solo huéspedes) --}}
                                 @if($tipoPaciente === 'huesped')
-                                    <div x-transition:enter="transition ease-out duration-150"
+                                    <div x-transition:enter="transition ease-out duration-100"
                                          x-transition:enter-start="opacity-0 -translate-y-1"
                                          class="sm:max-w-xs">
                                         <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-sand-600 dark:text-sand-400">
@@ -1120,10 +1125,10 @@
         @if($quickCreateAbierto)
             <div class="modal-overlay" wire:click.self="cerrarQuickCreate" x-data
                  x-on:keydown.escape.window="$wire.cerrarQuickCreate()"
-                 x-transition:enter="transition ease-out duration-150"
+                 x-transition:enter="transition ease-out duration-100"
                  x-transition:enter-start="opacity-0"
                  x-transition:enter-end="opacity-100"
-                 x-transition:leave="transition ease-in duration-100"
+                 x-transition:leave="transition ease-in duration-75"
                  x-transition:leave-start="opacity-100"
                  x-transition:leave-end="opacity-0">
                 <div class="modal-panel !max-w-2xl w-[calc(100%-0.5rem)] sm:!w-full mx-auto" @click.stop>
@@ -1319,10 +1324,10 @@
         ============================================================ --}}
         @if($modalEliminarAbierto)
             <div class="modal-overlay" wire:click.self="cancelarEliminar" x-data
-                 x-transition:enter="transition ease-out duration-150"
+                 x-transition:enter="transition ease-out duration-100"
                  x-transition:enter-start="opacity-0"
                  x-transition:enter-end="opacity-100"
-                 x-transition:leave="transition ease-in duration-100"
+                 x-transition:leave="transition ease-in duration-75"
                  x-transition:leave-start="opacity-100"
                  x-transition:leave-end="opacity-0">
                 <div class="modal-panel" @click.stop>

@@ -1,11 +1,16 @@
 <x-filament-panels::page>
     <x-hero-card title="Medicinas y Insumos" subtitle="Gestiona el catálogo de productos, stock mínimo y fechas de caducidad" icon="heroicon-o-beaker" color="brand">
         <button type="button" wire:click="abrirModalProducto"
+            wire:loading.attr="disabled" wire:target="abrirModalProducto"
             class="btn-primary text-sm !rounded-xl !px-5 !py-3">
-            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg wire:loading.remove wire:target="abrirModalProducto" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
             </svg>
-            Nuevo producto
+            <svg wire:loading wire:target="abrirModalProducto" class="h-5 w-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display:none">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+            </svg>
+            <span wire:loading.remove wire:target="abrirModalProducto">Nuevo producto</span>
+            <span wire:loading wire:target="abrirModalProducto" style="display:none">Abriendo…</span>
         </button>
     </x-hero-card>
 
@@ -168,10 +173,10 @@
         @if ($modalProductoAbierto)
             <div class="modal-overlay" wire:click.self="cerrarModalProducto" x-data
                  x-on:keydown.escape.window="$wire.cerrarModalProducto()"
-                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter="transition ease-out duration-100"
                  x-transition:enter-start="opacity-0"
                  x-transition:enter-end="opacity-100"
-                 x-transition:leave="transition ease-in duration-100"
+                 x-transition:leave="transition ease-in duration-75"
                  x-transition:leave-start="opacity-100"
                  x-transition:leave-end="opacity-0">
                 <div class="modal-panel !max-w-xl w-full mx-auto" @click.stop>
