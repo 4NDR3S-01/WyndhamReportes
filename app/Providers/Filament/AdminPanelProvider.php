@@ -62,62 +62,178 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(
                 PanelsRenderHook::HEAD_END,
                 fn (): string => Route::currentRouteName() === 'filament.admin.auth.login' ? Blade::render('<style>
+                    /* ============================================================
+                       LOGIN — Wyndham Manta Medical Panel v2
+                       Imagen de fondo nítida + Glassmorphism ligero
+                       ============================================================ */
+                    html, body {
+                        height: 100%;
+                    }
                     body {
-                        /* Redujimos la capa oscura para que la imagen se vea más brillante y clara */
-                        background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2)), url("/images/portada.png") !important;
+                        background-image:
+                            linear-gradient(
+                                135deg,
+                                rgba(11, 59, 96, 0.30) 0%,
+                                rgba(217, 112, 74, 0.08) 50%,
+                                rgba(10, 15, 30, 0.35) 100%
+                            ),
+                            url("/images/portada.png") !important;
                         background-size: cover !important;
                         background-position: center !important;
                         background-repeat: no-repeat !important;
                         background-attachment: fixed !important;
                     }
-                    /* Hacemos el fondo del contenedor transparente para que se vea la imagen */
+
+                    /* Contenedor transparente para ver la imagen */
                     .fi-simple-layout {
-                        background-color: transparent !important;
+                        background: transparent !important;
+                        min-height: 100dvh;
                     }
-                    /* Estilo Glassmorphism (Vidrio Esmerilado Blanco) para máxima legibilidad */
+
+                    /* Animación de entrada del card */
+                    @keyframes login-enter {
+                        0%   { opacity: 0; transform: translateY(20px) scale(0.98); }
+                        100% { opacity: 1; transform: translateY(0) scale(1); }
+                    }
+
+                    /* ========== TARJETA PRINCIPAL (glassmorphism ligero) ========== */
                     .fi-simple-main {
-                        background-color: rgba(255, 255, 255, 0.75) !important; 
-                        backdrop-filter: blur(16px) !important;
-                        -webkit-backdrop-filter: blur(16px) !important;
+                        animation: login-enter 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+                        background: rgba(255, 255, 255, 0.88) !important;
+                        backdrop-filter: blur(12px) !important;
+                        -webkit-backdrop-filter: blur(12px) !important;
                         border-radius: 1.5rem !important;
-                        padding: 2.5rem !important;
-                        box-shadow: 
-                            0 20px 40px -10px rgba(0, 0, 0, 0.3),
-                            inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
-                        border: 1px solid rgba(255, 255, 255, 0.4) !important;
+                        padding: 2.25rem 2.25rem 2rem !important;
+                        box-shadow:
+                            0 20px 40px -12px rgba(0, 0, 0, 0.25),
+                            0 8px 16px -6px rgba(0, 0, 0, 0.08),
+                            inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+                        border: 1px solid rgba(255, 255, 255, 0.6) !important;
+                        max-width: 400px !important;
+                        width: 100%;
+                        position: relative;
+                        overflow: visible;
                     }
-                    /* Forzar todos los textos del login en negro fijo (no se altera con dark mode) */
-                    .fi-simple-main,
-                    .fi-simple-main *,
-                    .fi-simple-main h2,
-                    .fi-simple-main label,
-                    .fi-simple-main p,
-                    .fi-simple-main span,
-                    .fi-simple-main a:not(.fi-btn) {
-                        color: #1e293b !important;
+                    /* Barra decorativa superior */
+                    .fi-simple-main::before {
+                        content: "";
+                        position: absolute;
+                        top: 0;
+                        left: 1.5rem;
+                        right: 1.5rem;
+                        height: 3px;
+                        background: linear-gradient(90deg, #0B3B60, #0E7490, #3B4C82, #D9704A);
+                        border-radius: 0 0 3px 3px;
                     }
-                    .fi-simple-main input,
-                    .fi-simple-main .fi-input,
-                    .fi-simple-main input[type="email"],
-                    .fi-simple-main input[type="password"] {
-                        color: #1e293b !important;
-                        background-color: #ffffff !important;
-                        border-color: #d1d5db !important;
-                    }
-                    .fi-simple-main input::placeholder {
-                        color: #9ca3af !important;
-                    }
-                    .fi-simple-main .fi-logo {
-                        margin-bottom: 1rem !important;
-                    }
-                    .fi-simple-main .fi-link {
-                        color: #2563eb !important;
-                    }
+
+                    /* ========== TIPOGRAFÍA ========== */
                     .fi-simple-main h2 {
-                        font-weight: 700 !important;
+                        color: #0B3B60 !important;
+                        font-weight: 800 !important;
+                        font-size: 1.35rem !important;
+                        letter-spacing: -0.02em;
+                        margin-bottom: 0.25rem !important;
+                    }
+                    .fi-simple-main > p {
+                        color: #475569 !important;
+                        font-size: 0.875rem !important;
+                        margin-bottom: 1.25rem !important;
                     }
                     .fi-simple-main label {
+                        color: #334155 !important;
                         font-weight: 600 !important;
+                        font-size: 0.8125rem !important;
+                    }
+                    .fi-simple-main .fi-link {
+                        color: #0E7490 !important;
+                        font-weight: 500 !important;
+                    }
+                    .fi-simple-main .fi-link:hover {
+                        color: #0B3B60 !important;
+                    }
+
+                    /* ========== INPUTS (solo texto, NO checkbox) ========== */
+                    .fi-simple-main input[type="email"],
+                    .fi-simple-main input[type="password"],
+                    .fi-simple-main input[type="text"] {
+                        color: #1e293b !important;
+                        background: #ffffff !important;
+                        border: 1.5px solid #e2e8f0 !important;
+                        border-radius: 0.75rem !important;
+                        padding: 0.625rem 0.875rem !important;
+                        font-size: 0.9375rem !important;
+                        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+                    }
+                    .fi-simple-main input[type="email"]:focus,
+                    .fi-simple-main input[type="password"]:focus,
+                    .fi-simple-main input[type="text"]:focus {
+                        border-color: #0E7490 !important;
+                        box-shadow: 0 0 0 3px rgba(14, 116, 144, 0.12) !important;
+                        outline: none !important;
+                    }
+                    .fi-simple-main input::placeholder {
+                        color: #94a3b8 !important;
+                    }
+
+                    /* ========== CHECKBOX "Recordarme" ========== */
+                    .fi-simple-main input[type="checkbox"] {
+                        accent-color: #0E7490 !important;
+                        width: 1rem !important;
+                        height: 1rem !important;
+                        border-radius: 4px !important;
+                        cursor: pointer;
+                    }
+                    .fi-simple-main input[type="checkbox"] + span,
+                    .fi-simple-main label:has(input[type="checkbox"]) {
+                        color: #475569 !important;
+                        font-size: 0.8125rem !important;
+                        font-weight: 500 !important;
+                        cursor: pointer;
+                        user-select: none;
+                    }
+
+                    /* ========== BOTÓN SUBMIT ========== */
+                    .fi-simple-main button[type="submit"] {
+                        background: linear-gradient(135deg, #0B3B60 0%, #0E7490 100%) !important;
+                        border-radius: 0.75rem !important;
+                        padding: 0.7rem 1.25rem !important;
+                        font-weight: 700 !important;
+                        font-size: 0.9375rem !important;
+                        color: #ffffff !important;
+                        border: none !important;
+                        transition: all 0.15s ease;
+                        box-shadow: 0 4px 14px rgba(11, 59, 96, 0.3) !important;
+                        cursor: pointer;
+                    }
+                    .fi-simple-main button[type="submit"]:hover {
+                        box-shadow: 0 6px 20px rgba(11, 59, 96, 0.4) !important;
+                        transform: translateY(-1px);
+                    }
+                    .fi-simple-main button[type="submit"]:active {
+                        transform: translateY(0) scale(0.98);
+                    }
+
+                    /* ========== LOGO ========== */
+                    .fi-simple-main .fi-logo {
+                        margin-bottom: 1.25rem !important;
+                    }
+
+                    /* ========== RESPONSIVE ========== */
+                    @media (max-width: 480px) {
+                        .fi-simple-main {
+                            padding: 1.75rem 1.5rem !important;
+                            border-radius: 1.25rem !important;
+                            margin: 1rem;
+                        }
+                        .fi-simple-main::before {
+                            left: 1rem;
+                            right: 1rem;
+                        }
+                    }
+                    @media (prefers-reduced-motion: reduce) {
+                        .fi-simple-main {
+                            animation: none !important;
+                        }
                     }
                 </style>') : Blade::render('<style>
                     /* Ocultar el selector de temas duplicado */

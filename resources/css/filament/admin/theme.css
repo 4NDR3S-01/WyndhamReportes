@@ -151,8 +151,12 @@
     /* Make chart canvas container relative so absolute skeleton works */
     .fi-wi-chart .fi-wi-chart-canvas-ctn {
         position: relative;
-        aspect-ratio: 2 / 1;
         min-height: 280px;
+        width: 100%;
+    }
+    /* When maxHeight is provided, let Chart.js control sizing freely */
+    .fi-wi-chart .fi-wi-chart-canvas-ctn-no-aspect-ratio {
+        aspect-ratio: unset;
     }
 
     /* ---- Skeleton / Shimmer Loading ---- */
