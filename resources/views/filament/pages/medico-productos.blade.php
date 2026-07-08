@@ -1,5 +1,13 @@
 <x-filament-panels::page>
-    <x-hero-card title="Medicinas y Insumos" subtitle="Gestiona el catálogo de productos, stock mínimo y fechas de caducidad" icon="heroicon-o-beaker" color="brand" />
+    <x-hero-card title="Medicinas y Insumos" subtitle="Gestiona el catálogo de productos, stock mínimo y fechas de caducidad" icon="heroicon-o-beaker" color="brand">
+        <button type="button" wire:click="abrirModalProducto"
+            class="btn-primary text-sm !rounded-xl !px-5 !py-3">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            Nuevo producto
+        </button>
+    </x-hero-card>
 
     <div class="space-y-4">
         <section class="rounded-3xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-5">
@@ -74,11 +82,6 @@
                             <option class="bg-white text-gray-900 dark:bg-gray-950 dark:text-white" value="inactivos">Inactivos</option>
                         </select>
 
-
-                        <button wire:click="abrirModalProducto" class="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-palm-600 px-4 text-sm font-semibold text-white shadow-sm shadow-palm-600/20 transition hover:bg-palm-700 sm:w-auto">
-                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m7-7H5" /></svg>
-                            Nuevo
-                        </button>
                     </div>
                 </div>
             </div>

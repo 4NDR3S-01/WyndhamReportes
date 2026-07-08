@@ -1,5 +1,13 @@
 <x-filament-panels::page>
-    <x-hero-card title="Base Médica" subtitle="Administra los catálogos del dispensario: áreas, causas, diagnósticos y más" icon="heroicon-o-building-library" color="palm" />
+    <x-hero-card title="Base Médica" subtitle="Administra los catálogos del dispensario: áreas, causas, diagnósticos y más" icon="heroicon-o-building-library" color="palm">
+        <button type="button" wire:click="abrirModalNuevo"
+            class="btn-primary text-sm !rounded-xl !px-5 !py-3">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            Nuevo registro
+        </button>
+    </x-hero-card>
 
     <div class="space-y-4">
         <section class="rounded-3xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-5">
@@ -88,10 +96,6 @@
                                 <option class="bg-white text-gray-900 dark:bg-gray-950 dark:text-white" value="ocultos">Ocultos</option>
                             </select>
 
-                            <button wire:click="abrirModalNuevo" class="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-ocean-600 px-4 text-sm font-semibold text-white shadow-sm shadow-ocean-600/20 transition hover:bg-ocean-700 focus:outline-none focus:ring-2 focus:ring-ocean-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 sm:w-auto">
-                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m7-7H5" /></svg>
-                                <span>Nuevo</span>
-                            </button>
                         </div>
                     </div>
                 </div>

@@ -1,5 +1,13 @@
 <x-filament-panels::page>
-    <x-hero-card title="Pacientes" subtitle="Gestiona pacientes, colaboradores y huéspedes del dispensario médico" icon="heroicon-o-user-group" color="sand" />
+    <x-hero-card title="Pacientes" subtitle="Gestiona pacientes, colaboradores y huéspedes del dispensario médico" icon="heroicon-o-user-group" color="sand">
+        <button type="button" wire:click="abrirModal"
+            class="btn-primary text-sm !rounded-xl !px-5 !py-3">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            Nuevo registro
+        </button>
+    </x-hero-card>
 
     <div class="page-enter space-y-5">
 
@@ -73,11 +81,6 @@
                     <h3 class="text-sm font-bold text-gray-900 dark:text-white">Base de pacientes</h3>
                     <span class="chip bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">{{ $this->totalPacientes }}</span>
                 </div>
-                <button type="button" wire:click="abrirModal"
-                    class="btn-primary text-xs rounded-lg px-3.5 py-2">
-                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                    Nuevo registro
-                </button>
             </div>
 
             {{-- Filters --}}
