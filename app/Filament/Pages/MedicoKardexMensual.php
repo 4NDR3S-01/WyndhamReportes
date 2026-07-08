@@ -14,12 +14,10 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 class MedicoKardexMensual extends Page
 {
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-document-magnifying-glass';
-    protected static string|\UnitEnum|null $navigationGroup = 'Medico';
-    protected static ?string $navigationLabel = 'Kardex mensual';
     protected static ?string $title = 'Kardex mensual';
     protected ?string $heading = '';
     protected static ?string $slug = 'medico/kardex-mensual';
-    protected static ?int $navigationSort = 6;
+    protected static bool $shouldRegisterNavigation = false;
     protected string $view = 'filament.pages.medico-kardex-mensual';
 
     // ============================================================
