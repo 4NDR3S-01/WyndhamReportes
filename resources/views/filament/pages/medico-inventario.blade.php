@@ -328,80 +328,106 @@
     </div>
 
     {{-- ============================================================
-    MODAL: Producto (crear/editar) — más compacto
+    MODAL: Producto (crear/editar) — ESTANDARIZADO
     ============================================================ --}}
     @if ($modalProductoAbierto)
-        <div class="modal-overlay" x-data @click.self="$wire.cerrarModalProducto()" x-on:keydown.escape.window="$wire.cerrarModalProducto()">
-            <div class="modal-panel-lg !max-w-lg">
+        <div class="modal-overlay" x-data
+             wire:click.self="cerrarModalProducto"
+             x-on:keydown.escape.window="$wire.cerrarModalProducto()"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-100"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0">
+            <div class="modal-panel !max-w-lg w-full mx-auto" wire:click.stop>
                 <div class="modal-accent-ocean"></div>
-                <section>
-                    <div class="flex items-center justify-between border-b border-gray-100 px-4 py-3 dark:border-gray-800">
-                        <h2 class="text-sm font-bold text-gray-950 dark:text-white">
-                            {{ $editandoId ? 'Editar producto' : 'Nuevo producto' }}
-                        </h2>
-                        <button wire:click="cerrarModalProducto" class="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800">
-                            <x-heroicon-m-x-mark class="h-5 w-5" />
-                        </button>
+
+                {{-- Header con icono --}}
+                <div class="flex items-center justify-between gap-2 px-5 py-4 sm:px-6">
+                    <div class="flex min-w-0 items-center gap-3">
+                        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-ocean-400 to-ocean-600 text-white shadow-md shadow-ocean-500/20">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                        </span>
+                        <div class="min-w-0">
+                            <h3 class="truncate text-[15px] font-bold text-gray-900 dark:text-white">{{ $editandoId ? 'Editar producto' : 'Nuevo producto' }}</h3>
+                            <p class="text-[11px] text-gray-400 dark:text-gray-500">{{ $editandoId ? 'Modifique los campos del producto' : 'Registre una medicina o insumo del dispensario' }}</p>
+                        </div>
                     </div>
-                    <form wire:submit.prevent="guardarProducto" class="space-y-3 px-4 py-3">
-                        <div class="grid gap-2 sm:grid-cols-2">
-                            <div>
-                                <label class="text-[11px] font-medium text-gray-600 dark:text-gray-300">Tipo</label>
-                                <select wire:model="productoTipo" class="mt-1 block w-full rounded-lg border-gray-300 bg-white text-xs shadow-sm focus:border-ocean-500 focus:ring-ocean-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white">
-                                    <option value="medicina">Medicina</option>
-                                    <option value="insumo">Insumo</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-[11px] font-medium text-gray-600 dark:text-gray-300">Stock mínimo</label>
-                                <input type="number" step="0.01" wire:model="productoStockMinimo" class="mt-1 block w-full rounded-lg border-gray-300 bg-white text-xs shadow-sm focus:border-ocean-500 focus:ring-ocean-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white">
-                            </div>
-                        </div>
+                    <button type="button" wire:click="cerrarModalProducto"
+                        class="shrink-0 rounded-xl p-2 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+                        aria-label="Cerrar modal">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
 
+                {{-- Formulario --}}
+                <form wire:submit.prevent="guardarProducto" class="scroll-thin max-h-[65vh] overflow-y-auto bg-gray-50/50 p-4 sm:p-6 space-y-4 dark:bg-gray-950/20">
+                    <div class="grid gap-2 sm:grid-cols-2">
                         <div>
-                            <label class="text-[11px] font-medium text-gray-600 dark:text-gray-300">Nombre <span class="text-red-400">*</span></label>
-                            <input wire:model="productoNombre" placeholder="Ej. Paracetamol 500mg" class="mt-1 block w-full rounded-lg border-gray-300 bg-white text-xs shadow-sm focus:border-ocean-500 focus:ring-ocean-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white" autofocus>
-                            @error('productoNombre') <p class="mt-1 text-[11px] text-red-500">{{ $message }}</p> @enderror
-                        </div>
-
-                        @if($productoTipo === 'medicina')
-                        <div>
-                            <label class="text-[11px] font-medium text-gray-600 dark:text-gray-300">
-                                Vincular con catálogo clínico
-                                <span class="font-normal text-gray-400">(descuento automático al dispensar)</span>
-                            </label>
-                            <select wire:model="productoMedicamentoId" class="mt-1 block w-full rounded-lg border-gray-300 bg-white text-xs shadow-sm focus:border-ocean-500 focus:ring-ocean-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white">
-                                <option value="">— Sin vincular —</option>
-                                @foreach($this->medicamentosCatalog as $med)
-                                    <option value="{{ $med->id }}">{{ $med->nombre }}</option>
-                                @endforeach
+                            <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Tipo</label>
+                            <select wire:model="productoTipo" class="input">
+                                <option value="medicina">Medicina</option>
+                                <option value="insumo">Insumo</option>
                             </select>
                         </div>
-                        @endif
-
-                        <div class="grid gap-2 sm:grid-cols-2">
-                            <div>
-                                <label class="text-[11px] font-medium text-gray-600 dark:text-gray-300">Fecha de caducidad</label>
-                                <input type="date" wire:model="productoFechaCaducidad" class="mt-1 block w-full rounded-lg border-gray-300 bg-white text-xs shadow-sm focus:border-ocean-500 focus:ring-ocean-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white">
-                            </div>
-                            <div class="flex items-end pb-1">
-                                <label class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300">
-                                    <input type="checkbox" wire:model="productoActivo" class="rounded border-gray-300 text-ocean-600 focus:ring-ocean-500"> Activo
-                                </label>
-                            </div>
-                        </div>
-
                         <div>
-                            <label class="text-[11px] font-medium text-gray-600 dark:text-gray-300">Observaciones</label>
-                            <textarea wire:model="productoObservaciones" rows="2" placeholder="Opcional" class="mt-1 block w-full rounded-lg border-gray-300 bg-white text-xs shadow-sm focus:border-ocean-500 focus:ring-ocean-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white"></textarea>
+                            <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Stock mínimo</label>
+                            <input type="number" step="0.01" wire:model="productoStockMinimo" class="input">
                         </div>
+                    </div>
 
-                        <div class="flex justify-end gap-2 border-t border-gray-100 pt-3 dark:border-gray-800">
-                            <button type="button" wire:click="cerrarModalProducto" class="btn-outline !rounded-lg !px-3.5 !py-2 text-xs">Cancelar</button>
-                            <button type="submit" class="btn-primary !rounded-lg !px-4 !py-2 text-xs">Guardar</button>
+                    <div>
+                        <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Nombre <span class="text-red-400">*</span></label>
+                        <input wire:model="productoNombre" placeholder="Ej. Paracetamol 500mg" class="input" autofocus>
+                        @error('productoNombre') <p class="mt-1 text-[11px] font-medium text-red-500">{{ $message }}</p> @enderror
+                    </div>
+
+                    @if($productoTipo === 'medicina')
+                    <div>
+                        <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                            Vincular con catálogo clínico
+                            <span class="font-normal text-gray-400">(descuento automático al dispensar)</span>
+                        </label>
+                        <select wire:model="productoMedicamentoId" class="input">
+                            <option value="">— Sin vincular —</option>
+                            @foreach($this->medicamentosCatalog as $med)
+                                <option value="{{ $med->id }}">{{ $med->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    @endif
+
+                    <div class="grid gap-2 sm:grid-cols-2">
+                        <div>
+                            <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Fecha de caducidad</label>
+                            <input type="date" wire:model="productoFechaCaducidad" class="input">
                         </div>
-                    </form>
-                </section>
+                        <div class="flex items-end pb-1">
+                            <label class="flex items-center gap-2 text-xs font-medium text-gray-600 dark:text-gray-400">
+                                <input type="checkbox" wire:model="productoActivo" class="h-4 w-4 rounded border-gray-300 text-ocean-600 focus:ring-ocean-500"> Activo
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Observaciones</label>
+                        <textarea wire:model="productoObservaciones" rows="2" placeholder="Opcional" class="input"></textarea>
+                    </div>
+                </form>
+
+                {{-- Footer --}}
+                <div class="flex items-center justify-end gap-2 border-t border-gray-100 px-5 py-3.5 sm:px-6 dark:border-gray-800">
+                    <button type="button" wire:click="cerrarModalProducto"
+                        class="btn-outline px-3 py-2 text-xs sm:px-4 sm:py-2.5 sm:text-sm">
+                        Cancelar
+                    </button>
+                    <button type="button" wire:click="guardarProducto"
+                        class="btn-primary px-3 py-2 text-xs sm:px-4 sm:py-2.5 sm:text-sm">
+                        <svg class="h-3.5 w-3.5 sm:h-4 sm:w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        <span>Guardar producto</span>
+                    </button>
+                </div>
             </div>
         </div>
     @endif

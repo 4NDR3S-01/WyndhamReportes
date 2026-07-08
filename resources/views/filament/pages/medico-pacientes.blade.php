@@ -390,8 +390,15 @@
         ============================================================ --}}
         @if($modalAbierto)
             <div class="modal-overlay" wire:click.self="cerrarModal" x-data
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-100"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
                  x-on:keydown.escape.window="$wire.cerrarModal()">
-                <div class="modal-panel !max-w-2xl w-[calc(100%-0.5rem)] sm:!w-full mx-auto">
+                <div class="modal-panel !max-w-2xl w-[calc(100%-0.5rem)] sm:!w-full mx-auto" wire:click.stop>
+                    <div class="{{ $editandoId ? 'modal-accent-sand' : 'modal-accent-ocean' }}"></div>
                     {{-- Header --}}
                     <div class="flex items-center justify-between gap-2 border-b border-gray-100 px-4 py-3 sm:px-6 sm:py-4 dark:border-gray-800">
                         <div class="flex min-w-0 items-center gap-2.5 sm:gap-3">
@@ -583,9 +590,16 @@
         DELETE CONFIRMATION MODAL
         ============================================================ --}}
         @if($modalEliminarAbierto)
-            <div class="modal-overlay" style="z-index: 10000;" wire:click.self="cancelarEliminar"
-                 x-data x-on:keydown.escape.window="$wire.cancelarEliminar()">
-                <div class="modal-panel w-[calc(100%-1rem)] sm:max-w-sm mx-auto">
+            <div class="modal-overlay" wire:click.self="cancelarEliminar" x-data
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-100"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 x-on:keydown.escape.window="$wire.cancelarEliminar()">
+                <div class="modal-panel w-[calc(100%-1rem)] sm:max-w-sm mx-auto" wire:click.stop>
+                    <div class="modal-accent" style="background: linear-gradient(90deg, #ef4444, #dc2626, #b91c1c);"></div>
                     <div class="bg-gradient-to-br from-red-50 via-white to-white px-4 py-4 text-center sm:px-6 sm:py-5 dark:from-red-950/30 dark:via-gray-900 dark:to-gray-900">
                         <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100 ring-4 ring-red-50 sm:h-14 sm:w-14 dark:bg-red-950/30 dark:ring-red-950/10">
                             <svg class="h-6 w-6 text-red-500 sm:h-7 sm:w-7 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>

@@ -482,6 +482,13 @@
         @apply h-1 w-full bg-gradient-to-r from-sand-400 via-sand-500 to-sand-600;
     }
 
+    /* Lock body scroll when any modal overlay is visible.
+       Works with @if modals (removed from DOM when closed) and
+       Alpine x-show modals (which add style="display:none" when hidden). */
+    body:has(.modal-overlay:not([style*="display"])) {
+        overflow: hidden;
+    }
+
     /* Form section card — soft grouping */
     .form-section-card {
         @apply mx-5 my-3 overflow-hidden rounded-2xl border border-gray-100 bg-gray-50/50

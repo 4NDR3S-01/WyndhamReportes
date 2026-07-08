@@ -163,53 +163,64 @@
         </section>
 
         @if ($modalProductoAbierto)
-            <div class="flex items-center justify-center p-4 sm:p-6" style="position: fixed; inset: 0; z-index: 99999; background: rgba(15, 23, 42, 0.58); backdrop-filter: blur(6px);" wire:click.self="cerrarModalProducto">
-                <section class="w-full overflow-hidden rounded-2xl border border-white/70 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.35)] ring-1 ring-gray-950/5 dark:border-gray-800 dark:bg-gray-900 dark:ring-white/10" style="max-width: 500px;">
-                    <div class="bg-gradient-to-br from-palm-50 via-white to-white px-5 py-4 dark:from-palm-950/30 dark:via-gray-900 dark:to-gray-900">
-                        <div class="flex items-start justify-between gap-4">
-                            <div class="flex min-w-0 gap-3">
-                                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-palm-600 text-white shadow-sm shadow-palm-600/25">
-                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m7-7H5" /></svg>
-                                </div>
-                                <div class="min-w-0">
-                                    <h3 class="text-base font-semibold text-gray-950 dark:text-white">{{ $editandoId ? 'Editar producto' : 'Nuevo producto' }}</h3>
-                                    <p class="mt-1 text-sm leading-5 text-gray-500 dark:text-gray-400">Registra medicinas o insumos usados por el dispensario.</p>
-                                </div>
+            <div class="modal-overlay" wire:click.self="cerrarModalProducto" x-data
+                 x-on:keydown.escape.window="$wire.cerrarModalProducto()"
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-100"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0">
+                <div class="modal-panel !max-w-lg w-full mx-auto" wire:click.stop>
+                    <div class="modal-accent" style="background: linear-gradient(90deg, #059669, #10b981, #34d399);"></div>
+
+                    {{-- Header con icono --}}
+                    <div class="flex items-center justify-between gap-2 px-5 py-4 sm:px-6">
+                        <div class="flex min-w-0 items-center gap-3">
+                            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-palm-400 to-palm-600 text-white shadow-md shadow-palm-500/20">
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                            </span>
+                            <div class="min-w-0">
+                                <h3 class="truncate text-[15px] font-bold text-gray-900 dark:text-white">{{ $editandoId ? 'Editar producto' : 'Nuevo producto' }}</h3>
+                                <p class="text-[11px] text-gray-400 dark:text-gray-500">Registra medicinas o insumos usados por el dispensario</p>
                             </div>
-                            <button type="button" wire:click="cerrarModalProducto" class="rounded-full p-2 text-gray-400 transition hover:bg-white hover:text-gray-700 hover:shadow-sm dark:hover:bg-gray-800 dark:hover:text-gray-200">
-                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 18 6M6 6l12 12" /></svg>
-                            </button>
                         </div>
+                        <button type="button" wire:click="cerrarModalProducto"
+                            class="shrink-0 rounded-xl p-2 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+                            aria-label="Cerrar modal">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </button>
                     </div>
 
-                    <form wire:submit.prevent="guardar" class="space-y-4 px-5 py-4">
+                    {{-- Formulario --}}
+                    <form wire:submit.prevent="guardar" class="scroll-thin max-h-[65vh] overflow-y-auto bg-gray-50/50 p-4 sm:p-6 space-y-4 dark:bg-gray-950/20">
                         <div class="grid gap-3 sm:grid-cols-2">
                             <div>
-                                <label class="text-xs font-medium text-gray-600 dark:text-gray-300">Tipo</label>
-                                <select wire:model="tipo" class="mt-1 block w-full rounded-xl border-gray-300 bg-white text-sm shadow-sm focus:border-palm-500 focus:ring-palm-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white">
+                                <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Tipo</label>
+                                <select wire:model="tipo" class="input">
                                     <option value="medicina">Medicina</option>
                                     <option value="insumo">Insumo</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="text-xs font-medium text-gray-600 dark:text-gray-300">Stock minimo</label>
-                                <input type="number" step="0.01" wire:model="stock_minimo" class="mt-1 block w-full rounded-xl border-gray-300 bg-white text-sm shadow-sm focus:border-palm-500 focus:ring-palm-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white">
+                                <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Stock mínimo</label>
+                                <input type="number" step="0.01" wire:model="stock_minimo" class="input">
                             </div>
                         </div>
 
                         <div>
-                            <label class="text-xs font-medium text-gray-600 dark:text-gray-300">Nombre</label>
-                            <input wire:model="nombre" placeholder="Ej. Analgan" class="mt-1 block w-full rounded-xl border-gray-300 bg-white text-sm shadow-sm focus:border-palm-500 focus:ring-palm-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white" autofocus>
-                            @error('nombre') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
+                            <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Nombre <span class="text-red-400">*</span></label>
+                            <input wire:model="nombre" placeholder="Ej. Paracetamol 500mg" class="input" autofocus>
+                            @error('nombre') <p class="mt-1 text-[11px] font-medium text-red-500">{{ $message }}</p> @enderror
                         </div>
 
                         @if($tipo === 'medicina')
                         <div>
-                            <label class="text-xs font-medium text-gray-600 dark:text-gray-300">
+                            <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                                 Vincular con catálogo clínico
                                 <span class="font-normal text-gray-400">(para descuento automático de inventario)</span>
                             </label>
-                            <select wire:model="medicamento_id" class="mt-1 block w-full rounded-xl border-gray-300 bg-white text-sm shadow-sm focus:border-palm-500 focus:ring-palm-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white">
+                            <select wire:model="medicamento_id" class="input">
                                 <option value="">— Sin vincular —</option>
                                 @foreach($this->medicamentosCatalog as $med)
                                     <option value="{{ $med->id }}">{{ $med->nombre }}</option>
@@ -219,25 +230,33 @@
                         @endif
 
                         <div>
-                            <label class="text-xs font-medium text-gray-600 dark:text-gray-300">Fecha de caducidad</label>
-                            <input type="date" wire:model="fecha_caducidad" class="mt-1 block w-full rounded-xl border-gray-300 bg-white text-sm shadow-sm focus:border-palm-500 focus:ring-palm-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white">
+                            <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Fecha de caducidad</label>
+                            <input type="date" wire:model="fecha_caducidad" class="input">
                         </div>
 
                         <div>
-                            <label class="text-xs font-medium text-gray-600 dark:text-gray-300">Observaciones</label>
-                            <textarea wire:model="observaciones" rows="3" placeholder="Opcional" class="mt-1 block w-full rounded-xl border-gray-300 bg-white text-sm shadow-sm focus:border-palm-500 focus:ring-palm-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white"></textarea>
+                            <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Observaciones</label>
+                            <textarea wire:model="observaciones" rows="3" placeholder="Opcional" class="input"></textarea>
                         </div>
 
-                        <label class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-                            <input type="checkbox" wire:model="activo" class="rounded border-gray-300 text-palm-600 focus:ring-palm-500"> Disponible para usar
+                        <label class="flex items-center gap-2 text-xs font-medium text-gray-600 dark:text-gray-400">
+                            <input type="checkbox" wire:model="activo" class="h-4 w-4 rounded border-gray-300 text-palm-600 focus:ring-palm-500"> Disponible para usar
                         </label>
-
-                        <div class="flex flex-col-reverse gap-2 border-t border-gray-100 pt-4 dark:border-gray-800 sm:flex-row sm:justify-end">
-                            <button type="button" wire:click="cerrarModalProducto" class="rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-600 shadow-sm transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-800">Cancelar</button>
-                            <button class="rounded-xl bg-palm-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-palm-600/20 transition hover:bg-palm-700">Guardar producto</button>
-                        </div>
                     </form>
-                </section>
+
+                    {{-- Footer --}}
+                    <div class="flex items-center justify-end gap-2 border-t border-gray-100 px-5 py-3.5 sm:px-6 dark:border-gray-800">
+                        <button type="button" wire:click="cerrarModalProducto"
+                            class="btn-outline px-3 py-2 text-xs sm:px-4 sm:py-2.5 sm:text-sm">
+                            Cancelar
+                        </button>
+                        <button type="button" wire:click="guardar"
+                            class="btn-primary px-3 py-2 text-xs sm:px-4 sm:py-2.5 sm:text-sm">
+                            <svg class="h-3.5 w-3.5 sm:h-4 sm:w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span>Guardar producto</span>
+                        </button>
+                    </div>
+                </div>
             </div>
         @endif
     </div>

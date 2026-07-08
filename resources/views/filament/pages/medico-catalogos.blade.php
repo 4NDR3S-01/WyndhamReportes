@@ -187,35 +187,42 @@
                 @endif
         </section>
 
-        {{-- MODAL: CREAR / EDITAR --}}
+        {{-- MODAL: CREAR / EDITAR — ESTANDARIZADO --}}
         @if ($modalAbierto)
-            <div
-                class="flex items-center justify-center p-4 sm:p-6"
-                style="position: fixed; inset: 0; z-index: 99999; background: rgba(15, 23, 42, 0.58); backdrop-filter: blur(6px);"
-                wire:click.self="cerrarModal"
-            >
-                <section class="w-full overflow-hidden rounded-2xl border border-white/70 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.35)] ring-1 ring-gray-950/5 dark:border-gray-800 dark:bg-gray-900 dark:ring-white/10" style="max-width: 460px;">
-                    <div class="bg-gradient-to-br from-ocean-50 via-white to-white px-5 py-4 dark:from-ocean-950/30 dark:via-gray-900 dark:to-gray-900">
-                        <div class="flex items-start justify-between gap-4">
-                            <div class="flex min-w-0 gap-3">
-                                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-ocean-600 text-white shadow-sm shadow-ocean-600/25">
-                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v12m6-6H6" /></svg>
-                                </div>
-                                <div class="min-w-0">
-                                    <h3 class="text-base font-semibold text-gray-950 dark:text-white">{{ $editandoId ? 'Editar registro' : 'Nuevo registro' }}</h3>
-                                    <p class="mt-1 text-sm leading-5 text-gray-500 dark:text-gray-400">{{ $editandoId ? 'Actualizá el valor seleccionado.' : 'Agregá un valor a ' . ($tipos[$tipo] ?? $tipo) . '.' }}</p>
-                                </div>
+            <div class="modal-overlay" wire:click.self="cerrarModal" x-data
+                 x-on:keydown.escape.window="$wire.cerrarModal()"
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-100"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0">
+                <div class="modal-panel !max-w-md w-full mx-auto" wire:click.stop>
+                    <div class="modal-accent-ocean"></div>
+
+                    {{-- Header --}}
+                    <div class="flex items-center justify-between gap-2 px-5 py-4 sm:px-6">
+                        <div class="flex min-w-0 items-center gap-3">
+                            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-ocean-400 to-ocean-600 text-white shadow-md shadow-ocean-500/20">
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v12m6-6H6"/></svg>
+                            </span>
+                            <div class="min-w-0">
+                                <h3 class="truncate text-[15px] font-bold text-gray-900 dark:text-white">{{ $editandoId ? 'Editar registro' : 'Nuevo registro' }}</h3>
+                                <p class="text-[11px] text-gray-400 dark:text-gray-500">{{ $editandoId ? 'Actualizá el valor seleccionado.' : 'Agregá un valor a ' . ($tipos[$tipo] ?? $tipo) . '.' }}</p>
                             </div>
-                            <button type="button" wire:click="cerrarModal" class="rounded-full p-2 text-gray-400 transition hover:bg-white hover:text-gray-700 hover:shadow-sm dark:hover:bg-gray-800 dark:hover:text-gray-200">
-                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 18 6M6 6l12 12" /></svg>
-                            </button>
                         </div>
+                        <button type="button" wire:click="cerrarModal"
+                            class="shrink-0 rounded-xl p-2 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+                            aria-label="Cerrar modal">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </button>
                     </div>
 
-                    <form wire:submit.prevent="guardar" class="space-y-4 px-5 py-4">
+                    {{-- Formulario --}}
+                    <form wire:submit.prevent="guardar" class="scroll-thin max-h-[65vh] overflow-y-auto bg-gray-50/50 p-4 sm:p-6 space-y-4 dark:bg-gray-950/20">
                         <div>
-                            <label class="text-xs font-medium text-gray-600 dark:text-gray-300">Sección</label>
-                            <select wire:model.live="tipo" class="mt-1 block w-full rounded-xl border-gray-300 bg-white text-sm shadow-sm focus:border-ocean-500 focus:ring-ocean-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white">
+                            <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Sección</label>
+                            <select wire:model.live="tipo" class="input">
                                 @foreach ($tipos as $key => $label)
                                     <option value="{{ $key }}">{{ $label }}</option>
                                 @endforeach
@@ -223,63 +230,69 @@
                         </div>
 
                         <div>
-                            <label class="text-xs font-medium text-gray-600 dark:text-gray-300">Nombre</label>
-                            <input wire:model="nombre" placeholder="Ej. NUEVA ÁREA" class="mt-1 block w-full rounded-xl border-gray-300 bg-white text-sm shadow-sm focus:border-ocean-500 focus:ring-ocean-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white" autofocus>
-                            @error('nombre') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
+                            <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Nombre <span class="text-red-400">*</span></label>
+                            <input wire:model="nombre" placeholder="Ej. NUEVA ÁREA" class="input" autofocus>
+                            @error('nombre') <p class="mt-1 text-[11px] font-medium text-red-500">{{ $message }}</p> @enderror
                         </div>
 
-                        <label class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-                            <input type="checkbox" wire:model="activo" class="rounded border-gray-300 text-ocean-600 focus:ring-ocean-500"> Disponible para usar
+                        <label class="flex items-center gap-2 text-xs font-medium text-gray-600 dark:text-gray-400">
+                            <input type="checkbox" wire:model="activo" class="h-4 w-4 rounded border-gray-300 text-ocean-600 focus:ring-ocean-500"> Disponible para usar
                         </label>
-
-                        <div class="flex flex-col-reverse gap-2 border-t border-gray-100 pt-4 dark:border-gray-800 sm:flex-row sm:justify-end">
-                            <button type="button" wire:click="cerrarModal" class="rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-600 shadow-sm transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-800">Cancelar</button>
-                            <button class="rounded-xl bg-ocean-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-ocean-600/20 transition hover:bg-ocean-700">Guardar registro</button>
-                        </div>
                     </form>
-                </section>
+
+                    {{-- Footer --}}
+                    <div class="flex items-center justify-end gap-2 border-t border-gray-100 px-5 py-3.5 sm:px-6 dark:border-gray-800">
+                        <button type="button" wire:click="cerrarModal"
+                            class="btn-outline px-3 py-2 text-xs sm:px-4 sm:py-2.5 sm:text-sm">
+                            Cancelar
+                        </button>
+                        <button type="button" wire:click="guardar"
+                            class="btn-primary px-3 py-2 text-xs sm:px-4 sm:py-2.5 sm:text-sm">
+                            <svg class="h-3.5 w-3.5 sm:h-4 sm:w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span>Guardar registro</span>
+                        </button>
+                    </div>
+                </div>
             </div>
         @endif
 
-        {{-- MODAL: ELIMINAR --}}
+        {{-- MODAL: ELIMINAR — ESTANDARIZADO --}}
         @if ($modalEliminarAbierto)
-            <div
-                class="flex items-center justify-center p-4 sm:p-6"
-                style="position: fixed; inset: 0; z-index: 99999; background: rgba(15, 23, 42, 0.58); backdrop-filter: blur(6px);"
-                wire:click.self="cancelarEliminar"
-            >
-                <section class="w-full overflow-hidden rounded-2xl border border-white/70 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.35)] ring-1 ring-gray-950/5 dark:border-gray-800 dark:bg-gray-900 dark:ring-white/10" style="max-width: 400px;">
-                    <div class="px-5 py-5">
-                        <div class="flex gap-4">
-                            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-red-50 text-red-600 ring-1 ring-red-100 dark:bg-red-950/30 dark:text-red-400 dark:ring-red-900/50">
-                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v4m0 4h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z" /></svg>
-                            </div>
-                            <div class="min-w-0 flex-1">
-                                <h3 class="text-base font-semibold text-gray-950 dark:text-white">Eliminar registro</h3>
-                                <p class="mt-1 text-sm leading-6 text-gray-500 dark:text-gray-400">
-                                    @if ($this->registroAEliminar)
-                                        Vas a eliminar <strong class="font-semibold text-gray-900 dark:text-white">{{ $this->registroAEliminar->nombre }}</strong> de {{ $tipos[$tipo] ?? 'esta sección' }}.
-                                    @else
-                                        Vas a eliminar este registro.
-                                    @endif
-                                    Esta acción no se puede deshacer.
-                                </p>
-                            </div>
+            <div class="modal-overlay" wire:click.self="cancelarEliminar" x-data
+                 x-on:keydown.escape.window="$wire.cancelarEliminar()"
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-100"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0">
+                <div class="modal-panel w-[calc(100%-1rem)] sm:max-w-sm mx-auto" wire:click.stop>
+                    <div class="modal-accent" style="background: linear-gradient(90deg, #ef4444, #dc2626, #b91c1c);"></div>
+                    <div class="bg-gradient-to-br from-red-50 via-white to-white px-5 py-5 text-center dark:from-red-950/30 dark:via-gray-900 dark:to-gray-900">
+                        <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-100 ring-4 ring-red-50 dark:bg-red-950/30 dark:ring-red-950/10">
+                            <svg class="h-7 w-7 text-red-500 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v4m0 4h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z" /></svg>
                         </div>
-
-                        <div class="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-                            <button type="button" wire:click="cancelarEliminar" class="rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-600 shadow-sm transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-800">Cancelar</button>
-                            <button
-                                type="button"
-                                wire:click="confirmarEliminar"
-                                class="rounded-xl px-5 py-2.5 text-sm font-semibold shadow-sm transition"
-                                style="background-color: #dc2626; color: #ffffff; border: 1px solid #dc2626; min-width: 120px;"
-                                onmouseover="this.style.backgroundColor='#b91c1c'; this.style.borderColor='#b91c1c'"
-                                onmouseout="this.style.backgroundColor='#dc2626'; this.style.borderColor='#dc2626'"
-                            >Eliminar</button>
-                        </div>
+                        <h4 class="mt-4 text-base font-bold text-gray-900 dark:text-white">Eliminar registro</h4>
+                        <p class="mt-2 text-sm leading-relaxed text-gray-500 dark:text-gray-400">
+                            @if ($this->registroAEliminar)
+                                Vas a eliminar <strong class="font-semibold text-gray-900 dark:text-white">{{ $this->registroAEliminar->nombre }}</strong> de {{ $tipos[$tipo] ?? 'esta sección' }}.
+                            @else
+                                Vas a eliminar este registro.
+                            @endif
+                            Esta acción no se puede deshacer.
+                        </p>
                     </div>
-                </section>
+                    <div class="flex border-t border-gray-100 dark:border-gray-800">
+                        <button wire:click="cancelarEliminar"
+                            class="flex-1 border-r border-gray-100 px-4 py-3.5 text-sm font-semibold text-gray-600 transition hover:bg-gray-50 dark:border-gray-800 dark:text-gray-400 dark:hover:bg-gray-950">
+                            Cancelar
+                        </button>
+                        <button wire:click="confirmarEliminar"
+                            class="flex-1 px-4 py-3.5 text-sm font-semibold text-red-600 transition hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/20">
+                            Eliminar
+                        </button>
+                    </div>
+                </div>
             </div>
         @endif
     </div>
