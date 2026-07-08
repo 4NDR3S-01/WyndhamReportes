@@ -560,12 +560,25 @@ class MedicoPartesDiarios extends Page
 
     public function getPacientesProperty(): Collection
     {
+        $busqueda = trim($this->buscarPaciente);
+
         return MedicoPaciente::query()->with(['area', 'cargo', 'examenes', 'visitas'])
-            ->when($this->buscarPaciente !== '', fn ($q) => $q->where(function ($q) {
-                $q->where('nombres', 'like', '%' . $this->buscarPaciente . '%')
-                  ->orWhere('cedula', 'like', '%' . $this->buscarPaciente . '%')
-                  ->orWhereHas('area', fn ($a) => $a->where('nombre', 'like', '%' . $this->buscarPaciente . '%'));
-            }))
+            ->when($busqueda !== '', function ($q) use ($busqueda) {
+                $upper = mb_strtoupper($busqueda);
+                $sinAcentos = str_replace(
+                    ['Á','É','Í','Ó','Ú','À','È','Ì','Ò','Ù','Â','Ê','Î','Ô','Û','Ã','Õ','Ä','Ë','Ï','Ö','Ü','Ç','Ñ','Ñ'],
+                    ['A','E','I','O','U','A','E','I','O','U','A','E','I','O','U','A','O','A','E','I','O','U','C','N','N'],
+                    $upper
+                );
+
+                $q->where(function ($q) use ($upper, $sinAcentos, $busqueda) {
+                    $q->where('nombres', 'like', '%' . $upper . '%')
+                      ->orWhere('nombres', 'like', '%' . $sinAcentos . '%')
+                      ->orWhere('cedula', 'like', '%' . $busqueda . '%')
+                      ->orWhere('cedula', 'like', '%' . $sinAcentos . '%')
+                      ->orWhereHas('area', fn ($a) => $a->where('nombre', 'like', '%' . $upper . '%'));
+                });
+            })
             ->orderByDesc('activo')
             ->orderBy('nombres')
             ->limit(20)
@@ -747,10 +760,18 @@ class MedicoPartesDiarios extends Page
 
         // Búsqueda por texto
         if ($this->buscar !== '') {
-            $query->where(function ($q) {
-                $q->where('nombres', 'like', '%' . $this->buscar . '%')
-                  ->orWhere('observacion', 'like', '%' . $this->buscar . '%')
-                  ->orWhere('habitacion', 'like', '%' . $this->buscar . '%');
+            $busqueda = trim($this->buscar);
+            $upper = mb_strtoupper($busqueda);
+            $sinAcentos = str_replace(
+                ['Á','É','Í','Ó','Ú','À','È','Ì','Ò','Ù','Â','Ê','Î','Ô','Û','Ã','Õ','Ä','Ë','Ï','Ö','Ü','Ç','Ñ','Ñ'],
+                ['A','E','I','O','U','A','E','I','O','U','A','E','I','O','U','A','O','A','E','I','O','U','C','N','N'],
+                $upper
+            );
+            $query->where(function ($q) use ($upper, $sinAcentos) {
+                $q->where('nombres', 'like', '%' . $upper . '%')
+                  ->orWhere('nombres', 'like', '%' . $sinAcentos . '%')
+                  ->orWhere('observacion', 'like', '%' . $upper . '%')
+                  ->orWhere('habitacion', 'like', '%' . $upper . '%');
             });
         }
 

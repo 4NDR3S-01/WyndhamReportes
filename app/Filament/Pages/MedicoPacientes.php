@@ -312,13 +312,24 @@ class MedicoPacientes extends Page
 
     private function queryPacientes(): \Illuminate\Database\Eloquent\Builder
     {
+        $busqueda = trim($this->buscar);
+
         return MedicoPaciente::query()->with(['area', 'cargo', 'examenes', 'visitas'])
-            ->when($this->buscar !== '', function ($q) {
-                $q->where(function ($q) {
-                    $q->where('nombres', 'like', '%' . $this->buscar . '%')
-                      ->orWhere('cedula', 'like', '%' . $this->buscar . '%')
-                      ->orWhereHas('area', fn ($a) => $a->where('nombre', 'like', '%' . $this->buscar . '%'))
-                      ->orWhereHas('cargo', fn ($c) => $c->where('nombre', 'like', '%' . $this->buscar . '%'));
+            ->when($busqueda !== '', function ($q) use ($busqueda) {
+                $q->where(function ($q) use ($busqueda) {
+                    $upper = mb_strtoupper($busqueda);
+                    $sinAcentos = str_replace(
+                        ['Á','É','Í','Ó','Ú','À','È','Ì','Ò','Ù','Â','Ê','Î','Ô','Û','Ã','Õ','Ä','Ë','Ï','Ö','Ü','Ç','Ñ','Ñ'],
+                        ['A','E','I','O','U','A','E','I','O','U','A','E','I','O','U','A','O','A','E','I','O','U','C','N','N'],
+                        $upper
+                    );
+
+                    $q->where('nombres', 'like', '%' . $upper . '%')
+                      ->orWhere('nombres', 'like', '%' . $sinAcentos . '%')
+                      ->orWhere('cedula', 'like', '%' . $busqueda . '%')
+                      ->orWhere('cedula', 'like', '%' . $sinAcentos . '%')
+                      ->orWhereHas('area', fn ($a) => $a->where('nombre', 'like', '%' . $upper . '%'))
+                      ->orWhereHas('cargo', fn ($c) => $c->where('nombre', 'like', '%' . $upper . '%'));
                 });
             })
             ->when($this->areaFiltroId, fn ($q) => $q->where('area_id', $this->areaFiltroId))
