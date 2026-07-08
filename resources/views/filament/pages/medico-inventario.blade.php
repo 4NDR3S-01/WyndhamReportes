@@ -341,7 +341,7 @@
              x-transition:leave="transition ease-in duration-100"
              x-transition:leave-start="opacity-100"
              x-transition:leave-end="opacity-0">
-            <div class="modal-panel !max-w-lg w-full mx-auto" wire:click.stop>
+            <div class="modal-panel !max-w-xl w-full mx-auto" @click.stop>
                 <div class="modal-accent-ocean"></div>
 
                 {{-- Header con icono --}}
@@ -351,8 +351,8 @@
                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                         </span>
                         <div class="min-w-0">
-                            <h3 class="truncate text-[15px] font-bold text-gray-900 dark:text-white">{{ $editandoId ? 'Editar producto' : 'Nuevo producto' }}</h3>
-                            <p class="text-[11px] text-gray-400 dark:text-gray-500">{{ $editandoId ? 'Modifique los campos del producto' : 'Registre una medicina o insumo del dispensario' }}</p>
+                            <h3 class="truncate text-base font-bold text-gray-900 dark:text-white">{{ $editandoId ? 'Editar producto' : 'Nuevo producto' }}</h3>
+                            <p class="text-xs text-gray-400 dark:text-gray-500">{{ $editandoId ? 'Modifique los campos del producto' : 'Registre una medicina o insumo del dispensario' }}</p>
                         </div>
                     </div>
                     <button type="button" wire:click="cerrarModalProducto"
@@ -363,30 +363,30 @@
                 </div>
 
                 {{-- Formulario --}}
-                <form wire:submit.prevent="guardarProducto" class="scroll-thin max-h-[65vh] overflow-y-auto bg-gray-50/50 p-4 sm:p-6 space-y-4 dark:bg-gray-950/20">
+                <form wire:submit.prevent="guardarProducto" class="scroll-thin max-h-[70vh] overflow-y-auto bg-gray-50/50 p-5 sm:p-7 space-y-5 dark:bg-gray-950/20">
                     <div class="grid gap-2 sm:grid-cols-2">
                         <div>
-                            <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Tipo</label>
+                            <label class="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Tipo</label>
                             <select wire:model="productoTipo" class="input">
                                 <option value="medicina">Medicina</option>
                                 <option value="insumo">Insumo</option>
                             </select>
                         </div>
                         <div>
-                            <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Stock mínimo</label>
+                            <label class="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Stock mínimo</label>
                             <input type="number" step="0.01" wire:model="productoStockMinimo" class="input">
                         </div>
                     </div>
 
                     <div>
-                        <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Nombre <span class="text-red-400">*</span></label>
+                        <label class="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Nombre <span class="text-red-400">*</span></label>
                         <input wire:model="productoNombre" placeholder="Ej. Paracetamol 500mg" class="input" autofocus>
                         @error('productoNombre') <p class="mt-1 text-[11px] font-medium text-red-500">{{ $message }}</p> @enderror
                     </div>
 
                     @if($productoTipo === 'medicina')
                     <div>
-                        <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                        <label class="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                             Vincular con catálogo clínico
                             <span class="font-normal text-gray-400">(descuento automático al dispensar)</span>
                         </label>
@@ -401,7 +401,7 @@
 
                     <div class="grid gap-2 sm:grid-cols-2">
                         <div>
-                            <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Fecha de caducidad</label>
+                            <label class="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Fecha de caducidad</label>
                             <input type="date" wire:model="productoFechaCaducidad" class="input">
                         </div>
                         <div class="flex items-end pb-1">
@@ -412,7 +412,7 @@
                     </div>
 
                     <div>
-                        <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Observaciones</label>
+                        <label class="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Observaciones</label>
                         <textarea wire:model="productoObservaciones" rows="2" placeholder="Opcional" class="input"></textarea>
                     </div>
                 </form>

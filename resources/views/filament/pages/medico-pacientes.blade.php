@@ -400,7 +400,7 @@
                  x-transition:leave-start="opacity-100"
                  x-transition:leave-end="opacity-0"
                  x-on:keydown.escape.window="$wire.cerrarModal()">
-                <div class="modal-panel !max-w-2xl w-[calc(100%-0.5rem)] sm:!w-full mx-auto" wire:click.stop>
+                <div class="modal-panel !max-w-3xl w-[calc(100%-0.5rem)] sm:!w-full mx-auto" @click.stop>
                     <div class="{{ $editandoId ? 'modal-accent-sand' : 'modal-accent-ocean' }}"></div>
                     {{-- Header --}}
                     <div class="flex items-center justify-between gap-2 border-b border-gray-100 px-4 py-3 sm:px-6 sm:py-4 dark:border-gray-800">
@@ -431,7 +431,7 @@
 
                     {{-- Form body --}}
                     <form wire:submit.prevent="guardar"
-                        class="scroll-thin max-h-[50vh] overflow-y-auto divide-y divide-gray-50 sm:max-h-[60vh] dark:divide-gray-800/50">
+                        class="scroll-thin max-h-[65vh] overflow-y-auto divide-y divide-gray-50 sm:max-h-[70vh] dark:divide-gray-800/50">
 
                         {{-- SECTION: Datos personales --}}
                         <div class="form-section">
@@ -440,23 +440,23 @@
                                 Datos personales
                             </span>
                             <div>
-                                <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Nombres completos *</label>
+                                <label class="mb-1 block text-[11px] font-bold uppercase text-gray-500 dark:text-gray-400">Nombres completos *</label>
                                 <input wire:model="nombres" placeholder="Nombres y apellidos" class="input" required>
                                 @error('nombres')<p class="mt-1 text-[11px] font-medium text-red-500">{{ $message }}</p>@enderror
                             </div>
                             <div class="grid gap-2.5 sm:grid-cols-2">
                                 <div>
-                                    <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Cédula</label>
+                                    <label class="mb-1 block text-[11px] font-bold uppercase text-gray-500 dark:text-gray-400">Cédula</label>
                                     <input wire:model="cedula" placeholder="Sin cédula" class="input">
                                 </div>
                                 <div>
-                                    <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Edad</label>
+                                    <label class="mb-1 block text-[11px] font-bold uppercase text-gray-500 dark:text-gray-400">Edad</label>
                                     <input type="number" wire:model="edad" placeholder="—" class="input" min="0" max="150">
                                 </div>
                             </div>
                             <div class="grid gap-2.5 sm:grid-cols-2">
                                 <div>
-                                    <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Área</label>
+                                    <label class="mb-1 block text-[11px] font-bold uppercase text-gray-500 dark:text-gray-400">Área</label>
                                     <select wire:model="area_id" class="input">
                                         <option value="">— Seleccionar —</option>
                                         @foreach ($this->areasParaSelect as $area)
@@ -465,7 +465,7 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Cargo</label>
+                                    <label class="mb-1 block text-[11px] font-bold uppercase text-gray-500 dark:text-gray-400">Cargo</label>
                                     <select wire:model="cargo_id" class="input">
                                         <option value="">— Seleccionar —</option>
                                         @foreach ($this->cargosParaSelect as $cargo)
@@ -476,11 +476,11 @@
                             </div>
                             <div class="grid gap-2.5 sm:grid-cols-3">
                                 <div>
-                                    <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Fecha ingreso</label>
+                                    <label class="mb-1 block text-[11px] font-bold uppercase text-gray-500 dark:text-gray-400">Fecha ingreso</label>
                                     <input type="date" wire:model="fecha_ingreso" class="input">
                                 </div>
                                 <div>
-                                    <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Tipo</label>
+                                    <label class="mb-1 block text-[11px] font-bold uppercase text-gray-500 dark:text-gray-400">Tipo</label>
                                     <select wire:model="tipo" class="input">
                                         <option value="colaborador">Colaborador</option>
                                         <option value="aspirante">Aspirante</option>
@@ -490,7 +490,7 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Teléfono</label>
+                                    <label class="mb-1 block text-[11px] font-bold uppercase text-gray-500 dark:text-gray-400">Teléfono</label>
                                     <input wire:model="telefono" placeholder="09..." class="input">
                                 </div>
                             </div>
@@ -507,21 +507,21 @@
                                 Historial médico
                             </span>
                             <div>
-                                <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Patologías</label>
+                                <label class="mb-1 block text-[11px] font-bold uppercase text-gray-500 dark:text-gray-400">Patologías</label>
                                 <textarea wire:model="patologias" rows="2" placeholder="Describa patologías conocidas..." class="input"></textarea>
                             </div>
                             <div class="grid gap-2.5 sm:grid-cols-2">
                                 <div>
-                                    <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Vacunas</label>
+                                    <label class="mb-1 block text-[11px] font-bold uppercase text-gray-500 dark:text-gray-400">Vacunas</label>
                                     <input wire:model="vacunas" placeholder="Ej: COVID-19, Influenza" class="input">
                                 </div>
                                 <div>
-                                    <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Fichas anteriores</label>
+                                    <label class="mb-1 block text-[11px] font-bold uppercase text-gray-500 dark:text-gray-400">Fichas anteriores</label>
                                     <input wire:model="fichas_anteriores" placeholder="Ej: Desde 2020" class="input">
                                 </div>
                             </div>
                             <div>
-                                <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Antecedentes</label>
+                                <label class="mb-1 block text-[11px] font-bold uppercase text-gray-500 dark:text-gray-400">Antecedentes</label>
                                 <textarea wire:model="antecedentes" rows="2" placeholder="Antecedentes médicos relevantes..." class="input"></textarea>
                             </div>
                         </div>
@@ -535,7 +535,7 @@
                             <div class="grid gap-2.5 sm:grid-cols-2">
                                 @foreach(['espirometria' => 'Espirometría', 'ecografia' => 'Ecografía', 'audiometria' => 'Audiometría', 'optometria' => 'Optometría'] as $key => $label)
                                     <div>
-                                        <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">{{ $label }}</label>
+                                        <label class="mb-1 block text-[11px] font-bold uppercase text-gray-500 dark:text-gray-400">{{ $label }}</label>
                                         <input type="date" wire:model="examenesFechas.{{ $key }}" class="input">
                                     </div>
                                 @endforeach
@@ -567,7 +567,7 @@
 
                         {{-- SECTION: Observaciones --}}
                         <div class="form-section !pb-2">
-                            <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Observaciones</label>
+                            <label class="mb-1 block text-[11px] font-bold uppercase text-gray-500 dark:text-gray-400">Observaciones</label>
                             <textarea wire:model="observaciones" rows="2" placeholder="Notas adicionales..." class="input"></textarea>
                         </div>
                     </form>
@@ -601,7 +601,7 @@
                  x-transition:leave-start="opacity-100"
                  x-transition:leave-end="opacity-0"
                  x-on:keydown.escape.window="$wire.cancelarEliminar()">
-                <div class="modal-panel w-[calc(100%-1rem)] sm:max-w-sm mx-auto" wire:click.stop>
+                <div class="modal-panel w-[calc(100%-1rem)] sm:max-w-sm mx-auto" @click.stop>
                     <div class="modal-accent" style="background: linear-gradient(90deg, #ef4444, #dc2626, #b91c1c);"></div>
                     <div class="bg-gradient-to-br from-red-50 via-white to-white px-4 py-4 text-center sm:px-6 sm:py-5 dark:from-red-950/30 dark:via-gray-900 dark:to-gray-900">
                         <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100 ring-4 ring-red-50 sm:h-14 sm:w-14 dark:bg-red-950/30 dark:ring-red-950/10">

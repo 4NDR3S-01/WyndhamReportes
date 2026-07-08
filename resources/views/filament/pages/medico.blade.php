@@ -260,8 +260,8 @@
                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/></svg>
                         </span>
                         <div class="min-w-0">
-                            <h3 class="truncate text-[15px] font-bold text-gray-900 dark:text-white">Resumen KARDEX Mensual</h3>
-                            <p class="text-[11px] text-gray-400 dark:text-gray-500">Atenciones y pacientes por mes</p>
+                            <h3 class="truncate text-base font-bold text-gray-900 dark:text-white">Resumen KARDEX Mensual</h3>
+                            <p class="text-xs text-gray-400 dark:text-gray-500">Atenciones y pacientes por mes</p>
                         </div>
                     </div>
                     <button type="button" @click="open = false"
@@ -270,7 +270,7 @@
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
                 </div>
-                <div class="scroll-thin max-h-[70vh] overflow-y-auto bg-gray-50/50 p-4 sm:p-6 dark:bg-gray-950/20">
+                <div class="scroll-thin max-h-[70vh] overflow-y-auto bg-gray-50/50 p-5 sm:p-7 dark:bg-gray-950/20">
                     <div class="flex items-center justify-between gap-2 mb-4">
                         <div>
                             <span class="text-sm font-semibold text-gray-950 dark:text-white">Seleccionar Mes</span>
@@ -329,8 +329,8 @@
                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"/></svg>
                         </span>
                         <div class="min-w-0">
-                            <h3 class="truncate text-[15px] font-bold text-gray-900 dark:text-white">Medicamentos más usados</h3>
-                            <p class="text-[11px] text-gray-400 dark:text-gray-500">Histórico de consumos en el dispensario</p>
+                            <h3 class="truncate text-base font-bold text-gray-900 dark:text-white">Medicamentos más usados</h3>
+                            <p class="text-xs text-gray-400 dark:text-gray-500">Histórico de consumos en el dispensario</p>
                         </div>
                     </div>
                     <button type="button" @click="open = false"
@@ -339,7 +339,7 @@
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
                 </div>
-                <div class="scroll-thin max-h-[70vh] overflow-y-auto bg-gray-50/50 p-4 sm:p-6 dark:bg-gray-950/20">
+                <div class="scroll-thin max-h-[70vh] overflow-y-auto bg-gray-50/50 p-5 sm:p-7 dark:bg-gray-950/20">
                     <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                         @foreach ($this->medicamentosMasUsados as $med)
                             <div class="flex items-center justify-between rounded-xl border border-tide-100 bg-tide-50/50 px-3 py-2 text-sm dark:border-tide-900 dark:bg-tide-950/20">
@@ -373,8 +373,8 @@
                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/></svg>
                         </span>
                         <div class="min-w-0">
-                            <h3 class="truncate text-[15px] font-bold text-gray-900 dark:text-white">Alertas de Stock Bajo</h3>
-                            <p class="text-[11px] text-gray-400 dark:text-gray-500">{{ $this->kardexAlertas->count() }} productos por debajo del stock mínimo</p>
+                            <h3 class="truncate text-base font-bold text-gray-900 dark:text-white">Alertas de Stock Bajo</h3>
+                            <p class="text-xs text-gray-400 dark:text-gray-500">{{ $this->kardexAlertas->count() }} productos por debajo del stock mínimo</p>
                         </div>
                     </div>
                     <button type="button" @click="open = false"
@@ -383,7 +383,7 @@
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
                 </div>
-                <div class="scroll-thin max-h-[70vh] overflow-y-auto bg-gray-50/50 p-4 sm:p-6 dark:bg-gray-950/20">
+                <div class="scroll-thin max-h-[70vh] overflow-y-auto bg-gray-50/50 p-5 sm:p-7 dark:bg-gray-950/20">
                     <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                         @foreach ($this->kardexAlertas as $alerta)
                             @php $saldoAlerta = $alerta->saldoActual(); @endphp
@@ -418,8 +418,8 @@
                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182"/></svg>
                         </span>
                         <div class="min-w-0">
-                            <h3 class="truncate text-[15px] font-bold text-gray-900 dark:text-white">Movimientos Recientes</h3>
-                            <p class="text-[11px] text-gray-400 dark:text-gray-500">Últimos ingresos, egresos y ajustes de inventario</p>
+                            <h3 class="truncate text-base font-bold text-gray-900 dark:text-white">Movimientos Recientes</h3>
+                            <p class="text-xs text-gray-400 dark:text-gray-500">Últimos ingresos, egresos y ajustes de inventario</p>
                         </div>
                     </div>
                     <button type="button" @click="open = false"
@@ -428,7 +428,7 @@
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
                 </div>
-                <div class="scroll-thin max-h-[70vh] overflow-y-auto bg-gray-50/50 p-4 sm:p-6 dark:bg-gray-950/20">
+                <div class="scroll-thin max-h-[70vh] overflow-y-auto bg-gray-50/50 p-5 sm:p-7 dark:bg-gray-950/20">
                     <div class="overflow-x-auto">
                         <table class="min-w-full text-sm">
                             <thead>
@@ -486,8 +486,8 @@
                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.5 14.25l-2.625 2.625M15 13.5l-2.625 2.625M19.5 14.25l-4.5 4.5M19.5 14.25V11.25m0 0h-3.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         </span>
                         <div class="min-w-0">
-                            <h3 class="truncate text-[15px] font-bold text-gray-900 dark:text-white">Kardex Inventario — Medicinas</h3>
-                            <p class="text-[11px] text-gray-400 dark:text-gray-500">Inventario detallado con saldos y consumos</p>
+                            <h3 class="truncate text-base font-bold text-gray-900 dark:text-white">Kardex Inventario — Medicinas</h3>
+                            <p class="text-xs text-gray-400 dark:text-gray-500">Inventario detallado con saldos y consumos</p>
                         </div>
                     </div>
                     <button type="button" @click="open = false"
@@ -496,7 +496,7 @@
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
                 </div>
-                <div class="scroll-thin max-h-[70vh] overflow-y-auto bg-gray-50/50 p-4 sm:p-6 dark:bg-gray-950/20">
+                <div class="scroll-thin max-h-[70vh] overflow-y-auto bg-gray-50/50 p-5 sm:p-7 dark:bg-gray-950/20">
                     <div class="overflow-x-auto">
                         <table class="min-w-full text-sm">
                             <thead class="sticky top-0 bg-white dark:bg-gray-900">
@@ -557,8 +557,8 @@
                                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 21h7.5V10.75M2.25 21h1.5m18 0h-18M2.25 9l4.5-1.636M18.75 3l-1.5.545m0 6.205l3 1m1.5.5l-1.5-.5M6.75 7.364V3h-3v18m3-13.636l10.5-3.819"/></svg>
                             </span>
                             <div class="min-w-0">
-                                <h3 class="truncate text-[15px] font-bold text-gray-900 dark:text-white">Kardex de Insumos</h3>
-                                <p class="text-[11px] text-gray-400 dark:text-gray-500">Insumos y suministros médicos</p>
+                                <h3 class="truncate text-base font-bold text-gray-900 dark:text-white">Kardex de Insumos</h3>
+                                <p class="text-xs text-gray-400 dark:text-gray-500">Insumos y suministros médicos</p>
                             </div>
                         </div>
                         <button type="button" @click="open = false"
@@ -567,7 +567,7 @@
                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                         </button>
                     </div>
-                    <div class="scroll-thin max-h-[60vh] overflow-y-auto bg-gray-50/50 p-4 sm:p-6 dark:bg-gray-950/20">
+                    <div class="scroll-thin max-h-[65vh] overflow-y-auto bg-gray-50/50 p-5 sm:p-7 dark:bg-gray-950/20">
                         <div class="overflow-x-auto">
                             <table class="min-w-full text-sm">
                                 <thead class="sticky top-0 bg-white dark:bg-gray-900">

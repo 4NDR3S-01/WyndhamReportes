@@ -305,7 +305,7 @@
                  x-transition:leave="transition ease-in duration-100"
                  x-transition:leave-start="opacity-100"
                  x-transition:leave-end="opacity-0">
-                <div class="modal-panel !max-w-3xl w-full mx-auto sm:px-0" wire:click.stop
+                <div class="modal-panel !max-w-5xl w-full mx-auto sm:px-0" @click.stop
                      x-on:keydown.escape.window="$wire.cerrarModalAtencion()">
                     {{-- Accent gradient bar --}}
                     <div class="{{ $editandoId ? 'modal-accent-sand' : 'modal-accent-ocean' }}"></div>
@@ -323,10 +323,10 @@
                                 </svg>
                             </span>
                             <div class="min-w-0">
-                                <h3 class="truncate text-[15px] font-bold text-gray-900 dark:text-white">
+                                <h3 class="truncate text-base font-bold text-gray-900 dark:text-white">
                                     {{ $editandoId ? 'Editando atención #' . $editandoId : 'Nueva atención médica' }}
                                 </h3>
-                                <p class="text-[11px] text-gray-400 sm:text-xs dark:text-gray-500">
+                                <p class="text-xs text-gray-400 dark:text-gray-500">
                                     {{ $editandoId ? 'Modifique los campos necesarios y guarde los cambios' : 'Complete el formulario para registrar la atención' }}
                                 </p>
                             </div>
@@ -340,7 +340,7 @@
 
                     {{-- Form body — scrollable --}}
                     <form wire:submit.prevent="guardar"
-                        class="scroll-thin max-h-[65vh] overflow-y-auto bg-gray-50/50 p-4 sm:p-6 space-y-6 dark:bg-gray-950/20">
+                        class="scroll-thin max-h-[70vh] overflow-y-auto bg-gray-50/50 p-5 sm:p-7 space-y-6 dark:bg-gray-950/20">
 
                         {{-- 1. INFORMACIÓN DEL PACIENTE --}}
                         <div class="rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
@@ -349,16 +349,16 @@
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                                 </span>
                                 <div>
-                                    <h4 class="text-[13px] font-bold text-gray-900 dark:text-white">1. Información del Paciente</h4>
-                                    <p class="text-[11px] text-gray-500">Datos personales, ubicación y ficha médica</p>
+                                    <h4 class="text-sm font-bold text-gray-900 dark:text-white">1. Información del Paciente</h4>
+                                    <p class="text-xs text-gray-500">Datos personales, ubicación y ficha médica</p>
                                 </div>
                             </div>
                             
-                            <div class="p-5 space-y-6">
+                            <div class="p-5 sm:p-6 space-y-5">
                                 {{-- Fecha + Buscar paciente (Nombre Completo) --}}
                                 <div class="grid gap-4 sm:grid-cols-3">
                                     <div class="sm:col-span-1">
-                                        <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                                        <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                                             Fecha <span class="text-red-400">*</span>
                                         </label>
                                         <input type="date" wire:model="fecha" class="input">
@@ -402,7 +402,7 @@
                                             if (e.key === 'Escape') { e.preventDefault(); this.cerrar(); }
                                         }
                                     }" x-on:click.outside="cerrar()" x-on:close-comboboxes.window="cerrar()" x-on:keydown="navegar($event)">
-                                        <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                                        <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                                             Nombre completo <span class="text-red-400">*</span>
                                         </label>
                                         <div class="relative">
@@ -520,7 +520,7 @@
                                                 <div class="flex items-start gap-2 rounded-lg border border-red-100 bg-red-50/50 p-2.5 dark:border-red-900/30 dark:bg-red-950/10">
                                                     <svg class="mt-0.5 h-4 w-4 shrink-0 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
                                                     <div class="min-w-0">
-                                                        <p class="text-[10px] font-bold uppercase text-red-600 dark:text-red-400">Patologías</p>
+                                                        <p class="text-xs font-bold uppercase text-red-600 dark:text-red-400">Patologías</p>
                                                         <p class="mt-0.5 text-[11px] leading-relaxed text-gray-700 dark:text-gray-300">{{ $sel->patologias }}</p>
                                                     </div>
                                                 </div>
@@ -621,11 +621,11 @@
                                 {{-- Fila: Edad / Área / Cargo --}}
                                 <div class="grid grid-cols-4 gap-3 sm:gap-4">
                                     <div>
-                                        <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Edad</label>
+                                        <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Edad</label>
                                         <input type="number" wire:model="edad" placeholder="—" class="input text-center">
                                     </div>
                                     <div class="col-span-2">
-                                        <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Área</label>
+                                        <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Área</label>
                                         <select wire:model="area_id" class="input">
                                             <option value="">— Seleccionar —</option>
                                             @foreach ($this->areaCatalog as $a)
@@ -634,7 +634,7 @@
                                         </select>
                                     </div>
                                     <div>
-                                        <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Cargo</label>
+                                        <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Cargo</label>
                                         <select wire:model="cargo_id" class="input">
                                             <option value="">— Seleccionar —</option>
                                             @foreach ($this->cargoCatalog as $c)
@@ -648,7 +648,7 @@
                                 <div class="grid gap-3 sm:gap-4 sm:grid-cols-2">
                                     {{-- Tipo --}}
                                     <div>
-                                        <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                                        <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                                             Tipo de paciente <span class="text-red-400">*</span>
                                         </label>
                                         <div class="flex gap-2">
@@ -667,7 +667,7 @@
 
                                     {{-- Turno --}}
                                     <div>
-                                        <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Turno</label>
+                                        <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Turno</label>
                                         <div class="flex gap-2">
                                             @foreach(['mañana','tarde','noche'] as $t)
                                                 <button type="button" wire:click="toggleTurno('{{ $t }}')"
@@ -685,7 +685,7 @@
                                     <div x-transition:enter="transition ease-out duration-150"
                                          x-transition:enter-start="opacity-0 -translate-y-1"
                                          class="sm:max-w-xs">
-                                        <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-sand-600 dark:text-sand-400">
+                                        <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-sand-600 dark:text-sand-400">
                                             Nº Habitación <span class="text-red-400">*</span>
                                         </label>
                                         <input wire:model="habitacion" placeholder="Ej: 301"
@@ -703,8 +703,8 @@
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
                                 </span>
                                 <div>
-                                    <h4 class="text-[13px] font-bold text-gray-900 dark:text-white">2. Evaluación Clínica</h4>
-                                    <p class="text-[11px] text-gray-500">Causa, diagnóstico y observaciones de la atención</p>
+                                    <h4 class="text-sm font-bold text-gray-900 dark:text-white">2. Evaluación Clínica</h4>
+                                    <p class="text-xs text-gray-500">Causa, diagnóstico y observaciones de la atención</p>
                                 </div>
                             </div>
                             <div class="p-5 space-y-5">
@@ -751,7 +751,7 @@
                                         x-on:mousedown.outside="open = false"
                                         x-on:close-comboboxes.window="open = false">
 
-                                        <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                                        <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                                             Causa <span class="text-red-400">*</span>
                                         </label>
                                         <div class="relative">
@@ -831,7 +831,7 @@
                                         x-on:mousedown.outside="open = false"
                                         x-on:close-comboboxes.window="open = false">
 
-                                        <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Diagnóstico</label>
+                                        <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Diagnóstico</label>
                                         <div class="relative">
                                             <input
                                                 type="text"
@@ -876,7 +876,7 @@
                                 </div>
 
                                 <div>
-                                    <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Observaciones y Notas Clínicas</label>
+                                    <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Observaciones y Notas Clínicas</label>
                                     <textarea wire:model="observacion" rows="3" placeholder="Redacte cualquier nota adicional sobre el diagnóstico, la consulta o el estado del paciente..."
                                         class="input resize-none bg-gray-50/50 dark:bg-gray-950/20 focus:bg-white dark:focus:bg-gray-900 transition-colors"></textarea>
                                 </div>
@@ -890,12 +890,12 @@
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
                                 </span>
                                 <div>
-                                    <h4 class="text-[13px] font-bold text-gray-900 dark:text-white">3. Tratamiento y Reposo</h4>
-                                    <p class="text-[11px] text-gray-500">Medicación prescrita y certificados médicos emitidos</p>
+                                    <h4 class="text-sm font-bold text-gray-900 dark:text-white">3. Tratamiento y Reposo</h4>
+                                    <p class="text-xs text-gray-500">Medicación prescrita y certificados médicos emitidos</p>
                                 </div>
                             </div>
-                            <div class="p-5 space-y-6">
-                                
+                            <div class="p-5 sm:p-6 space-y-5">
+
                                 {{-- Medicamentos --}}
                                 <div class="space-y-3">
                                     <div class="flex items-center justify-between">
@@ -1048,7 +1048,7 @@
                                     <div x-show="abierto" x-collapse>
                                         <div class="mt-3 grid gap-4 rounded-xl border border-gray-100 bg-white p-4 shadow-sm sm:grid-cols-2 dark:border-gray-800 dark:bg-gray-950/50">
                                             <div>
-                                                <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Entidad / Tipo</label>
+                                                <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Entidad / Tipo</label>
                                                 <select wire:model="entidad_certificado_id" class="input">
                                                     <option value="">— Seleccionar —</option>
                                                     @foreach ($this->entidadCatalog as $ec)
@@ -1057,7 +1057,7 @@
                                                 </select>
                                             </div>
                                             <div>
-                                                <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Subsidio</label>
+                                                <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Subsidio</label>
                                                 <select wire:model="tipo_certificado_id" class="input">
                                                     <option value="">— Seleccionar —</option>
                                                     @foreach ($this->tipoCertCatalog as $tc)
@@ -1066,14 +1066,14 @@
                                                 </select>
                                             </div>
                                             <div>
-                                                <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Tiempo de Reposo</label>
+                                                <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Tiempo de Reposo</label>
                                                 <div class="flex gap-2">
                                                     <input type="number" step="0.5" wire:model="horas_certificado" placeholder="Horas" class="input flex-1">
                                                     <input type="number" wire:model="dias_certificado" placeholder="Días" class="input flex-1">
                                                 </div>
                                             </div>
                                             <div>
-                                                <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Fechas (Inicio - Fin)</label>
+                                                <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Fechas (Inicio - Fin)</label>
                                                 <div class="flex items-center gap-2">
                                                     <input type="date" wire:model="fecha_inicio_certificado" class="input flex-1 px-2">
                                                     <span class="text-gray-400">-</span>
@@ -1081,7 +1081,7 @@
                                                 </div>
                                             </div>
                                             <div class="sm:col-span-2">
-                                                <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Médico que certifica</label>
+                                                <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Médico que certifica</label>
                                                 <input wire:model="medico_certifica" placeholder="Nombre del doctor responsable" class="input">
                                             </div>
                                         </div>
@@ -1126,7 +1126,7 @@
                  x-transition:leave="transition ease-in duration-100"
                  x-transition:leave-start="opacity-100"
                  x-transition:leave-end="opacity-0">
-                <div class="modal-panel !max-w-2xl w-[calc(100%-0.5rem)] sm:!w-full mx-auto" wire:click.stop>
+                <div class="modal-panel !max-w-2xl w-[calc(100%-0.5rem)] sm:!w-full mx-auto" @click.stop>
                     {{-- Header --}}
                     <div class="flex items-center justify-between gap-2 border-b border-gray-100 px-4 py-3 sm:px-6 sm:py-4 dark:border-gray-800">
                         <div class="flex min-w-0 items-center gap-2.5 sm:gap-3">
@@ -1157,23 +1157,23 @@
                                 Datos personales
                             </span>
                             <div>
-                                <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Nombres completos <span class="text-red-400">*</span></label>
+                                <label class="mb-1 block text-xs font-bold uppercase text-gray-500 dark:text-gray-400">Nombres completos <span class="text-red-400">*</span></label>
                                 <input wire:model="qNombres" placeholder="Nombres y apellidos" class="input" required>
                                 @error('qNombres')<p class="mt-1 text-[11px] font-medium text-red-500">{{ $message }}</p>@enderror
                             </div>
                             <div class="grid gap-2.5 sm:grid-cols-2">
                                 <div>
-                                    <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Cédula</label>
+                                    <label class="mb-1 block text-xs font-bold uppercase text-gray-500 dark:text-gray-400">Cédula</label>
                                     <input wire:model="qCedula" placeholder="Sin cédula" class="input">
                                 </div>
                                 <div>
-                                    <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Edad</label>
+                                    <label class="mb-1 block text-xs font-bold uppercase text-gray-500 dark:text-gray-400">Edad</label>
                                     <input type="number" wire:model="qEdad" placeholder="—" class="input" min="0" max="150">
                                 </div>
                             </div>
                             <div class="grid gap-2.5 sm:grid-cols-2">
                                 <div>
-                                    <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Área</label>
+                                    <label class="mb-1 block text-xs font-bold uppercase text-gray-500 dark:text-gray-400">Área</label>
                                     <select wire:model="qAreaId" class="input">
                                         <option value="">— Seleccionar —</option>
                                         @foreach ($this->areaCatalog as $area)
@@ -1182,7 +1182,7 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Cargo</label>
+                                    <label class="mb-1 block text-xs font-bold uppercase text-gray-500 dark:text-gray-400">Cargo</label>
                                     <select wire:model="qCargoId" class="input">
                                         <option value="">— Seleccionar —</option>
                                         @foreach ($this->cargoCatalog as $cargo)
@@ -1193,11 +1193,11 @@
                             </div>
                             <div class="grid gap-2.5 sm:grid-cols-3">
                                 <div>
-                                    <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Fecha ingreso</label>
+                                    <label class="mb-1 block text-xs font-bold uppercase text-gray-500 dark:text-gray-400">Fecha ingreso</label>
                                     <input type="date" wire:model="qFechaIngreso" class="input">
                                 </div>
                                 <div>
-                                    <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Tipo <span class="text-red-400">*</span></label>
+                                    <label class="mb-1 block text-xs font-bold uppercase text-gray-500 dark:text-gray-400">Tipo <span class="text-red-400">*</span></label>
                                     <select wire:model="qTipo" class="input">
                                         <option value="colaborador">Colaborador</option>
                                         <option value="aspirante">Aspirante</option>
@@ -1207,7 +1207,7 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Teléfono</label>
+                                    <label class="mb-1 block text-xs font-bold uppercase text-gray-500 dark:text-gray-400">Teléfono</label>
                                     <input wire:model="qTelefono" placeholder="09..." class="input">
                                 </div>
                             </div>
@@ -1224,21 +1224,21 @@
                                 Historial médico
                             </span>
                             <div>
-                                <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Patologías</label>
+                                <label class="mb-1 block text-xs font-bold uppercase text-gray-500 dark:text-gray-400">Patologías</label>
                                 <textarea wire:model="qPatologias" rows="2" placeholder="Describa patologías conocidas..." class="input"></textarea>
                             </div>
                             <div class="grid gap-2.5 sm:grid-cols-2">
                                 <div>
-                                    <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Vacunas</label>
+                                    <label class="mb-1 block text-xs font-bold uppercase text-gray-500 dark:text-gray-400">Vacunas</label>
                                     <input wire:model="qVacunas" placeholder="Ej: COVID-19, Influenza" class="input">
                                 </div>
                                 <div>
-                                    <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Fichas anteriores</label>
+                                    <label class="mb-1 block text-xs font-bold uppercase text-gray-500 dark:text-gray-400">Fichas anteriores</label>
                                     <input wire:model="qFichasAnteriores" placeholder="Ej: Desde 2020" class="input">
                                 </div>
                             </div>
                             <div>
-                                <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Antecedentes</label>
+                                <label class="mb-1 block text-xs font-bold uppercase text-gray-500 dark:text-gray-400">Antecedentes</label>
                                 <textarea wire:model="qAntecedentes" rows="2" placeholder="Antecedentes médicos relevantes..." class="input"></textarea>
                             </div>
                         </div>
@@ -1252,7 +1252,7 @@
                             <div class="grid gap-2.5 sm:grid-cols-2">
                                 @foreach(['espirometria' => 'Espirometría', 'ecografia' => 'Ecografía', 'audiometria' => 'Audiometría', 'optometria' => 'Optometría'] as $key => $label)
                                     <div>
-                                        <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">{{ $label }}</label>
+                                        <label class="mb-1 block text-xs font-bold uppercase text-gray-500 dark:text-gray-400">{{ $label }}</label>
                                         <input type="date" wire:model="qExamenesFechas.{{ $key }}" class="input">
                                     </div>
                                 @endforeach
@@ -1274,7 +1274,7 @@
                                 <div class="grid grid-cols-2 gap-2 rounded-xl border border-tide-100 bg-tide-50/30 p-3 sm:grid-cols-3 dark:border-tide-900/30 dark:bg-tide-950/10">
                                     @foreach(range(2021, 2026) as $anio)
                                         <div>
-                                            <label class="mb-1 block text-[10px] font-bold uppercase text-tide-600 dark:text-tide-400">{{ $anio }}</label>
+                                            <label class="mb-1 block text-xs font-bold uppercase text-tide-600 dark:text-tide-400">{{ $anio }}</label>
                                             <input type="date" wire:model="qVisitasFechas.{{ $anio }}" class="input-xs border-tide-200 dark:border-tide-800">
                                         </div>
                                     @endforeach
@@ -1284,7 +1284,7 @@
 
                         {{-- SECTION: Observaciones --}}
                         <div class="form-section !pb-2">
-                            <label class="mb-1 block text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Observaciones</label>
+                            <label class="mb-1 block text-xs font-bold uppercase text-gray-500 dark:text-gray-400">Observaciones</label>
                             <textarea wire:model="qObservaciones" rows="2" placeholder="Notas adicionales..." class="input"></textarea>
                         </div>
                     </form>
@@ -1325,7 +1325,7 @@
                  x-transition:leave="transition ease-in duration-100"
                  x-transition:leave-start="opacity-100"
                  x-transition:leave-end="opacity-0">
-                <div class="modal-panel" wire:click.stop>
+                <div class="modal-panel" @click.stop>
                     <div class="bg-gradient-to-br from-red-50 via-white to-white px-6 py-5 text-center dark:from-red-950/30 dark:via-gray-900 dark:to-gray-900">
                         <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-100 ring-4 ring-red-50 dark:bg-red-950/30 dark:ring-red-950/10">
                             <svg class="h-7 w-7 text-red-500 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>

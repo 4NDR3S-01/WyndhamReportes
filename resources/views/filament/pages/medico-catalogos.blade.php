@@ -201,7 +201,7 @@
                  x-transition:leave="transition ease-in duration-100"
                  x-transition:leave-start="opacity-100"
                  x-transition:leave-end="opacity-0">
-                <div class="modal-panel !max-w-md w-full mx-auto" wire:click.stop>
+                <div class="modal-panel !max-w-lg w-full mx-auto" @click.stop>
                     <div class="modal-accent-ocean"></div>
 
                     {{-- Header --}}
@@ -211,8 +211,8 @@
                                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v12m6-6H6"/></svg>
                             </span>
                             <div class="min-w-0">
-                                <h3 class="truncate text-[15px] font-bold text-gray-900 dark:text-white">{{ $editandoId ? 'Editar registro' : 'Nuevo registro' }}</h3>
-                                <p class="text-[11px] text-gray-400 dark:text-gray-500">{{ $editandoId ? 'Actualizá el valor seleccionado.' : 'Agregá un valor a ' . ($tipos[$tipo] ?? $tipo) . '.' }}</p>
+                                <h3 class="truncate text-base font-bold text-gray-900 dark:text-white">{{ $editandoId ? 'Editar registro' : 'Nuevo registro' }}</h3>
+                                <p class="text-xs text-gray-400 dark:text-gray-500">{{ $editandoId ? 'Actualizá el valor seleccionado.' : 'Agregá un valor a ' . ($tipos[$tipo] ?? $tipo) . '.' }}</p>
                             </div>
                         </div>
                         <button type="button" wire:click="cerrarModal"
@@ -223,9 +223,9 @@
                     </div>
 
                     {{-- Formulario --}}
-                    <form wire:submit.prevent="guardar" class="scroll-thin max-h-[65vh] overflow-y-auto bg-gray-50/50 p-4 sm:p-6 space-y-4 dark:bg-gray-950/20">
+                    <form wire:submit.prevent="guardar" class="scroll-thin max-h-[70vh] overflow-y-auto bg-gray-50/50 p-5 sm:p-7 space-y-5 dark:bg-gray-950/20">
                         <div>
-                            <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Sección</label>
+                            <label class="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Sección</label>
                             <select wire:model.live="tipo" class="input">
                                 @foreach ($tipos as $key => $label)
                                     <option value="{{ $key }}">{{ $label }}</option>
@@ -234,7 +234,7 @@
                         </div>
 
                         <div>
-                            <label class="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Nombre <span class="text-red-400">*</span></label>
+                            <label class="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Nombre <span class="text-red-400">*</span></label>
                             <input wire:model="nombre" placeholder="Ej. NUEVA ÁREA" class="input" autofocus>
                             @error('nombre') <p class="mt-1 text-[11px] font-medium text-red-500">{{ $message }}</p> @enderror
                         </div>
@@ -270,7 +270,7 @@
                  x-transition:leave="transition ease-in duration-100"
                  x-transition:leave-start="opacity-100"
                  x-transition:leave-end="opacity-0">
-                <div class="modal-panel w-[calc(100%-1rem)] sm:max-w-sm mx-auto" wire:click.stop>
+                <div class="modal-panel w-[calc(100%-1rem)] sm:max-w-sm mx-auto" @click.stop>
                     <div class="modal-accent" style="background: linear-gradient(90deg, #ef4444, #dc2626, #b91c1c);"></div>
                     <div class="bg-gradient-to-br from-red-50 via-white to-white px-5 py-5 text-center dark:from-red-950/30 dark:via-gray-900 dark:to-gray-900">
                         <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-100 ring-4 ring-red-50 dark:bg-red-950/30 dark:ring-red-950/10">
