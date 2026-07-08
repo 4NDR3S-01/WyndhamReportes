@@ -4,30 +4,7 @@
     <div class="page-enter space-y-6">
 
         {{-- ============================================================
-        EMPTY STATE (sin datos)
-        ============================================================ --}}
-        @if ($this->fechasDisponibles->isEmpty())
-            <div class="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-gray-200 py-16 dark:border-gray-800">
-                <svg class="h-12 w-12 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2Z"/></svg>
-                <p class="mt-4 text-sm text-gray-500 dark:text-gray-400">No hay datos registrados. Importa un archivo Excel desde la secci&oacute;n correspondiente para generar reportes.</p>
-            </div>
-        @endif
-
-        @if ($this->fechasDisponibles->isNotEmpty())
-
-        {{-- ============================================================
-        STATS STRIP
-        ============================================================ --}}
-        @php $mesesCount = max(1, $this->kardexMensualDetallado->count()); @endphp
-        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <x-stat-card title="Atenciones registradas" :value="number_format($this->kardexMensualDetallado->sum('atenciones'), 0, ',', '.')" icon="heroicon-o-document-text" color="tide" />
-            <x-stat-card title="Meses con datos" :value="$mesesCount" icon="heroicon-o-calendar-days" color="ocean" />
-            <x-stat-card title="Total productos" :value="number_format(\App\Models\MedicoProducto::count(), 0, ',', '.')" icon="heroicon-o-cube" color="palm" />
-            <x-stat-card title="Pacientes únicos" :value="number_format($this->kardexMensualDetallado->sum('pacientes'), 0, ',', '.')" icon="heroicon-o-user-group" color="coral" />
-        </div>
-
-        {{-- ============================================================
-        SECCIÓN 1: Generar Kardex Mensual
+        SECCIÓN 1: Generar Kardex Mensual — siempre visible (independiente)
         ============================================================ --}}
         <section class="card overflow-hidden">
             <div class="card-header">
@@ -165,6 +142,20 @@
                 </div>
             @endif
         </section>
+
+        {{-- ============================================================
+        REPORTES — solo visible si hay datos importados
+        ============================================================ --}}
+        @if ($this->fechasDisponibles->isNotEmpty())
+
+        {{-- STATS STRIP --}}
+        @php $mesesCount = max(1, $this->kardexMensualDetallado->count()); @endphp
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <x-stat-card title="Atenciones registradas" :value="number_format($this->kardexMensualDetallado->sum('atenciones'), 0, ',', '.')" icon="heroicon-o-document-text" color="tide" />
+            <x-stat-card title="Meses con datos" :value="$mesesCount" icon="heroicon-o-calendar-days" color="ocean" />
+            <x-stat-card title="Total productos" :value="number_format(\App\Models\MedicoProducto::count(), 0, ',', '.')" icon="heroicon-o-cube" color="palm" />
+            <x-stat-card title="Pacientes &uacute;nicos" :value="number_format($this->kardexMensualDetallado->sum('pacientes'), 0, ',', '.')" icon="heroicon-o-user-group" color="coral" />
+        </div>
 
         {{-- ============================================================
         SECCIÓN 2: Exportar Reportes (download cards)
@@ -462,6 +453,14 @@
         </details>
         @endif
 
-        @endif {{-- fechasDisponibles --}}
+        @else
+        {{-- ============================================================
+        EMPTY STATE (sin datos de reportes)
+        ============================================================ --}}
+        <div class="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-gray-200 py-16 dark:border-gray-800">
+            <svg class="h-12 w-12 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2Z"/></svg>
+            <p class="mt-4 text-sm text-gray-500 dark:text-gray-400">No hay datos de reportes registrados. Importa un archivo Excel desde la secci&oacute;n correspondiente para ver estad&iacute;sticas y an&aacute;lisis.</p>
+        </div>
+        @endif
     </div>
 </x-filament-panels::page>

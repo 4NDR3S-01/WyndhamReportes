@@ -453,7 +453,7 @@
                                         </td>
                                         <td class="py-2 pr-3 text-right font-semibold text-gray-900 dark:text-white">{{ $mov->cantidad }}</td>
                                         <td class="py-2 pr-3 text-gray-600 dark:text-gray-400">
-                                            {{ $mov->origen === 'parte_diario' ? '🏥 Consulta' : '✋ Manual' }}
+                                            {{ $mov->origen === 'parte_diario' ? 'Consulta' : 'Manual' }}
                                         </td>
                                         <td class="py-2 pr-3 text-gray-600 dark:text-gray-400">{{ $mov->parteDiario?->nombres ?? $mov->observacion ?: '-' }}</td>
                                     </tr>

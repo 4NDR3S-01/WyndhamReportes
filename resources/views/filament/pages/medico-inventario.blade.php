@@ -73,7 +73,13 @@
                                 wire:click="seleccionarProducto({{ $p->id }})">
                                 <td class="table-cell py-2">
                                     <div class="flex items-center gap-1.5 min-w-0">
-                                        <span class="text-sm shrink-0">{{ $p->tipo === 'medicina' ? '💊' : '🏥' }}</span>
+                                        <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg {{ $p->tipo === 'medicina' ? 'bg-palm-100 text-palm-600 dark:bg-palm-950/30 dark:text-palm-400' : 'bg-ocean-100 text-ocean-600 dark:bg-ocean-950/30 dark:text-ocean-400' }}">
+                                            @if($p->tipo === 'medicina')
+                                                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                            @else
+                                                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/></svg>
+                                            @endif
+                                        </span>
                                         <div class="min-w-0">
                                             <p class="truncate text-xs font-semibold text-gray-900 dark:text-white">{{ $p->nombre }}</p>
                                             <p class="truncate text-[10px] text-gray-400">
@@ -172,12 +178,14 @@
                         <button @click="tab = 'movimiento'"
                             :class="tab === 'movimiento' ? 'border-ocean-500 text-ocean-700 dark:text-ocean-300' : 'border-transparent text-gray-400 hover:text-gray-600'"
                             class="flex-1 border-b-2 px-3 py-2 text-[11px] font-semibold transition">
-                            📥 Movimiento
+                            <svg class="mr-1 inline-block h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                            Movimiento
                         </button>
                         <button @click="tab = 'historial'"
                             :class="tab === 'historial' ? 'border-ocean-500 text-ocean-700 dark:text-ocean-300' : 'border-transparent text-gray-400 hover:text-gray-600'"
                             class="flex-1 border-b-2 px-3 py-2 text-[11px] font-semibold transition">
-                            📋 Historial
+                            <svg class="mr-1 inline-block h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            Historial
                             @if($sel->movimientos->isNotEmpty())
                                 <span class="ml-1 text-[10px] opacity-60">{{ $sel->movimientos->count() }}</span>
                             @endif
@@ -189,9 +197,9 @@
                         <form wire:submit.prevent="guardarMovimiento" class="space-y-2 p-3">
                             <div class="grid grid-cols-2 gap-1.5">
                                 <select wire:model="tipo" class="input-sm text-xs">
-                                    <option value="ingreso">📥 Ingreso</option>
-                                    <option value="salida">📤 Salida</option>
-                                    <option value="ajuste">⚙️ Ajuste</option>
+                                    <option value="ingreso">Ingreso</option>
+                                    <option value="salida">Salida</option>
+                                    <option value="ajuste">Ajuste</option>
                                 </select>
                                 <input type="number" step="0.01" wire:model="cantidad"
                                     class="input-sm text-xs" placeholder="Cantidad" required>
@@ -229,7 +237,7 @@
                                                 {{ $mov->cantidad > 0 ? '+' : '' }}{{ number_format($mov->cantidad, 0, ',', '.') }}
                                             </td>
                                             <td class="px-3 py-1.5 text-gray-400">
-                                                {{ $mov->origen === 'parte_diario' ? '🏥' : '✋' }}
+                                                {{ $mov->origen === 'parte_diario' ? 'Consulta' : 'Manual' }}
                                             </td>
                                         </tr>
                                         @endforeach
@@ -291,7 +299,7 @@
                             </td>
                             <td class="table-cell py-1.5 text-right font-bold tabular-nums text-gray-900 dark:text-white">{{ $m->cantidad }}</td>
                             <td class="table-cell py-1.5 text-gray-400">
-                                {{ $m->origen === 'parte_diario' ? '🏥 #'.$m->parteDiario?->id : '✋ Manual' }}
+                                {{ $m->origen === 'parte_diario' ? 'Consulta #'.$m->parteDiario?->id : 'Manual' }}
                             </td>
                         </tr>
                         @endforeach
