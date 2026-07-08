@@ -4,54 +4,78 @@ namespace App\Filament\Pages;
 
 use App\Models\Medicamento;
 use App\Models\MedicoKardexMovimiento;
+use App\Models\MedicoPaciente;
 use App\Models\MedicoProducto;
 use App\Services\Medico\InventarioMedicoService;
-use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class MedicoInventario extends Page
 {
-    protected static string|\BackedEnum|null $navigationIcon = \Filament\Support\Icons\Heroicon::OutlinedArchiveBox;
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedArchiveBox;
+
     protected static string|\UnitEnum|null $navigationGroup = 'Medico';
+
     protected static ?string $navigationLabel = 'Inventario';
+
     protected static ?string $title = 'Inventario médico';
+
     protected ?string $heading = '';
+
     protected static ?string $slug = 'medico/inventario';
+
     protected static ?int $navigationSort = 5;
+
     protected string $view = 'filament.pages.medico-inventario';
 
     // ============================================================
     // MOVIMIENTO — estado del formulario de movimiento
     // ============================================================
     public ?int $producto_id = null;
+
     public ?int $productoSeleccionadoId = null; // para panel detalle
+
     public string $tipo = 'ingreso';
+
     public float $cantidad = 1;
+
     public string $fecha_movimiento;
+
     public ?string $responsable = null;
+
     public ?string $observacion = null;
 
     // ============================================================
     // PRODUCTO — estado del formulario de producto (modal)
     // ============================================================
     public bool $modalProductoAbierto = false;
+
     public ?int $editandoId = null;
+
     public string $productoTipo = 'medicina';
+
     public string $productoNombre = '';
-    public ?int $productoMedicamentoId = null;
+
     public ?float $productoStockMinimo = 0;
+
+    public ?float $productoStockInicial = null;
+
     public ?string $productoFechaCaducidad = null;
+
     public bool $productoActivo = true;
+
     public ?string $productoObservaciones = null;
 
     // ============================================================
     // FILTROS
     // ============================================================
     public string $buscar = '';
+
     public string $tipoFiltro = 'todos';   // todos|medicina|insumo
+
     public string $estadoFiltro = 'activos'; // activos|inactivos|todos
 
     public function mount(): void
@@ -108,26 +132,26 @@ class MedicoInventario extends Page
         $this->editandoId = $p->id;
         $this->productoTipo = $p->tipo;
         $this->productoNombre = $p->nombre;
-        $this->productoMedicamentoId = $p->medicamento_id;
         $this->productoStockMinimo = $p->stock_minimo;
+        $this->productoStockInicial = null;
         $this->productoFechaCaducidad = $p->fecha_caducidad?->format('Y-m-d');
         $this->productoActivo = $p->activo;
         $this->productoObservaciones = $p->observaciones;
         $this->modalProductoAbierto = true;
     }
 
-    public function guardarProducto(): void
+    public function guardarProducto(InventarioMedicoService $service): void
     {
         $this->validate(['productoNombre' => ['required', 'string', 'max:255']]);
 
         $nombreNormalizado = mb_strtoupper(trim($this->productoNombre));
+        $esNuevo = $this->editandoId === null;
 
         $producto = MedicoProducto::query()->updateOrCreate(
             ['id' => $this->editandoId],
             [
                 'tipo' => $this->productoTipo,
                 'nombre' => $nombreNormalizado,
-                'medicamento_id' => $this->productoMedicamentoId,
                 'stock_minimo' => $this->productoStockMinimo ?: 0,
                 'fecha_caducidad' => $this->productoFechaCaducidad,
                 'activo' => $this->productoActivo,
@@ -137,6 +161,17 @@ class MedicoInventario extends Page
 
         // ── SINCRONIZAR: producto → catálogo medicamentos (todos los tipos) ──
         $this->sincronizarProductoAMedicamento($producto, $nombreNormalizado);
+
+        // ── STOCK INICIAL: solo para productos nuevos con cantidad > 0 ──
+        if ($esNuevo && $this->productoStockInicial > 0) {
+            $service->registrarMovimientoProducto(
+                $producto,
+                'ingreso',
+                $this->productoStockInicial,
+                now()->toDateString(),
+                observacion: 'Stock inicial',
+            );
+        }
 
         $label = $this->productoTipo === 'insumo' ? 'Insumo' : 'Medicina';
         $this->cerrarModalProducto();
@@ -156,6 +191,7 @@ class MedicoInventario extends Page
                 if ($med->nombre !== $nombreNormalizado) {
                     $med->update(['nombre' => $nombreNormalizado]);
                 }
+
                 return;
             }
             // medicamento_id apunta a un registro eliminado → limpiar
@@ -169,6 +205,7 @@ class MedicoInventario extends Page
 
         if ($medicamento) {
             $producto->update(['medicamento_id' => $medicamento->id]);
+
             return;
         }
 
@@ -188,6 +225,7 @@ class MedicoInventario extends Page
 
         if ($mejor) {
             $producto->update(['medicamento_id' => $mejor->id]);
+
             return;
         }
 
@@ -231,8 +269,8 @@ class MedicoInventario extends Page
         $this->editandoId = null;
         $this->productoTipo = 'medicina';
         $this->productoNombre = '';
-        $this->productoMedicamentoId = null;
         $this->productoStockMinimo = 0;
+        $this->productoStockInicial = null;
         $this->productoFechaCaducidad = null;
         $this->productoActivo = true;
         $this->productoObservaciones = null;
@@ -251,7 +289,7 @@ class MedicoInventario extends Page
     {
         return MedicoProducto::query()
             ->with(['movimientos', 'medicamento'])
-            ->when($this->buscar !== '', fn ($q) => $q->where('nombre', 'like', '%' . $this->buscar . '%'))
+            ->when($this->buscar !== '', fn ($q) => $q->where('nombre', 'like', '%'.$this->buscar.'%'))
             ->when($this->tipoFiltro !== 'todos', fn ($q) => $q->where('tipo', $this->tipoFiltro))
             ->when($this->estadoFiltro === 'activos', fn ($q) => $q->where('activo', true))
             ->when($this->estadoFiltro === 'inactivos', fn ($q) => $q->where('activo', false))
@@ -276,17 +314,10 @@ class MedicoInventario extends Page
         if (! $this->productoSeleccionadoId) {
             return null;
         }
+
         return MedicoProducto::query()
             ->with(['medicamento', 'movimientos' => fn ($q) => $q->latest()->limit(20)])
             ->find($this->productoSeleccionadoId);
-    }
-
-    public function getMedicamentosCatalogProperty(): Collection
-    {
-        return Medicamento::query()
-            ->where('activo', true)
-            ->orderBy('nombre')
-            ->get(['id', 'nombre']);
     }
 
     public function getTotalProductosProperty(): int
@@ -311,5 +342,17 @@ class MedicoInventario extends Page
             ->get()
             ->filter(fn (MedicoProducto $p) => $p->stock_minimo > 0 && $p->saldoActual() <= $p->stock_minimo)
             ->count();
+    }
+
+    public function getPersonalMedicoProperty(): Collection
+    {
+        $cargosMedicos = ['DOCTOR', 'DOCTORA', 'ENFERMERO', 'ENFERMERA', 'UNIDAD DE SEGURIDAD Y SALUD'];
+
+        return MedicoPaciente::query()
+            ->where('activo', true)
+            ->whereHas('cargo', fn ($q) => $q->whereIn('nombre', $cargosMedicos))
+            ->with('cargo')
+            ->orderBy('nombres')
+            ->get(['id', 'nombres', 'cargo_id']);
     }
 }

@@ -7,84 +7,79 @@ use App\Models\Cargo;
 use App\Models\Causa;
 use App\Models\Diagnostico;
 use App\Models\EntidadCertificado;
-use App\Models\Incidente;
-use App\Models\Medicamento;
-use App\Models\MedicoProducto;
-use App\Models\TipoCertificado;
-use App\Models\TipoDescanso;
-use App\Models\TipoSalida;
-use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 class MedicoCatalogos extends Page
 {
-    protected static string|\BackedEnum|null $navigationIcon = \Filament\Support\Icons\Heroicon::OutlinedCircleStack;
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedCircleStack;
+
     protected static string|\UnitEnum|null $navigationGroup = 'Medico';
+
     protected static ?string $navigationLabel = 'Base médica';
+
     protected static ?string $title = 'Base médica';
+
     protected ?string $heading = '';
+
     protected static ?string $slug = 'medico/base-medica';
+
     protected static ?int $navigationSort = 4;
+
     protected string $view = 'filament.pages.medico-catalogos';
 
     public string $tipo = 'area';
+
     public string $buscar = '';
+
     public string $estado = 'activos';
+
     public bool $modalAbierto = false;
+
     public bool $modalEliminarAbierto = false;
+
     public ?int $editandoId = null;
+
     public ?int $eliminandoId = null;
+
     public string $nombre = '';
+
     public bool $activo = true;
 
     // === PAGINATION ===
     public int $pagina = 1;
+
     public int $porPagina = 30;
 
     // === TIPO → MODELO + ETIQUETA ===
 
     public array $tipos = [
-        'area'                   => 'Áreas',
-        'cargo'                  => 'Cargos',
-        'causa'                  => 'Causas',
-        'diagnostico'            => 'Diagnósticos',
-        'tipo_certificado'       => 'Tipos de certificado',
-        'entidad_certificado'    => 'Entidades certificado',
-        'tipo_descanso'          => 'Tipos de descanso',
-        'tipo_salida'            => 'Tipos de salida',
-        'medicamento'            => 'Medicamentos y Productos',
-        'incidente'              => 'Incidentes',
+        'area' => 'Áreas',
+        'cargo' => 'Cargos',
+        'causa' => 'Causas',
+        'diagnostico' => 'Diagnósticos',
+        'entidad_certificado' => 'Entidades certificado',
     ];
 
     public array $descripciones = [
-        'area'                  => 'Departamentos y áreas laborales usados en partes diarios.',
-        'cargo'                 => 'Puestos de trabajo vinculados a colaboradores.',
-        'causa'                 => 'Categorías principales de atención médica.',
-        'diagnostico'           => 'Diagnósticos disponibles para registrar atenciones.',
-        'tipo_certificado'      => 'Tipos de certificado (subsidio, reposo, etc.).',
-        'entidad_certificado'   => 'Origen del certificado presentado por el colaborador.',
-        'tipo_descanso'         => 'Unidad del descanso médico: horas o días.',
-        'tipo_salida'           => 'Resultado de la atención o derivación.',
-        'medicamento'           => 'Lista base importada desde la hoja BASE DE DATOS.',
-        'incidente'             => 'Tipos de incidente registrados por el dispensario.',
+        'area' => 'Departamentos y áreas laborales usados en partes diarios.',
+        'cargo' => 'Puestos de trabajo vinculados a colaboradores.',
+        'causa' => 'Categorías principales de atención médica.',
+        'diagnostico' => 'Diagnósticos disponibles para registrar atenciones.',
+        'entidad_certificado' => 'Origen del certificado presentado por el colaborador.',
     ];
 
     protected function getModelClass(string $tipo): string
     {
         return match ($tipo) {
-            'area'                => Area::class,
-            'cargo'               => Cargo::class,
-            'causa'               => Causa::class,
-            'diagnostico'         => Diagnostico::class,
-            'tipo_certificado'    => TipoCertificado::class,
+            'area' => Area::class,
+            'cargo' => Cargo::class,
+            'causa' => Causa::class,
+            'diagnostico' => Diagnostico::class,
             'entidad_certificado' => EntidadCertificado::class,
-            'tipo_descanso'       => TipoDescanso::class,
-            'tipo_salida'         => TipoSalida::class,
-            'medicamento'         => Medicamento::class,
-            'incidente'           => Incidente::class,
         };
     }
 
@@ -93,13 +88,13 @@ class MedicoCatalogos extends Page
     public function guardar(): void
     {
         $this->validate([
-            'tipo'   => ['required', 'string', 'max:50'],
+            'tipo' => ['required', 'string', 'max:50'],
             'nombre' => ['required', 'string', 'max:255'],
         ]);
 
         $modelClass = $this->getModelClass($this->tipo);
 
-        $registro = $modelClass::query()->updateOrCreate(
+        $modelClass::query()->updateOrCreate(
             ['id' => $this->editandoId],
             [
                 'nombre' => mb_strtoupper(trim($this->nombre)),
@@ -107,44 +102,10 @@ class MedicoCatalogos extends Page
             ],
         );
 
-        // ── SINCRONIZAR: medicamento → inventario ──
-        if ($this->tipo === 'medicamento') {
-            $this->sincronizarMedicamentoAInventario($registro);
-        }
-
         $label = str($this->tipos[$this->tipo] ?? 'Registro')->singular()->lower()->ucfirst();
 
         $this->cerrarModal();
         Notification::make()->title("{$label} guardado")->success()->send();
-    }
-
-    /**
-     * Crea o vincula un MedicoProducto para un medicamento del catálogo.
-     */
-    private function sincronizarMedicamentoAInventario(Model $medicamento): void
-    {
-        $producto = MedicoProducto::resolverPorNombre($medicamento->nombre);
-
-        if (! $producto) {
-            // Crear producto nuevo vinculado
-            MedicoProducto::query()->create([
-                'medicamento_id' => $medicamento->id,
-                'tipo'           => 'medicina',
-                'nombre'         => $medicamento->nombre,
-                'stock_minimo'   => 0,
-                'activo'         => $medicamento->activo,
-            ]);
-        } elseif (! $producto->medicamento_id) {
-            // Producto existe sin vínculo → vincular
-            $producto->update([
-                'medicamento_id' => $medicamento->id,
-                'activo'         => $medicamento->activo,
-            ]);
-        } elseif ($producto->medicamento_id !== $medicamento->id) {
-            // Producto vinculado a OTRO medicamento → crear alias y vincular este también
-            // (caso raro: nombres iguales pero IDs diferentes)
-            $producto->update(['medicamento_id' => $medicamento->id]);
-        }
     }
 
     public function abrirModalNuevo(): void
@@ -175,13 +136,6 @@ class MedicoCatalogos extends Page
         $item = $modelClass::query()->findOrFail($id);
         $nuevoEstado = ! $item->activo;
         $item->update(['activo' => $nuevoEstado]);
-
-        // Sincronizar estado a productos vinculados (medicamentos → inventario)
-        if ($this->tipo === 'medicamento' && $item instanceof Medicamento) {
-            MedicoProducto::query()
-                ->where('medicamento_id', $item->id)
-                ->update(['activo' => $nuevoEstado]);
-        }
     }
 
     public function solicitarEliminar(int $id): void
@@ -223,6 +177,7 @@ class MedicoCatalogos extends Page
             return null;
         }
         $modelClass = $this->getModelClass($this->tipo);
+
         return $modelClass::query()->find($this->eliminandoId);
     }
 
@@ -267,7 +222,7 @@ class MedicoCatalogos extends Page
         return $modelClass::query()
             ->when($this->estado === 'activos', fn ($q) => $q->where('activo', true))
             ->when($this->estado === 'ocultos', fn ($q) => $q->where('activo', false))
-            ->when($this->buscar !== '', fn ($q) => $q->where('nombre', 'like', '%' . $this->buscar . '%'))
+            ->when($this->buscar !== '', fn ($q) => $q->where('nombre', 'like', '%'.$this->buscar.'%'))
             ->orderByDesc('activo')
             ->orderBy('nombre')
             ->skip(($this->pagina - 1) * $this->porPagina)
@@ -283,12 +238,14 @@ class MedicoCatalogos extends Page
     public function getTotalSeccionProperty(): int
     {
         $modelClass = $this->getModelClass($this->tipo);
+
         return (int) $modelClass::query()->count();
     }
 
     public function getActivosSeccionProperty(): int
     {
         $modelClass = $this->getModelClass($this->tipo);
+
         return (int) $modelClass::query()->where('activo', true)->count();
     }
 
@@ -304,7 +261,7 @@ class MedicoCatalogos extends Page
         return (int) $modelClass::query()
             ->when($this->estado === 'activos', fn ($q) => $q->where('activo', true))
             ->when($this->estado === 'ocultos', fn ($q) => $q->where('activo', false))
-            ->when($this->buscar !== '', fn ($q) => $q->where('nombre', 'like', '%' . $this->buscar . '%'))
+            ->when($this->buscar !== '', fn ($q) => $q->where('nombre', 'like', '%'.$this->buscar.'%'))
             ->count();
     }
 

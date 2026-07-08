@@ -19,7 +19,7 @@ class MedicoParteDiario extends Model
         'tipo_paciente',
         'habitacion',
         'turno',
-        'tipo_certificado_id',
+        'tipo_certificado',
         'entidad_certificado_id',
         'horas_certificado',
         'dias_certificado',
@@ -28,6 +28,8 @@ class MedicoParteDiario extends Model
         'medico_certifica',
         'causa_id',
         'diagnostico_id',
+        'tipo_salida',
+        'incidente',
         'observacion',
         'hash_unico',
     ];
@@ -54,11 +56,6 @@ class MedicoParteDiario extends Model
     public function cargo(): BelongsTo
     {
         return $this->belongsTo(Cargo::class, 'cargo_id');
-    }
-
-    public function tipoCertificado(): BelongsTo
-    {
-        return $this->belongsTo(TipoCertificado::class, 'tipo_certificado_id');
     }
 
     public function entidadCertificado(): BelongsTo

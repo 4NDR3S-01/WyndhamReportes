@@ -19,14 +19,10 @@ class MedicoCatalogosSeeder extends Seeder
     private const CATALOG_MAP = [
         'A' => 'areas',
         'B' => 'cargos',
-        'D' => 'tipos_certificado',
         'F' => 'causas',
         'H' => 'medicamentos',
         'J' => 'entidades_certificado',
-        'L' => 'tipos_descanso',
-        'N' => 'tipos_salida',
         'P' => 'diagnosticos',
-        'X' => 'incidentes',
     ];
 
     public function run(): void

@@ -108,7 +108,7 @@ class ReportesMedico extends Page
         ]);
 
         $partes = MedicoParteDiario::query()
-            ->with(['area', 'cargo', 'causa', 'diagnostico', 'entidadCertificado', 'tipoCertificado', 'medicamentos.medicamento'])
+            ->with(['area', 'cargo', 'causa', 'diagnostico', 'entidadCertificado', 'medicamentos.medicamento'])
             ->whereDate('fecha', '>=', $this->desde)
             ->whereDate('fecha', '<=', $this->hasta)
             ->orderBy('fecha')
@@ -138,7 +138,7 @@ class ReportesMedico extends Page
             $sheet->setCellValue("D{$row}", $p->area?->nombre);
             $sheet->setCellValue("E{$row}", $p->cargo?->nombre);
             $sheet->setCellValue("F{$row}", $p->entidadCertificado?->nombre);
-            $sheet->setCellValue("G{$row}", $p->tipoCertificado?->nombre);
+            $sheet->setCellValue("G{$row}", $p->tipo_certificado);
             $sheet->setCellValue("H{$row}", $p->horas_certificado);
             $sheet->setCellValue("I{$row}", $p->dias_certificado);
             $sheet->setCellValue("J{$row}", $p->fecha_inicio_certificado?->format('Y-m-d'));

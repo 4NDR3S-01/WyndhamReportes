@@ -415,7 +415,7 @@
                                             <input type="text" x-model="nombres" placeholder="Escriba los nombres y apellidos..."
                                                 class="input pl-9 pr-8"
                                                 x-on:focus="if(nombres && nombres.length >= 2 && !seleccionadoId) abierto = true"
-                                                x-on:input="seleccionadoId = null"
+                                                x-on:input="nombres = nombres.toUpperCase(); seleccionadoId = null"
                                                 autocomplete="off">
                                             
                                             <!-- Botón Limpiar -->
@@ -630,8 +630,16 @@
                                         <input type="number" wire:model="edad" placeholder="—" class="input text-center">
                                     </div>
                                     <div class="col-span-2">
-                                        <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Área</label>
-                                        <select wire:model="area_id" class="input">
+                                        <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                                            Área
+                                            @if($tipoPaciente === 'huesped')
+                                                <span class="font-normal normal-case text-gray-400">(no aplica)</span>
+                                            @elseif($pacienteId)
+                                                <span class="font-normal normal-case text-gray-400">(datos del paciente)</span>
+                                            @endif
+                                        </label>
+                                        <select wire:model="area_id" class="input"
+                                            @if($tipoPaciente === 'huesped' || $pacienteId) disabled @endif>
                                             <option value="">— Seleccionar —</option>
                                             @foreach ($this->areaCatalog as $a)
                                                 <option value="{{ $a->id }}">{{ $a->nombre }}</option>
@@ -639,8 +647,16 @@
                                         </select>
                                     </div>
                                     <div>
-                                        <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Cargo</label>
-                                        <select wire:model="cargo_id" class="input">
+                                        <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                                            Cargo
+                                            @if($tipoPaciente === 'huesped')
+                                                <span class="font-normal normal-case text-gray-400">(no aplica)</span>
+                                            @elseif($pacienteId)
+                                                <span class="font-normal normal-case text-gray-400">(datos del paciente)</span>
+                                            @endif
+                                        </label>
+                                        <select wire:model="cargo_id" class="input"
+                                            @if($tipoPaciente === 'huesped' || $pacienteId) disabled @endif>
                                             <option value="">— Seleccionar —</option>
                                             @foreach ($this->cargoCatalog as $c)
                                                 <option value="{{ $c->id }}">{{ $c->nombre }}</option>
@@ -672,12 +688,20 @@
 
                                     {{-- Turno --}}
                                     <div>
-                                        <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Turno</label>
+                                        <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                                            Turno
+                                            @if($tipoPaciente === 'huesped')
+                                                <span class="font-normal normal-case text-gray-400">(no aplica)</span>
+                                            @endif
+                                        </label>
                                         <div class="flex gap-2">
                                             @foreach(['mañana','tarde','noche'] as $t)
-                                                <button type="button" wire:click="toggleTurno('{{ $t }}')"
+                                                <button type="button"
+                                                    @if($tipoPaciente === 'huesped') disabled @else wire:click="toggleTurno('{{ $t }}')" @endif
                                                     class="flex-1 rounded-xl border px-2 py-2.5 text-xs font-semibold capitalize transition-all
-                                                    {{ $turno === $t ? 'bg-gray-900 border-gray-900 text-white shadow-sm dark:bg-white dark:border-white dark:text-gray-900' : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50 dark:bg-gray-800/50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800' }}">
+                                                    {{ $tipoPaciente === 'huesped' ? 'bg-gray-100 border-gray-200 text-gray-300 cursor-not-allowed dark:bg-gray-800/30 dark:border-gray-700 dark:text-gray-600' : '' }}
+                                                    {{ $tipoPaciente !== 'huesped' && $turno === $t ? 'bg-gray-900 border-gray-900 text-white shadow-sm dark:bg-white dark:border-white dark:text-gray-900' : '' }}
+                                                    {{ $tipoPaciente !== 'huesped' && $turno !== $t ? 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50 dark:bg-gray-800/50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800' : '' }}">
                                                     {{ $t }}
                                                 </button>
                                             @endforeach
@@ -764,7 +788,7 @@
                                                 type="text"
                                                 x-model="q"
                                                 x-on:focus="open = true; indice = -1; $dispatch('close-comboboxes')"
-                                                x-on:input="open = true; indice = -1"
+                                                x-on:input="q = q.toUpperCase(); open = true; indice = -1"
                                                 x-on:keydown="navegar($event)"
                                                 placeholder="Buscar causa..."
                                                 class="input pr-8"
@@ -842,7 +866,7 @@
                                                 type="text"
                                                 x-model="q"
                                                 x-on:focus="open = true; $dispatch('close-comboboxes')"
-                                                x-on:input="open = true; buscar()"
+                                                x-on:input="q = q.toUpperCase(); open = true; buscar()"
                                                 placeholder="Escriba al menos 2 caracteres para buscar..."
                                                 class="input pr-8"
                                                 autocomplete="off">
@@ -877,6 +901,28 @@
                                                 Sin resultados para "<span x-text="q"></span>"
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
+
+                                {{-- Tipo de Salida + Incidente --}}
+                                <div class="grid gap-4 sm:grid-cols-2">
+                                    <div>
+                                        <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Tipo de salida <span class="font-normal normal-case text-gray-400">(opcional)</span></label>
+                                        <select wire:model="tipo_salida" class="input">
+                                            <option value="">— Sin especificar —</option>
+                                            @foreach($this->tiposSalidaCatalog as $t)
+                                                <option value="{{ $t }}">{{ $t }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Incidente <span class="font-normal normal-case text-gray-400">(opcional)</span></label>
+                                        <select wire:model="incidente" class="input">
+                                            <option value="">— Sin especificar —</option>
+                                            @foreach($this->incidentesCatalog as $i)
+                                                <option value="{{ $i }}">{{ $i }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
 
@@ -1062,20 +1108,35 @@
                                                 </select>
                                             </div>
                                             <div>
-                                                <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Subsidio</label>
-                                                <select wire:model="tipo_certificado_id" class="input">
+                                                <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Tipo de certificado</label>
+                                                <select wire:model="tipo_certificado" class="input">
                                                     <option value="">— Seleccionar —</option>
                                                     @foreach ($this->tipoCertCatalog as $tc)
-                                                        <option value="{{ $tc->id }}">{{ $tc->nombre }}</option>
+                                                        <option value="{{ $tc }}">{{ $tc }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
                                             <div>
                                                 <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Tiempo de Reposo</label>
-                                                <div class="flex gap-2">
-                                                    <input type="number" step="0.5" wire:model="horas_certificado" placeholder="Horas" class="input flex-1">
-                                                    <input type="number" wire:model="dias_certificado" placeholder="Días" class="input flex-1">
+                                                <div class="flex gap-1 mb-2">
+                                                    <button type="button"
+                                                        wire:click="$set('unidadDescanso', 'horas')"
+                                                        class="flex-1 rounded-lg border px-3 py-2 text-xs font-semibold transition-all
+                                                        {{ $unidadDescanso === 'horas' ? 'bg-ocean-600 border-ocean-600 text-white dark:bg-ocean-500 dark:border-ocean-500' : 'border-gray-200 bg-white text-gray-500 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400' }}">
+                                                        Horas
+                                                    </button>
+                                                    <button type="button"
+                                                        wire:click="$set('unidadDescanso', 'dias')"
+                                                        class="flex-1 rounded-lg border px-3 py-2 text-xs font-semibold transition-all
+                                                        {{ $unidadDescanso === 'dias' ? 'bg-ocean-600 border-ocean-600 text-white dark:bg-ocean-500 dark:border-ocean-500' : 'border-gray-200 bg-white text-gray-500 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400' }}">
+                                                        Días
+                                                    </button>
                                                 </div>
+                                                @if($unidadDescanso === 'horas')
+                                                    <input type="number" step="0.5" wire:model="horas_certificado" placeholder="Cantidad de horas" class="input">
+                                                @else
+                                                    <input type="number" wire:model="dias_certificado" placeholder="Cantidad de días" class="input">
+                                                @endif
                                             </div>
                                             <div>
                                                 <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Fechas (Inicio - Fin)</label>
@@ -1085,9 +1146,91 @@
                                                     <input type="date" wire:model="fecha_fin_certificado" class="input flex-1 px-2">
                                                 </div>
                                             </div>
-                                            <div class="sm:col-span-2">
-                                                <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Médico que certifica</label>
-                                                <input wire:model="medico_certifica" placeholder="Nombre del doctor responsable" class="input">
+                                            <div class="sm:col-span-2"
+                                                x-data="{
+                                                    open: false,
+                                                    q: @js($medico_certifica ?? ''),
+                                                    selected: null,
+                                                    indice: -1,
+                                                    items: @js($this->personalMedico->map(fn($p) => ['id' => $p->id, 'nombre' => $p->nombres, 'cargo' => $p->cargo?->nombre])->values()),
+                                                    get filtered() {
+                                                        if (!this.q) return this.items;
+                                                        const s = this.q.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+                                                        return this.items.filter(i =>
+                                                            i.nombre.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().includes(s) ||
+                                                            (i.cargo && i.cargo.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().includes(s))
+                                                        );
+                                                    },
+                                                    pick(item) {
+                                                        this.selected = item;
+                                                        this.q = item.nombre;
+                                                        this.open = false;
+                                                        this.indice = -1;
+                                                        $wire.set('medico_certifica', item.nombre);
+                                                    },
+                                                    clear() {
+                                                        this.selected = null;
+                                                        this.q = '';
+                                                        this.indice = -1;
+                                                        $wire.set('medico_certifica', null);
+                                                    },
+                                                    cerrar() { this.open = false; this.indice = -1; },
+                                                    navegar(e) {
+                                                        if (!this.open || this.filtered.length === 0) return;
+                                                        if (e.key === 'ArrowDown') { e.preventDefault(); this.indice = Math.min(this.indice + 1, this.filtered.length - 1); this.$refs.list?.children[this.indice]?.scrollIntoView({ block: 'nearest' }); }
+                                                        else if (e.key === 'ArrowUp') { e.preventDefault(); this.indice = Math.max(this.indice - 1, 0); this.$refs.list?.children[this.indice]?.scrollIntoView({ block: 'nearest' }); }
+                                                        else if (e.key === 'Enter' && this.indice >= 0 && this.filtered[this.indice]) { e.preventDefault(); this.pick(this.filtered[this.indice]); }
+                                                        else if (e.key === 'Escape') { e.preventDefault(); this.cerrar(); }
+                                                    },
+                                                    guardarTextoLibre() {
+                                                        setTimeout(() => {
+                                                            const val = this.q ? this.q.trim().toUpperCase() : '';
+                                                            if (val) { $wire.set('medico_certifica', val); }
+                                                            else { $wire.set('medico_certifica', null); }
+                                                            this.open = false;
+                                                        }, 150);
+                                                    }
+                                                }"
+                                                x-init="
+                                                    @if($medico_certifica)
+                                                        const found = items.find(i => i.nombre === @js($medico_certifica));
+                                                        if (found) { selected = found; q = found.nombre; }
+                                                    @endif
+                                                "
+                                                x-on:click.outside="guardarTextoLibre()"
+                                                x-on:close-comboboxes.window="open = false">
+                                                <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Médico que certifica <span class="font-normal normal-case text-gray-400">(opcional)</span></label>
+                                                <div class="relative">
+                                                    <input type="text" x-model="q"
+                                                        @focus="open = true; indice = -1; $dispatch('close-comboboxes')"
+                                                        @input="q = q.toUpperCase(); open = true; indice = -1"
+                                                        @keydown="navegar($event)"
+                                                        placeholder="Buscar por nombre o cargo..."
+                                                        class="input pr-8" autocomplete="off">
+                                                    <button type="button" x-show="q" @click="clear()"
+                                                        class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                                                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                                    </button>
+                                                    <div x-show="open && filtered.length > 0" x-transition x-ref="list"
+                                                        class="absolute z-50 mt-1 w-full max-h-44 overflow-auto rounded-xl border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-900">
+                                                        <template x-for="(item, i) in filtered" :key="item.id">
+                                                            <button type="button"
+                                                                @click="pick(item)"
+                                                                @mouseenter="indice = i"
+                                                                class="flex w-full items-center px-3 py-2 text-left text-[12px] hover:bg-gray-50 dark:hover:bg-gray-800"
+                                                                :class="indice === i ? 'bg-tide-50 text-tide-700 dark:bg-tide-950/20 dark:text-tide-400' : (selected && selected.id === item.id ? 'bg-tide-50/60 text-tide-700 dark:bg-tide-950/20 dark:text-tide-400' : 'text-gray-700 dark:text-gray-300')">
+                                                                <div>
+                                                                    <span x-text="item.nombre" class="font-medium"></span>
+                                                                    <span x-text="item.cargo ? ' · ' + item.cargo : ''" class="text-gray-400"></span>
+                                                                </div>
+                                                            </button>
+                                                        </template>
+                                                    </div>
+                                                    <div x-show="open && q && filtered.length === 0" x-transition
+                                                        class="absolute z-50 mt-1 w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-[11px] text-gray-400 shadow-lg dark:border-gray-700 dark:bg-gray-900">
+                                                        Sin coincidencias — se guardará como texto libre
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

@@ -27,7 +27,7 @@
     {{-- ============================================================
     MAIN LAYOUT: Productos (izq) + Detalle/Movimiento/Historial (der)
     ============================================================ --}}
-    <div class="grid gap-4 xl:grid-cols-[1fr_380px]">
+    <div class="grid gap-4 xl:grid-cols-[6fr_5fr] xl:items-start">
         {{-- LEFT: Lista de productos --}}
         <section class="card overflow-hidden">
             <div class="card-header flex-wrap gap-2">
@@ -84,11 +84,8 @@
                                             <p class="truncate text-xs font-semibold text-gray-900 dark:text-white">{{ $p->nombre }}</p>
                                             <p class="truncate text-[10px] text-gray-400">
                                                 {{ $p->tipo === 'medicina' ? 'Medicina' : 'Insumo' }}
-                                                @if($p->medicamento)
-                                                    · {{ $p->medicamento->nombre }}
-                                                @endif
                                                 @if($p->stock_minimo > 0)
-                                                    · Min {{ fmod($p->stock_minimo, 1) == 0 ? number_format($p->stock_minimo, 0, ',', '.') : number_format($p->stock_minimo, 1, ',', '.') }}
+                                                    · Stock mín: {{ fmod($p->stock_minimo, 1) == 0 ? number_format($p->stock_minimo, 0, ',', '.') : number_format($p->stock_minimo, 1, ',', '.') }}
                                                 @endif
                                             </p>
                                         </div>
@@ -145,7 +142,7 @@
         </section>
 
         {{-- RIGHT: Panel de detalle (solo si hay producto seleccionado) --}}
-        <section x-data="{ tab: 'movimiento' }">
+        <section x-data="{ tab: 'movimiento' }" class="xl:self-start">
             @if($this->productoSeleccionado)
                 @php $sel = $this->productoSeleccionado; @endphp
                 <div class="card overflow-hidden">
@@ -156,8 +153,7 @@
                                 <p class="truncate text-xs font-bold text-gray-900 dark:text-white">{{ $sel->nombre }}</p>
                                 <p class="text-[10px] text-gray-500">
                                     {{ $sel->tipo === 'medicina' ? 'Medicina' : 'Insumo' }}
-                                    @if($sel->medicamento) · {{ $sel->medicamento->nombre }} @endif
-                                    @if($sel->stock_minimo > 0) · Min {{ number_format($sel->stock_minimo, 0, ',', '.') }} @endif
+                                    @if($sel->stock_minimo > 0) · Stock mín: {{ number_format($sel->stock_minimo, 0, ',', '.') }} @endif
                                 </p>
                             </div>
                             <div class="text-right shrink-0">
@@ -193,29 +189,128 @@
                     </div>
 
                     {{-- TAB: Movimiento --}}
-                    <div x-show="tab === 'movimiento'" x-cloak>
-                        <form wire:submit.prevent="guardarMovimiento" class="space-y-2 p-3">
+                    <div x-show="tab === 'movimiento'" x-cloak
+                         x-data="{
+                            obsOpen: false,
+                            q: '',
+                            open: false,
+                            indice: -1,
+                            items: @js($this->personalMedico->map(fn($p) => ['id' => $p->id, 'nombre' => $p->nombres, 'cargo' => $p->cargo?->nombre])->values()->toArray()),
+                            get filtered() {
+                                if (!this.q.trim()) return this.items.slice(0, 8);
+                                const n = this.q.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+                                return this.items.filter(i => {
+                                    const name = i.nombre.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+                                    const cargo = (i.cargo || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+                                    return name.includes(n) || cargo.includes(n);
+                                }).slice(0, 8);
+                            },
+                            pick(persona) {
+                                this.q = persona.nombre;
+                                $wire.set('responsable', persona.nombre);
+                                this.open = false;
+                                this.indice = -1;
+                            },
+                            clear() {
+                                this.q = '';
+                                $wire.set('responsable', '');
+                                this.open = false;
+                                this.indice = -1;
+                            },
+                            navegar(dir) {
+                                const max = this.filtered.length;
+                                if (!max) { this.indice = -1; return; }
+                                this.indice = (this.indice + dir + max) % max;
+                            },
+                            seleccionarIndice() {
+                                if (this.indice >= 0 && this.indice < this.filtered.length) {
+                                    this.pick(this.filtered[this.indice]);
+                                }
+                            },
+                            guardarTextoLibre() {
+                                setTimeout(() => {
+                                    if (this.open || !this.q.trim()) return;
+                                    $wire.set('responsable', this.q.trim().toUpperCase());
+                                }, 150);
+                            }
+                         }">
+                        <div class="border-b border-gray-100 px-3 py-2 dark:border-gray-800">
+                            <p class="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Registrar movimiento</p>
+                        </div>
+                        <form wire:submit.prevent="guardarMovimiento" class="space-y-2.5 p-3">
+                            {{-- Tipo + Cantidad --}}
                             <div class="grid grid-cols-2 gap-1.5">
-                                <select wire:model="tipo" class="input-sm text-xs">
-                                    <option value="ingreso">Ingreso</option>
-                                    <option value="salida">Salida</option>
-                                    <option value="ajuste">Ajuste</option>
-                                </select>
-                                <input type="number" step="0.01" wire:model="cantidad"
-                                    class="input-sm text-xs" placeholder="Cantidad" required>
+                                <div>
+                                    <label class="mb-1 block text-[10px] font-semibold uppercase text-gray-400">Tipo</label>
+                                    <select wire:model="tipo" class="input-sm text-xs">
+                                        <option value="ingreso">Ingreso</option>
+                                        <option value="salida">Salida</option>
+                                        <option value="ajuste">Ajuste</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="mb-1 block text-[10px] font-semibold uppercase text-gray-400">Cantidad</label>
+                                    <input type="number" step="0.01" wire:model="cantidad"
+                                        class="input-sm text-xs" placeholder="0" required>
+                                </div>
                             </div>
+                            {{-- Fecha + Responsable --}}
                             <div class="grid grid-cols-2 gap-1.5">
-                                <input type="date" wire:model="fecha_movimiento" class="input-sm text-xs">
-                                <input wire:model="responsable" placeholder="Responsable" class="input-sm text-xs">
+                                <div>
+                                    <label class="mb-1 block text-[10px] font-semibold uppercase text-gray-400">Fecha</label>
+                                    <input type="date" wire:model="fecha_movimiento" class="input-sm text-xs">
+                                </div>
+                                <div class="relative">
+                                    <label class="mb-1 block text-[10px] font-semibold uppercase text-gray-400">Responsable</label>
+                                    <div class="relative">
+                                        <input type="text" x-model="q" x-on:input="q = q.toUpperCase(); open = true; indice = -1"
+                                            x-on:keydown.arrow-down.prevent="navegar(1)"
+                                            x-on:keydown.arrow-up.prevent="navegar(-1)"
+                                            x-on:keydown.enter.prevent="seleccionarIndice()"
+                                            x-on:keydown.escape.prevent="open = false"
+                                            x-on:blur="guardarTextoLibre()"
+                                            placeholder="Opcional" class="input-sm w-full pr-6 text-xs">
+                                        <button type="button" x-show="q" @click="clear()"
+                                            class="absolute right-1.5 top-1/2 -translate-y-1/2 text-gray-300 hover:text-gray-500 dark:hover:text-gray-400">
+                                            <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                        </button>
+                                    </div>
+                                    {{-- Dropdown --}}
+                                    <div x-show="open && filtered.length" x-transition
+                                        x-on:click.outside="open = false"
+                                        class="absolute z-50 mt-0.5 w-full rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-900"
+                                        style="max-height: 160px; overflow-y: auto;">
+                                        <template x-for="(persona, idx) in filtered" :key="persona.id">
+                                            <div @click="pick(persona)"
+                                                :class="{ 'bg-ocean-50 dark:bg-ocean-950/30': idx === indice }"
+                                                class="cursor-pointer px-2.5 py-1.5 transition hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                                <p class="text-[11px] font-medium text-gray-800 dark:text-gray-200" x-text="persona.nombre"></p>
+                                                <p class="text-[10px] text-gray-400" x-text="persona.cargo || 'Sin cargo'"></p>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
                             </div>
-                            {{-- Detalles expandibles --}}
-                            <details class="group">
-                                <summary class="cursor-pointer text-[10px] font-medium text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">+ Más opciones</summary>
-                                <textarea wire:model="observacion" placeholder="Observación" rows="2" class="input-sm mt-1.5 w-full text-xs"></textarea>
-                            </details>
-                            <button type="submit" class="btn-primary w-full !rounded-lg !py-1.5 text-xs">
+                            {{-- Observación expandible --}}
+                            <div>
+                                <button type="button" @click="obsOpen = !obsOpen"
+                                    class="flex items-center gap-1.5 text-[10px] font-medium text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition">
+                                    <svg x-show="!obsOpen" class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                    <svg x-show="obsOpen" class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
+                                    Observación
+                                </button>
+                                <textarea wire:model="observacion" placeholder="Detalle del movimiento…" rows="2"
+                                    x-show="obsOpen"
+                                    class="input-sm mt-1.5 w-full text-xs"></textarea>
+                            </div>
+                            <button type="submit" class="btn-primary w-full !rounded-lg !py-2 text-xs font-semibold">
+                                <svg class="mr-1 inline-block h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                                 Registrar movimiento
                             </button>
+                            {{-- Guía rápida --}}
+                            <div class="rounded-lg border border-gray-100 bg-gray-50/70 p-2 dark:border-gray-700/50 dark:bg-gray-800/30">
+                                <p class="text-[9px] font-semibold text-gray-400">💡 Ingreso = entra stock &nbsp;·&nbsp; Salida = consume &nbsp;·&nbsp; Ajuste = corrección</p>
+                            </div>
                         </form>
                     </div>
 
@@ -250,13 +345,29 @@
                     </div>
                 </div>
             @else
-                {{-- Empty state --}}
-                <div class="card flex flex-col items-center justify-center py-12 text-center">
-                    <div class="mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-ocean-50 text-ocean-400 dark:bg-ocean-950/20">
-                        <x-heroicon-o-cursor-arrow-rays class="h-6 w-6" />
+                {{-- Empty state: sin producto seleccionado --}}
+                <div class="card flex flex-col items-center justify-center py-10 text-center">
+                    <div class="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-ocean-50 text-ocean-400 dark:bg-ocean-950/30">
+                        <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg>
                     </div>
-                    <p class="text-xs font-medium text-gray-600 dark:text-gray-400">Selecciona un producto</p>
-                    <p class="mt-1 text-[10px] text-gray-400">Haz clic en la tabla para ver detalle y movimientos</p>
+                    <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">Gestiona tu inventario</p>
+                    <p class="mt-1 max-w-[240px] text-[11px] leading-relaxed text-gray-400">
+                        Selecciona un producto de la tabla para registrar movimientos o ver su historial.
+                    </p>
+                    <div class="mt-4 flex flex-col gap-1.5 text-[10px] text-gray-400">
+                        <span class="flex items-center gap-1.5">
+                            <span class="flex h-4 w-4 items-center justify-center rounded-full bg-palm-100 text-[9px] font-bold text-palm-600 dark:bg-palm-950/30 dark:text-palm-400">1</span>
+                            Crea productos con «Nuevo producto»
+                        </span>
+                        <span class="flex items-center gap-1.5">
+                            <span class="flex h-4 w-4 items-center justify-center rounded-full bg-ocean-100 text-[9px] font-bold text-ocean-600 dark:bg-ocean-950/30 dark:text-ocean-400">2</span>
+                            Haz clic en un producto para seleccionarlo
+                        </span>
+                        <span class="flex items-center gap-1.5">
+                            <span class="flex h-4 w-4 items-center justify-center rounded-full bg-sand-100 text-[9px] font-bold text-sand-600 dark:bg-sand-950/30 dark:text-sand-400">3</span>
+                            Registra ingresos, salidas o ajustes de stock
+                        </span>
+                    </div>
                 </div>
             @endif
         </section>
@@ -345,7 +456,7 @@
 
                 {{-- Formulario --}}
                 <form wire:submit.prevent="guardarProducto" class="scroll-thin max-h-[70vh] overflow-y-auto bg-gray-50/50 p-5 sm:p-7 space-y-5 dark:bg-gray-950/20">
-                    <div class="grid gap-2 sm:grid-cols-2">
+                    <div class="grid gap-2 {{ !$editandoId ? 'sm:grid-cols-3' : 'sm:grid-cols-2' }}">
                         <div>
                             <label class="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Tipo</label>
                             <select wire:model="productoTipo" class="input">
@@ -353,6 +464,12 @@
                                 <option value="insumo">Insumo</option>
                             </select>
                         </div>
+                        @if(!$editandoId)
+                        <div>
+                            <label class="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Stock inicial</label>
+                            <input type="number" step="0.01" wire:model="productoStockInicial" class="input" placeholder="0">
+                        </div>
+                        @endif
                         <div>
                             <label class="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Stock mínimo</label>
                             <input type="number" step="0.01" wire:model="productoStockMinimo" class="input">
@@ -361,24 +478,9 @@
 
                     <div>
                         <label class="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Nombre <span class="text-red-400">*</span></label>
-                        <input wire:model="productoNombre" placeholder="Ej. Paracetamol 500mg" class="input" autofocus>
+                        <input wire:model="productoNombre" x-on:input="$wire.productoNombre = $el.value.toUpperCase()" placeholder="Ej. PARACETAMOL 500MG" class="input" autofocus>
                         @error('productoNombre') <p class="mt-1 text-[11px] font-medium text-red-500">{{ $message }}</p> @enderror
                     </div>
-
-                    @if($productoTipo === 'medicina')
-                    <div>
-                        <label class="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                            Vincular con catálogo clínico
-                            <span class="font-normal text-gray-400">(descuento automático al dispensar)</span>
-                        </label>
-                        <select wire:model="productoMedicamentoId" class="input">
-                            <option value="">— Sin vincular —</option>
-                            @foreach($this->medicamentosCatalog as $med)
-                                <option value="{{ $med->id }}">{{ $med->nombre }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    @endif
 
                     <div class="grid gap-2 sm:grid-cols-2">
                         <div>

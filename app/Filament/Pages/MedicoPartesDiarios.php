@@ -8,18 +8,18 @@ use App\Models\Causa;
 use App\Models\Diagnostico;
 use App\Models\EntidadCertificado;
 use App\Models\Medicamento;
+use App\Models\MedicoKardexMovimiento;
 use App\Models\MedicoPaciente;
 use App\Models\MedicoPacienteExamen;
 use App\Models\MedicoPacienteVisita;
 use App\Models\MedicoParteDiario;
 use App\Models\MedicoParteMedicamento;
-use App\Models\MedicoKardexMovimiento;
 use App\Models\MedicoProducto;
-use App\Models\TipoCertificado;
 use App\Services\Medico\InventarioMedicoService;
-use BackedEnum;
+use Carbon\Carbon;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 class MedicoPartesDiarios extends Page
@@ -39,6 +39,34 @@ class MedicoPartesDiarios extends Page
     protected static ?int $navigationSort = 2;
 
     protected string $view = 'filament.pages.medico-partes-diarios';
+
+    // === OPCIONES FIJAS (antes catálogos administrables) ===
+
+    public const TIPOS_CERTIFICADO = [
+        'REPOSO',
+        'SUBSIDIO',
+        'ALTA MEDICA',
+        'REPOSO POR ACCIDENTE LABORAL',
+        'REPOSO POR ENFERMEDAD COMUN',
+    ];
+
+    public const TIPOS_SALIDA = [
+        'ALTA',
+        'REPOSO',
+        'DERIVACION A ESPECIALISTA',
+        'OBSERVACION',
+        'HOSPITALIZACION',
+    ];
+
+    public const INCIDENTES = [
+        'CAIDA',
+        'CORTE',
+        'QUEMADURA',
+        'EXPOSICION QUIMICA',
+        'GOLPE / CONTUSION',
+        'ACCIDENTE DE TRANSITO',
+        'OTRO',
+    ];
 
     // === FORMULARIO ===
     public ?int $editandoId = null;
@@ -75,25 +103,40 @@ class MedicoPartesDiarios extends Page
     public bool $quickCreateAbierto = false;
 
     public string $qNombres = '';
+
     public string $qCedula = '';
+
     public string $qTipo = 'colaborador';
+
     public ?int $qEdad = null;
+
     public ?int $qAreaId = null;
+
     public ?int $qCargoId = null;
+
     public ?string $qTelefono = null;
+
     public ?string $qFechaIngreso = null;
+
     public bool $qActivo = true;
+
     public ?string $qPatologias = null;
+
     public ?string $qVacunas = null;
+
     public ?string $qFichasAnteriores = null;
+
     public ?string $qAntecedentes = null;
+
     public ?string $qObservaciones = null;
+
     public array $qExamenesFechas = [
         'espirometria' => null,
-        'ecografia'    => null,
-        'audiometria'  => null,
-        'optometria'   => null,
+        'ecografia' => null,
+        'audiometria' => null,
+        'optometria' => null,
     ];
+
     public array $qVisitasFechas = [
         2021 => null, 2022 => null, 2023 => null,
         2024 => null, 2025 => null, 2026 => null,
@@ -102,7 +145,7 @@ class MedicoPartesDiarios extends Page
     // Certificado
     public ?int $entidad_certificado_id = null;
 
-    public ?int $tipo_certificado_id = null;
+    public ?string $tipo_certificado = null;
 
     public ?float $horas_certificado = null;
 
@@ -114,10 +157,16 @@ class MedicoPartesDiarios extends Page
 
     public ?string $medico_certifica = null;
 
+    public string $unidadDescanso = 'horas'; // 'horas' | 'dias'
+
     // Atención
     public ?int $causa_id = null;
 
     public ?int $diagnostico_id = null;
+
+    public ?string $tipo_salida = null;
+
+    public ?string $incidente = null;
 
     public ?string $observacion = null;
 
@@ -155,7 +204,7 @@ class MedicoPartesDiarios extends Page
         $this->fecha = now()->toDateString();
         $this->desde = now()->startOfMonth()->toDateString();
         $this->hasta = now()->toDateString();
-        $this->medicamentos = [['medicamento_id' => null, 'cantidad' => 1]];
+        $this->medicamentos = [];
     }
 
     public function updated(string $property): void
@@ -199,6 +248,7 @@ class MedicoPartesDiarios extends Page
         if ($this->tipoPaciente === 'huesped') {
             $this->area_id = null;
             $this->cargo_id = null;
+            $this->turno = null;
         }
     }
 
@@ -223,8 +273,7 @@ class MedicoPartesDiarios extends Page
 
     public function quitarMedicamento(int $index): void
     {
-        if (count($this->medicamentos) <= 1) {
-            Notification::make()->title('Debe haber al menos un medicamento')->warning()->send();
+        if (! isset($this->medicamentos[$index])) {
             return;
         }
         unset($this->medicamentos[$index]);
@@ -236,22 +285,22 @@ class MedicoPartesDiarios extends Page
     public function abrirQuickCreate(): void
     {
         // Pre-rellenar el nombre con lo que el usuario ya escribió en el buscador
-        $this->qNombres    = mb_strtoupper(trim($this->buscarPaciente ?: ''));
-        $this->qCedula     = '';
-        $this->qTipo       = 'colaborador';
-        $this->qEdad       = null;
-        $this->qAreaId     = null;
-        $this->qCargoId    = null;
-        $this->qTelefono   = null;
+        $this->qNombres = mb_strtoupper(trim($this->buscarPaciente ?: ''));
+        $this->qCedula = '';
+        $this->qTipo = 'colaborador';
+        $this->qEdad = null;
+        $this->qAreaId = null;
+        $this->qCargoId = null;
+        $this->qTelefono = null;
         $this->qFechaIngreso = null;
-        $this->qActivo     = true;
+        $this->qActivo = true;
         $this->qPatologias = null;
-        $this->qVacunas    = null;
+        $this->qVacunas = null;
         $this->qFichasAnteriores = null;
         $this->qAntecedentes = null;
         $this->qObservaciones = null;
-        $this->qExamenesFechas = array_fill_keys(['espirometria','ecografia','audiometria','optometria'], null);
-        $this->qVisitasFechas  = array_fill_keys(range(2021, 2026), null);
+        $this->qExamenesFechas = array_fill_keys(['espirometria', 'ecografia', 'audiometria', 'optometria'], null);
+        $this->qVisitasFechas = array_fill_keys(range(2021, 2026), null);
         $this->quickCreateAbierto = true;
         $this->buscarPaciente = '';
     }
@@ -265,28 +314,28 @@ class MedicoPartesDiarios extends Page
     {
         $this->validate([
             'qNombres' => ['required', 'string', 'max:255'],
-            'qTipo'    => ['required', 'in:colaborador,aspirante,externo,paciente,huesped'],
-            'qCedula'  => ['nullable', 'string', 'max:20'],
-            'qEdad'    => ['nullable', 'integer', 'min:0', 'max:150'],
+            'qTipo' => ['required', 'in:colaborador,aspirante,externo,paciente,huesped'],
+            'qCedula' => ['nullable', 'string', 'max:20'],
+            'qEdad' => ['nullable', 'integer', 'min:0', 'max:150'],
         ]);
 
         $nombreNormalizado = mb_strtoupper(trim($this->qNombres));
 
         $paciente = MedicoPaciente::query()->create([
-            'cedula'            => $this->qCedula !== '' ? $this->qCedula : null,
-            'nombres'           => $nombreNormalizado,
-            'tipo'              => $this->qTipo,
-            'edad'              => $this->qEdad,
-            'area_id'           => $this->qAreaId,
-            'cargo_id'          => $this->qCargoId,
-            'telefono'          => $this->qTelefono,
-            'fecha_ingreso'     => $this->qFechaIngreso,
-            'patologias'        => $this->qPatologias,
-            'vacunas'           => $this->qVacunas,
+            'cedula' => $this->qCedula !== '' ? $this->qCedula : null,
+            'nombres' => $nombreNormalizado,
+            'tipo' => $this->qTipo,
+            'edad' => $this->qEdad,
+            'area_id' => $this->qAreaId,
+            'cargo_id' => $this->qCargoId,
+            'telefono' => $this->qTelefono,
+            'fecha_ingreso' => $this->qFechaIngreso,
+            'patologias' => $this->qPatologias,
+            'vacunas' => $this->qVacunas,
             'fichas_anteriores' => $this->qFichasAnteriores,
-            'antecedentes'      => $this->qAntecedentes,
-            'observaciones'     => $this->qObservaciones,
-            'activo'            => $this->qActivo,
+            'antecedentes' => $this->qAntecedentes,
+            'observaciones' => $this->qObservaciones,
+            'activo' => $this->qActivo,
         ]);
 
         // Guardar exámenes ocupacionales
@@ -310,13 +359,13 @@ class MedicoPartesDiarios extends Page
         }
 
         // Autoseleccionar en el formulario de atención
-        $this->pacienteId  = $paciente->id;
-        $this->nombres     = $paciente->nombres;
-        $this->cedula      = $paciente->cedula ?? '';
+        $this->pacienteId = $paciente->id;
+        $this->nombres = $paciente->nombres;
+        $this->cedula = $paciente->cedula ?? '';
         $this->tipoPaciente = in_array($paciente->tipo, ['huesped']) ? 'huesped' : 'colaborador';
-        $this->edad        = $paciente->edad;
-        $this->area_id     = $paciente->area_id;
-        $this->cargo_id    = $paciente->cargo_id;
+        $this->edad = $paciente->edad;
+        $this->area_id = $paciente->area_id;
+        $this->cargo_id = $paciente->cargo_id;
 
         $this->cerrarQuickCreate();
         Notification::make()->title("«{$nombreNormalizado}» creado y seleccionado")->success()->send();
@@ -325,18 +374,21 @@ class MedicoPartesDiarios extends Page
     public function guardar(InventarioMedicoService $inventarioService): void
     {
         $this->validate([
-            'fecha'           => ['required', 'date'],
-            'nombres'         => ['required', 'string', 'max:255'],
-            'cedula'          => ['nullable', 'string', 'max:20'],
-            'tipoPaciente'    => ['required', 'in:colaborador,aspirante,externo,paciente,huesped'],
-            'habitacion'      => ['nullable', 'string', 'max:20', 'required_if:tipoPaciente,huesped'],
-            'turno'           => ['nullable', 'in:mañana,tarde,noche'],
-            'causa_id'        => ['required', 'integer', 'exists:causas,id'],
+            'fecha' => ['required', 'date'],
+            'nombres' => ['required', 'string', 'max:255'],
+            'cedula' => ['nullable', 'string', 'max:20'],
+            'tipoPaciente' => ['required', 'in:colaborador,aspirante,externo,paciente,huesped'],
+            'habitacion' => ['nullable', 'string', 'max:20', 'required_if:tipoPaciente,huesped'],
+            'turno' => ['nullable', 'in:mañana,tarde,noche'],
+            'causa_id' => ['required', 'integer', 'exists:causas,id'],
             'medicamentos.*.medicamento_id' => ['nullable', 'integer'],
             'medicamentos.*.cantidad' => ['required', 'numeric', 'min:0.01'],
+            'tipo_certificado' => ['nullable', 'string', 'max:100'],
+            'tipo_salida' => ['nullable', 'string', 'max:100'],
+            'incidente' => ['nullable', 'string', 'max:100'],
         ], [
             'medicamentos.*.cantidad.min' => 'La cantidad debe ser mayor a 0.',
-            'habitacion.required_if'      => 'La habitación es obligatoria para huéspedes.',
+            'habitacion.required_if' => 'La habitación es obligatoria para huéspedes.',
         ]);
 
         $meds = collect($this->medicamentos)
@@ -346,25 +398,27 @@ class MedicoPartesDiarios extends Page
         $parte = MedicoParteDiario::query()->updateOrCreate(
             ['id' => $this->editandoId],
             [
-                'fecha'                    => $this->fecha,
-                'nombres'                  => mb_strtoupper(trim($this->nombres)),
-                'edad'                     => $this->edad,
-                'area_id'                  => $this->area_id,
-                'cargo_id'                 => $this->cargo_id,
-                'tipo_paciente'            => $this->tipoPaciente,
-                'habitacion'               => $this->habitacion,
-                'turno'                    => $this->turno,
-                'tipo_certificado_id'      => $this->tipo_certificado_id,
-                'entidad_certificado_id'   => $this->entidad_certificado_id,
-                'horas_certificado'        => $this->horas_certificado,
-                'dias_certificado'         => $this->dias_certificado,
+                'fecha' => $this->fecha,
+                'nombres' => mb_strtoupper(trim($this->nombres)),
+                'edad' => $this->edad,
+                'area_id' => $this->area_id,
+                'cargo_id' => $this->cargo_id,
+                'tipo_paciente' => $this->tipoPaciente,
+                'habitacion' => $this->habitacion,
+                'turno' => $this->turno,
+                'tipo_certificado' => $this->tipo_certificado,
+                'entidad_certificado_id' => $this->entidad_certificado_id,
+                'horas_certificado' => $this->unidadDescanso === 'horas' ? $this->horas_certificado : null,
+                'dias_certificado' => $this->unidadDescanso === 'dias' ? $this->dias_certificado : null,
                 'fecha_inicio_certificado' => $this->fecha_inicio_certificado,
-                'fecha_fin_certificado'    => $this->fecha_fin_certificado,
-                'medico_certifica'         => $this->medico_certifica,
-                'causa_id'                 => $this->causa_id,
-                'diagnostico_id'           => $this->diagnostico_id,
-                'observacion'              => $this->observacion,
-                'hash_unico'               => $this->editandoId
+                'fecha_fin_certificado' => $this->fecha_fin_certificado,
+                'medico_certifica' => $this->medico_certifica ? mb_strtoupper(trim($this->medico_certifica)) : null,
+                'causa_id' => $this->causa_id,
+                'diagnostico_id' => $this->diagnostico_id,
+                'tipo_salida' => $this->tipo_salida,
+                'incidente' => $this->incidente,
+                'observacion' => $this->observacion,
+                'hash_unico' => $this->editandoId
                     ? MedicoParteDiario::query()->whereKey($this->editandoId)->value('hash_unico')
                     : hash('sha256', implode('|', ['manual', microtime(true), $this->nombres])),
             ],
@@ -376,9 +430,9 @@ class MedicoPartesDiarios extends Page
             $med = Medicamento::query()->find($m['medicamento_id']);
             MedicoParteMedicamento::query()->create([
                 'parte_diario_id' => $parte->id,
-                'medicamento_id'  => $m['medicamento_id'],
+                'medicamento_id' => $m['medicamento_id'],
                 'nombre_original' => $med?->nombre ?? 'Desconocido',
-                'cantidad'        => (float) ($m['cantidad'] ?? 1),
+                'cantidad' => (float) ($m['cantidad'] ?? 1),
             ]);
         }
 
@@ -410,19 +464,16 @@ class MedicoPartesDiarios extends Page
             }
         }
 
-        // Vincular o crear paciente — usar pacienteId si ya se seleccionó
+        // Vincular o crear paciente
         $nombreNormalizado = mb_strtoupper(trim($this->nombres));
+
         if ($this->pacienteId && MedicoPaciente::query()->whereKey($this->pacienteId)->exists()) {
-            // Actualizar datos del paciente existente
+            // Paciente existente: solo actualizar edad (área/cargo/tipo son datos maestros, no se tocan)
             MedicoPaciente::query()->whereKey($this->pacienteId)->update([
-                'edad'    => $this->edad ?? null,
-                'area_id' => $this->area_id,
-                'cargo_id'=> $this->cargo_id,
-                'tipo'    => $this->tipoPaciente,
+                'edad' => $this->edad ?? null,
             ]);
-        } elseif ($this->tipoPaciente !== 'colaborador') {
-            // Para huéspedes/externos/aspirantes/pacientes: crear si no existe
-            // Buscar por nombre exacto o cédula
+        } else {
+            // Buscar por cédula o nombre exacto (sin importar el tipo)
             $paciente = null;
             if ($this->cedula !== '') {
                 $paciente = MedicoPaciente::query()->where('cedula', $this->cedula)->first();
@@ -430,15 +481,22 @@ class MedicoPartesDiarios extends Page
             if (! $paciente) {
                 $paciente = MedicoPaciente::query()->where('nombres', $nombreNormalizado)->first();
             }
-            if (! $paciente) {
-                MedicoPaciente::query()->create([
-                    'cedula'  => $this->cedula !== '' ? $this->cedula : null,
+
+            if ($paciente) {
+                // Ya existía (no seleccionado del dropdown): actualizar solo edad si se dio
+                if ($this->edad !== null) {
+                    $paciente->update(['edad' => $this->edad]);
+                }
+            } else {
+                // No existe: crear siempre, sin importar el tipo de paciente
+                $paciente = MedicoPaciente::query()->create([
+                    'cedula' => $this->cedula !== '' ? $this->cedula : null,
                     'nombres' => $nombreNormalizado,
-                    'edad'    => $this->edad,
+                    'edad' => $this->edad,
                     'area_id' => $this->area_id,
-                    'cargo_id'=> $this->cargo_id,
-                    'tipo'    => $this->tipoPaciente,
-                    'activo'  => true,
+                    'cargo_id' => $this->cargo_id,
+                    'tipo' => $this->tipoPaciente,
+                    'activo' => true,
                 ]);
             }
         }
@@ -452,7 +510,7 @@ class MedicoPartesDiarios extends Page
     {
         $p = MedicoParteDiario::query()->with('medicamentos')->findOrFail($id);
         $this->editandoId = $p->id;
-        $this->fecha = $p->fecha instanceof \Carbon\Carbon ? $p->fecha->format('Y-m-d') : now()->toDateString();
+        $this->fecha = $p->fecha instanceof Carbon ? $p->fecha->format('Y-m-d') : now()->toDateString();
         $this->nombres = $p->nombres;
         $this->edad = $p->edad;
         $this->area_id = $p->area_id;
@@ -461,19 +519,22 @@ class MedicoPartesDiarios extends Page
         $this->habitacion = $p->habitacion;
         $this->turno = $p->turno;
         $this->entidad_certificado_id = $p->entidad_certificado_id;
-        $this->tipo_certificado_id = $p->tipo_certificado_id;
+        $this->tipo_certificado = $p->tipo_certificado;
         $this->horas_certificado = $p->horas_certificado;
         $this->dias_certificado = $p->dias_certificado;
-        $this->fecha_inicio_certificado = $p->fecha_inicio_certificado instanceof \Carbon\Carbon ? $p->fecha_inicio_certificado->format('Y-m-d') : $p->fecha_inicio_certificado;
-        $this->fecha_fin_certificado = $p->fecha_fin_certificado instanceof \Carbon\Carbon ? $p->fecha_fin_certificado->format('Y-m-d') : $p->fecha_fin_certificado;
+        $this->fecha_inicio_certificado = $p->fecha_inicio_certificado instanceof Carbon ? $p->fecha_inicio_certificado->format('Y-m-d') : $p->fecha_inicio_certificado;
+        $this->fecha_fin_certificado = $p->fecha_fin_certificado instanceof Carbon ? $p->fecha_fin_certificado->format('Y-m-d') : $p->fecha_fin_certificado;
         $this->medico_certifica = $p->medico_certifica;
         $this->causa_id = $p->causa_id;
         $this->diagnostico_id = $p->diagnostico_id;
+        $this->tipo_salida = $p->tipo_salida;
+        $this->incidente = $p->incidente;
+        $this->unidadDescanso = $p->dias_certificado ? 'dias' : 'horas';
         $this->observacion = $p->observacion;
         $this->medicamentos = $p->medicamentos->map(fn ($m) => [
             'medicamento_id' => $m->medicamento_id,
-            'cantidad'       => $m->cantidad,
-        ])->values()->all() ?: [['medicamento_id' => null, 'cantidad' => 1]];
+            'cantidad' => $m->cantidad,
+        ])->values()->all();
 
         $this->modalAtencionAbierto = true;
     }
@@ -525,16 +586,19 @@ class MedicoPartesDiarios extends Page
         $this->habitacion = null;
         $this->turno = null;
         $this->entidad_certificado_id = null;
-        $this->tipo_certificado_id = null;
+        $this->tipo_certificado = null;
         $this->horas_certificado = null;
         $this->dias_certificado = null;
         $this->fecha_inicio_certificado = null;
         $this->fecha_fin_certificado = null;
         $this->medico_certifica = null;
+        $this->unidadDescanso = 'horas';
         $this->causa_id = null;
         $this->diagnostico_id = null;
+        $this->tipo_salida = null;
+        $this->incidente = null;
         $this->observacion = null;
-        $this->medicamentos = [['medicamento_id' => null, 'cantidad' => 1]];
+        $this->medicamentos = [];
     }
 
     public function toggleTurno(string $turno): void
@@ -566,25 +630,25 @@ class MedicoPartesDiarios extends Page
             ->when($busqueda !== '', function ($q) use ($busqueda) {
                 $upper = mb_strtoupper($busqueda);
                 $sinAcentos = str_replace(
-                    ['Á','É','Í','Ó','Ú','À','È','Ì','Ò','Ù','Â','Ê','Î','Ô','Û','Ã','Õ','Ä','Ë','Ï','Ö','Ü','Ç','Ñ','Ñ'],
-                    ['A','E','I','O','U','A','E','I','O','U','A','E','I','O','U','A','O','A','E','I','O','U','C','N','N'],
+                    ['Á', 'É', 'Í', 'Ó', 'Ú', 'À', 'È', 'Ì', 'Ò', 'Ù', 'Â', 'Ê', 'Î', 'Ô', 'Û', 'Ã', 'Õ', 'Ä', 'Ë', 'Ï', 'Ö', 'Ü', 'Ç', 'Ñ', 'Ñ'],
+                    ['A', 'E', 'I', 'O', 'U', 'A', 'E', 'I', 'O', 'U', 'A', 'E', 'I', 'O', 'U', 'A', 'O', 'A', 'E', 'I', 'O', 'U', 'C', 'N', 'N'],
                     $upper
                 );
 
                 $q->where(function ($q) use ($upper, $sinAcentos, $busqueda) {
-                    $q->where('nombres', 'like', '%' . $upper . '%')
-                      ->orWhere('nombres', 'like', '%' . $sinAcentos . '%')
-                      ->orWhere('cedula', 'like', '%' . $busqueda . '%')
-                      ->orWhere('cedula', 'like', '%' . $sinAcentos . '%')
-                      ->orWhereHas('area', fn ($a) => $a->where('nombre', 'like', '%' . $upper . '%'));
+                    $q->where('nombres', 'like', '%'.$upper.'%')
+                        ->orWhere('nombres', 'like', '%'.$sinAcentos.'%')
+                        ->orWhere('cedula', 'like', '%'.$busqueda.'%')
+                        ->orWhere('cedula', 'like', '%'.$sinAcentos.'%')
+                        ->orWhereHas('area', fn ($a) => $a->where('nombre', 'like', '%'.$upper.'%'));
                 });
             })
             ->orderByDesc('activo')
             ->orderBy('nombres')
             ->limit(20)
             ->get(['id', 'nombres', 'cedula', 'edad', 'area_id', 'cargo_id', 'tipo',
-                   'activo', 'patologias', 'vacunas', 'telefono', 'fecha_ingreso', 'antecedentes',
-                   'fichas_anteriores']);
+                'activo', 'patologias', 'vacunas', 'telefono', 'fecha_ingreso', 'antecedentes',
+                'fichas_anteriores']);
     }
 
     public function getPacienteSeleccionadoProperty(): ?MedicoPaciente
@@ -592,6 +656,7 @@ class MedicoPartesDiarios extends Page
         if (! $this->pacienteId) {
             return null;
         }
+
         return MedicoPaciente::query()->with(['area', 'cargo', 'examenes', 'visitas'])->find($this->pacienteId);
     }
 
@@ -606,16 +671,16 @@ class MedicoPartesDiarios extends Page
         $hoy = now();
 
         $tipos = ['espirometria' => 'Espirometria', 'ecografia' => 'Ecografia',
-                  'audiometria' => 'Audiometria', 'optometria' => 'Optometria'];
+            'audiometria' => 'Audiometria', 'optometria' => 'Optometria'];
 
         foreach ($tipos as $tipo => $nombre) {
             $ex = $p->examenes->firstWhere('tipo', $tipo);
             if (! $ex || ! $ex->fecha) {
                 $pendientes[] = ['nombre' => $nombre, 'estado' => 'pendiente', 'fecha' => null];
-            } elseif ($ex->fecha instanceof \Carbon\Carbon && $ex->fecha->lt($hoy->copy()->subYear())) {
+            } elseif ($ex->fecha instanceof Carbon && $ex->fecha->lt($hoy->copy()->subYear())) {
                 $pendientes[] = ['nombre' => $nombre, 'estado' => 'vencido', 'fecha' => $ex->fecha->format('d/m/Y')];
             } else {
-                $pendientes[] = ['nombre' => $nombre, 'estado' => 'vigente', 'fecha' => $ex->fecha instanceof \Carbon\Carbon ? $ex->fecha->format('d/m/Y') : $ex->fecha];
+                $pendientes[] = ['nombre' => $nombre, 'estado' => 'vigente', 'fecha' => $ex->fecha instanceof Carbon ? $ex->fecha->format('d/m/Y') : $ex->fecha];
             }
         }
 
@@ -631,8 +696,9 @@ class MedicoPartesDiarios extends Page
         $visitas = [];
         foreach (range(2021, 2026) as $anio) {
             $vis = $this->pacienteSeleccionado->visitas->firstWhere('anio', $anio);
-            $visitas[$anio] = $vis?->fecha instanceof \Carbon\Carbon ? $vis->fecha->format('d/m/Y') : $vis?->fecha;
+            $visitas[$anio] = $vis?->fecha instanceof Carbon ? $vis->fecha->format('d/m/Y') : $vis?->fecha;
         }
+
         return $visitas;
     }
 
@@ -651,6 +717,7 @@ class MedicoPartesDiarios extends Page
             ->map(function ($p) {
                 $p->causa_nombre = $p->causa?->nombre;
                 $p->diagnostico_nombre = $p->diagnostico?->nombre;
+
                 return $p;
             });
     }
@@ -663,12 +730,25 @@ class MedicoPartesDiarios extends Page
     public function getFiltrosActivosProperty(): int
     {
         $count = 0;
-        if ($this->areaFiltroId) $count++;
-        if ($this->causaFiltroId) $count++;
-        if ($this->tipoPacienteFiltro) $count++;
-        if ($this->estadoFiltro) $count++;
-        if ($this->buscar !== '') $count++;
-        if (! $this->mostrarSoloHoy) $count++;
+        if ($this->areaFiltroId) {
+            $count++;
+        }
+        if ($this->causaFiltroId) {
+            $count++;
+        }
+        if ($this->tipoPacienteFiltro) {
+            $count++;
+        }
+        if ($this->estadoFiltro) {
+            $count++;
+        }
+        if ($this->buscar !== '') {
+            $count++;
+        }
+        if (! $this->mostrarSoloHoy) {
+            $count++;
+        }
+
         return $count;
     }
 
@@ -704,7 +784,7 @@ class MedicoPartesDiarios extends Page
 
         return Diagnostico::query()
             ->where('activo', true)
-            ->where('nombre', 'like', '%' . trim($q) . '%')
+            ->where('nombre', 'like', '%'.trim($q).'%')
             ->orderBy('nombre')
             ->limit(50)
             ->get(['id', 'nombre'])
@@ -720,6 +800,7 @@ class MedicoPartesDiarios extends Page
             return null;
         }
         $d = Diagnostico::query()->find($id);
+
         return $d ? ['id' => $d->id, 'nombre' => $d->nombre] : null;
     }
 
@@ -728,9 +809,9 @@ class MedicoPartesDiarios extends Page
         return EntidadCertificado::query()->where('activo', true)->orderBy('nombre')->get(['id', 'nombre']);
     }
 
-    public function getTipoCertCatalogProperty(): Collection
+    public function getTipoCertCatalogProperty(): array
     {
-        return TipoCertificado::query()->where('activo', true)->orderBy('nombre')->get(['id', 'nombre']);
+        return self::TIPOS_CERTIFICADO;
     }
 
     public function getMedicamentosCatalogProperty(): Collection
@@ -738,13 +819,39 @@ class MedicoPartesDiarios extends Page
         return Medicamento::query()->where('activo', true)->orderBy('nombre')->get(['id', 'nombre']);
     }
 
+    public function getTiposSalidaCatalogProperty(): array
+    {
+        return self::TIPOS_SALIDA;
+    }
+
+    public function getIncidentesCatalogProperty(): array
+    {
+        return self::INCIDENTES;
+    }
+
     /**
-     * @return \Illuminate\Database\Eloquent\Builder
+     * Personal médico (doctores, enfermeros, unidad de seguridad y salud)
+     * para el dropdown "Médico que certifica".
+     */
+    public function getPersonalMedicoProperty(): Collection
+    {
+        $cargosMedicos = ['DOCTOR', 'DOCTORA', 'ENFERMERO', 'ENFERMERA', 'UNIDAD DE SEGURIDAD Y SALUD'];
+
+        return MedicoPaciente::query()
+            ->where('activo', true)
+            ->whereHas('cargo', fn ($q) => $q->whereIn('nombre', $cargosMedicos))
+            ->with('cargo')
+            ->orderBy('nombres')
+            ->get(['id', 'nombres', 'cargo_id']);
+    }
+
+    /**
+     * @return Builder
      */
     private function queryPartes()
     {
         $query = MedicoParteDiario::query()->with(['area', 'cargo', 'causa', 'diagnostico',
-            'entidadCertificado', 'tipoCertificado', 'medicamentos.medicamento']);
+            'entidadCertificado', 'medicamentos.medicamento']);
 
         // Filtro de fecha
         if ($this->mostrarSoloHoy) {
@@ -763,15 +870,15 @@ class MedicoPartesDiarios extends Page
             $busqueda = trim($this->buscar);
             $upper = mb_strtoupper($busqueda);
             $sinAcentos = str_replace(
-                ['Á','É','Í','Ó','Ú','À','È','Ì','Ò','Ù','Â','Ê','Î','Ô','Û','Ã','Õ','Ä','Ë','Ï','Ö','Ü','Ç','Ñ','Ñ'],
-                ['A','E','I','O','U','A','E','I','O','U','A','E','I','O','U','A','O','A','E','I','O','U','C','N','N'],
+                ['Á', 'É', 'Í', 'Ó', 'Ú', 'À', 'È', 'Ì', 'Ò', 'Ù', 'Â', 'Ê', 'Î', 'Ô', 'Û', 'Ã', 'Õ', 'Ä', 'Ë', 'Ï', 'Ö', 'Ü', 'Ç', 'Ñ', 'Ñ'],
+                ['A', 'E', 'I', 'O', 'U', 'A', 'E', 'I', 'O', 'U', 'A', 'E', 'I', 'O', 'U', 'A', 'O', 'A', 'E', 'I', 'O', 'U', 'C', 'N', 'N'],
                 $upper
             );
             $query->where(function ($q) use ($upper, $sinAcentos) {
-                $q->where('nombres', 'like', '%' . $upper . '%')
-                  ->orWhere('nombres', 'like', '%' . $sinAcentos . '%')
-                  ->orWhere('observacion', 'like', '%' . $upper . '%')
-                  ->orWhere('habitacion', 'like', '%' . $upper . '%');
+                $q->where('nombres', 'like', '%'.$upper.'%')
+                    ->orWhere('nombres', 'like', '%'.$sinAcentos.'%')
+                    ->orWhere('observacion', 'like', '%'.$upper.'%')
+                    ->orWhere('habitacion', 'like', '%'.$upper.'%');
             });
         }
 
@@ -830,11 +937,11 @@ class MedicoPartesDiarios extends Page
         }
 
         return [
-            'total'     => (int) (clone $base)->count(),
+            'total' => (int) (clone $base)->count(),
             'huespedes' => (int) (clone $base)->where('tipo_paciente', 'huesped')->count(),
-            'colabs'    => (int) (clone $base)->where('tipo_paciente', 'colaborador')->count(),
-            'conCert'   => (int) (clone $base)->whereNotNull('entidad_certificado_id')->count(),
-            'areas'     => (int) (clone $base)->whereNotNull('area_id')->distinct('area_id')->count('area_id'),
+            'colabs' => (int) (clone $base)->where('tipo_paciente', 'colaborador')->count(),
+            'conCert' => (int) (clone $base)->whereNotNull('entidad_certificado_id')->count(),
+            'areas' => (int) (clone $base)->whereNotNull('area_id')->distinct('area_id')->count('area_id'),
         ];
     }
 }
