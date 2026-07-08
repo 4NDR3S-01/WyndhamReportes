@@ -1,5 +1,5 @@
 <x-filament-panels::page>
-    <div class="mx-auto max-w-5xl py-8">
+    <div class="py-8">
         <!-- Encabezado de Bienvenida (Hero Pastel) -->
         <x-hero-card
             title="{{ '¡Hola, ' . explode(' ', auth()->user()->name ?? 'Administrador')[0] . '!' }}"

@@ -8,9 +8,13 @@ use Filament\Widgets\ChartWidget;
 
 class MedicoAtencionesDiariasWidget extends ChartWidget
 {
+    protected static bool $isLazy = false;
+
     protected static ?int $sort = 2;
 
     protected int|string|array $columnSpan = 1;
+
+    protected string $view = 'filament.widgets.skeleton-chart';
 
     protected function getType(): string
     {
@@ -62,3 +66,4 @@ class MedicoAtencionesDiariasWidget extends ChartWidget
         ];
     }
 }
+

@@ -7,7 +7,6 @@ use App\Models\MedicoProducto;
 use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Filament\Support\Enums\Width;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -24,7 +23,6 @@ class MedicoProductos extends Page
     // Fusionado en MedicoInventario — ya no aparece en navegación
     protected static bool $shouldRegisterNavigation = false;
     protected string $view = 'filament.pages.medico-productos';
-    protected Width|string|null $maxContentWidth = Width::Full;
 
     public ?int $editandoId = null;
     public string $buscar = '';

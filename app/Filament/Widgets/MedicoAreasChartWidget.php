@@ -7,9 +7,13 @@ use Filament\Widgets\ChartWidget;
 
 class MedicoAreasChartWidget extends ChartWidget
 {
+    protected static bool $isLazy = false;
+
     protected static ?int $sort = 4;
 
     protected int|string|array $columnSpan = 1;
+
+    protected string $view = 'filament.widgets.skeleton-chart';
 
     protected function getType(): string
     {
@@ -50,3 +54,4 @@ class MedicoAreasChartWidget extends ChartWidget
         ];
     }
 }
+

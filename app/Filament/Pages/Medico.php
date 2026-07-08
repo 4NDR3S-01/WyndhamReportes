@@ -70,10 +70,10 @@ class Medico extends Page
     protected function getFooterWidgets(): array
     {
         return [
-            \App\Filament\Widgets\MedicoKardexMensualWidget::class,
             \App\Filament\Widgets\MedicoAtencionesDiariasWidget::class,
             \App\Filament\Widgets\MedicoCausasChartWidget::class,
             \App\Filament\Widgets\MedicoAreasChartWidget::class,
+            \App\Filament\Widgets\MedicoMedicamentosChartWidget::class,
         ];
     }
 

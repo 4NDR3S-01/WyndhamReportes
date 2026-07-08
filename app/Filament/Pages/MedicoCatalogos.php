@@ -16,7 +16,6 @@ use App\Models\TipoSalida;
 use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Filament\Support\Enums\Width;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
@@ -30,7 +29,6 @@ class MedicoCatalogos extends Page
     protected static ?string $slug = 'medico/base-medica';
     protected static ?int $navigationSort = 4;
     protected string $view = 'filament.pages.medico-catalogos';
-    protected Width|string|null $maxContentWidth = Width::Full;
 
     public string $tipo = 'area';
     public string $buscar = '';
