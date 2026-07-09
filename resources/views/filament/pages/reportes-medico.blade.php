@@ -216,41 +216,56 @@
         {{-- ============================================================
         ANÁLISIS — secciones colapsables
         ============================================================ --}}
-        {{-- Selector de rango para Parte Diario --}}
-        <details class="card group">
-            <summary class="card-header cursor-pointer select-none">
-                <div class="flex items-center gap-2">
-                    <svg class="h-4 w-4 shrink-0 text-ocean-500 transition group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/></svg>
-                    <h3 class="text-sm font-bold text-gray-900 dark:text-white">Filtrar por rango de fechas</h3>
+        {{-- Selector de rango de fechas (Filtro Principal UI Comprimido) --}}
+        <section class="rounded-xl shadow-sm border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 overflow-hidden mb-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between p-3 gap-3">
+                <!-- Lado Izquierdo: Título y descripción -->
+                <div class="flex items-center gap-3">
+                    <div class="flex shrink-0 h-10 w-10 items-center justify-center rounded-lg bg-ocean-50 text-ocean-600 dark:bg-ocean-950/50 dark:text-ocean-400">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-gray-900 dark:text-white leading-tight">Rango de fechas</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Filtra la informaci&oacute;n y exporta partes diarios.</p>
+                    </div>
                 </div>
-                <span class="text-xs text-gray-400">Parte diario por rango personalizado</span>
-            </summary>
-            <div class="flex flex-wrap items-end gap-3 border-t border-gray-50 px-5 py-4 dark:border-gray-800">
-                <div>
-                    <label class="text-xs font-medium text-gray-500 dark:text-gray-400">Desde</label>
-                    <input type="date" wire:model="desde" class="mt-1 block rounded-lg border-gray-300 text-sm shadow-sm focus:border-ocean-500 focus:ring-ocean-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white">
+            
+                <!-- Lado Derecho: Controles y botón -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <!-- Inputs encapsulados compactos -->
+                    <div class="flex flex-nowrap items-center rounded-lg bg-gray-50 border border-gray-200 dark:bg-gray-950/50 dark:border-gray-800 p-0.5 shadow-inner">
+                        <div class="flex items-center pl-2">
+                            <span class="text-[9px] font-bold uppercase tracking-wider text-gray-400">Desde</span>
+                            <input type="date" wire:model.live="desde" class="w-[120px] border-0 bg-transparent py-1.5 px-2 text-xs font-medium text-gray-800 focus:ring-0 dark:text-gray-200">
+                        </div>
+                        <span class="text-gray-300 dark:text-gray-700">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        </span>
+                        <div class="flex items-center">
+                            <span class="text-[9px] font-bold uppercase tracking-wider text-gray-400 pl-1">Hasta</span>
+                            <input type="date" wire:model.live="hasta" class="w-[120px] border-0 bg-transparent py-1.5 px-2 text-xs font-medium text-gray-800 focus:ring-0 dark:text-gray-200">
+                        </div>
+                    </div>
+                    
+                    <!-- Botón de Exportar compacto -->
+                    <button wire:click.prevent="descargarParteDiarioRango" class="inline-flex items-center justify-center rounded-lg bg-ocean-600 px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-ocean-500 focus:outline-none focus:ring-2 focus:ring-ocean-500 focus:ring-offset-1">
+                        <svg class="mr-1.5 h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0-3-3m3 3 3-3m2 8H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z"/></svg>
+                        Exportar
+                    </button>
                 </div>
-                <div>
-                    <label class="text-xs font-medium text-gray-500 dark:text-gray-400">Hasta</label>
-                    <input type="date" wire:model="hasta" class="mt-1 block rounded-lg border-gray-300 text-sm shadow-sm focus:border-ocean-500 focus:ring-ocean-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white">
-                </div>
-                <a href="#" wire:click.prevent="descargarParteDiarioRango" class="inline-flex items-center rounded-lg bg-ocean-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-ocean-700">
-                    <svg class="mr-1.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0-3-3m3 3 3-3m2 8H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z"/></svg>
-                    Descargar
-                </a>
             </div>
-        </details>
+        </section>
 
         {{-- Kardex Mensual Detallado --}}
-        @if ($this->kardexMensualDetallado->isNotEmpty())
         <details class="card group">
             <summary class="card-header cursor-pointer select-none">
                 <div class="flex items-center gap-2">
                     <svg class="h-4 w-4 shrink-0 text-tide-500 transition group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/></svg>
                     <h3 class="text-sm font-bold text-gray-900 dark:text-white">KARDEX Mensual Detallado</h3>
                 </div>
-                <span class="chip bg-tide-100 text-tide-700 dark:bg-tide-900/30 dark:text-tide-400">{{ $this->kardexMensualDetallado->count() }}</span>
+                <span class="chip {{ $this->kardexMensualDetallado->isNotEmpty() ? 'bg-tide-100 text-tide-700 dark:bg-tide-900/30 dark:text-tide-400' : 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400' }}">{{ $this->kardexMensualDetallado->count() }}</span>
             </summary>
+            @if ($this->kardexMensualDetallado->isNotEmpty())
             <div class="divide-y divide-gray-100 dark:divide-gray-800">
                 @foreach ($this->kardexMensualDetallado as $mes)
                     <details class="group">
@@ -307,11 +322,18 @@
                     </details>
                 @endforeach
             </div>
+            @else
+            <div class="flex flex-col items-center justify-center py-10 px-5 text-center">
+                <div class="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-50 text-gray-400 dark:bg-gray-900">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+                </div>
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">No hay datos detallados disponibles</p>
+                <p class="mt-1 text-xs text-gray-400">Genera partes diarios o ajusta las fechas para visualizar la informaci&oacute;n</p>
+            </div>
+            @endif
         </details>
-        @endif
 
         {{-- Comparativo Semanal --}}
-        @if ($this->semanas->isNotEmpty())
         <details class="card group">
             <summary class="card-header cursor-pointer select-none">
                 <div class="flex items-center gap-2">
@@ -320,6 +342,7 @@
                 </div>
                 <span class="text-xs text-gray-400">{{ $this->semanas->count() }} semanas</span>
             </summary>
+            @if ($this->semanas->isNotEmpty())
             <div class="overflow-x-auto">
                 <table class="min-w-full text-sm">
                     <thead>
@@ -342,11 +365,18 @@
                     </tbody>
                 </table>
             </div>
+            @else
+            <div class="flex flex-col items-center justify-center py-10 px-5 text-center">
+                <div class="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-50 text-gray-400 dark:bg-gray-900">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                </div>
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Sin comparativo semanal</p>
+                <p class="mt-1 text-xs text-gray-400">Faltan registros de pacientes en el rango establecido</p>
+            </div>
+            @endif
         </details>
-        @endif
 
         {{-- Kardex Inventario --}}
-        @if ($this->kardex->isNotEmpty())
         <details class="card group">
             <summary class="card-header cursor-pointer select-none">
                 <div class="flex items-center gap-2">
@@ -361,6 +391,7 @@
                     </a>
                 </div>
             </summary>
+            @if ($this->kardex->isNotEmpty())
             <div class="space-y-3 p-5">
                 @foreach ($this->kardex as $periodo => $items)
                     <details class="group rounded-xl border border-gray-100 dark:border-gray-800">
@@ -400,11 +431,18 @@
                     </details>
                 @endforeach
             </div>
+            @else
+            <div class="flex flex-col items-center justify-center py-10 px-5 text-center">
+                <div class="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-50 text-gray-400 dark:bg-gray-900">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+                </div>
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Inventario vac&iacute;o</p>
+                <p class="mt-1 text-xs text-gray-400">No hay registros de medicinas o insumos en este per&iacute;odo</p>
+            </div>
+            @endif
         </details>
-        @endif
 
         {{-- Movimientos Kardex --}}
-        @if ($this->kardexMovimientos->isNotEmpty())
         <details class="card group">
             <summary class="card-header cursor-pointer select-none">
                 <div class="flex items-center gap-2">
@@ -418,6 +456,7 @@
                     </a>
                 </div>
             </summary>
+            @if ($this->kardexMovimientos->isNotEmpty())
             <div class="overflow-x-auto">
                 <table class="min-w-full text-sm">
                     <thead>
@@ -450,8 +489,16 @@
                     </tbody>
                 </table>
             </div>
+            @else
+            <div class="flex flex-col items-center justify-center py-10 px-5 text-center">
+                <div class="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-50 text-gray-400 dark:bg-gray-900">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
+                </div>
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Sin movimientos recientes</p>
+                <p class="mt-1 text-xs text-gray-400">No se han registrado salidas ni ingresos en este rango</p>
+            </div>
+            @endif
         </details>
-        @endif
 
         @else
         {{-- ============================================================

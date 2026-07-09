@@ -283,7 +283,7 @@ class AdminPanelProvider extends PanelProvider
                             </div>
                             <div class="leading-none pr-2">
                                 <p class="mb-0.5 text-[9px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">' . e($fecha) . '</p>
-                                <p class="text-sm font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300" x-text="time"></p>
+                                <p class="text-sm font-black tracking-tight text-gray-900 dark:text-white" x-text="time"></p>
                             </div>
                         </div>
 
