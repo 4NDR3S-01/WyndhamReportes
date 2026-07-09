@@ -14,6 +14,8 @@ class MedicoAtencionesDiariasWidget extends ChartWidget
 
     protected int|string|array $columnSpan = 1;
 
+    protected ?string $maxHeight = '300px';
+
     protected string $view = 'filament.widgets.skeleton-chart';
 
     protected function getType(): string
@@ -23,32 +25,52 @@ class MedicoAtencionesDiariasWidget extends ChartWidget
 
     public function getHeading(): ?string
     {
-        return 'Atenciones diarias';
+        return 'Atenciones mensuales (' . Carbon::today()->year . ')';
+    }
+
+    protected function getOptions(): array
+    {
+        return [
+            'responsive' => true,
+            'maintainAspectRatio' => false,
+            'pointRadius' => 3,
+            'pointHoverRadius' => 6,
+            'scales' => [
+                'y' => [
+                    'beginAtZero' => true,
+                    'ticks' => ['precision' => 0],
+                ],
+            ],
+        ];
     }
 
     protected function getData(): array
     {
-        $diasRaw = MedicoParteDiario::query()
-            ->selectRaw('DISTINCT fecha')
-            ->orderBy('fecha')
-            ->pluck('fecha');
+        $hoy = Carbon::today();
+        $inicio = $hoy->copy()->startOfYear();
+        $fin = $hoy->copy()->endOfYear();
 
-        $labels = [];
-        $dias = [];
-        foreach ($diasRaw as $f) {
-            $key = Carbon::parse($f)->format('Y-m-d');
-            $dias[] = $key;
-            $labels[] = Carbon::parse($f)->format('d/m');
-        }
+        // Conteo por día dentro del año actual (consulta agnóstica a la BD).
+        $filas = MedicoParteDiario::query()
+            ->whereDate('fecha', '>=', $inicio)
+            ->whereDate('fecha', '<=', $fin)
+            ->selectRaw('fecha, COUNT(*) as total')
+            ->groupBy('fecha')
+            ->get();
 
+        // Agrupa los totales diarios por mes.
         $mapa = [];
-        foreach (MedicoParteDiario::query()->selectRaw('fecha, COUNT(*) as total')->groupBy('fecha')->get() as $c) {
-            $mapa[Carbon::parse($c->fecha)->format('Y-m-d')] = (int) $c->total;
+        foreach ($filas as $fila) {
+            $mes = (int) Carbon::parse($fila->fecha)->format('m');
+            $mapa[$mes] = ($mapa[$mes] ?? 0) + (int) $fila->total;
         }
 
+        // Serie mensual continua de enero a diciembre (los meses sin atenciones quedan en 0).
+        $labels = [];
         $data = [];
-        foreach ($dias as $f) {
-            $data[] = $mapa[$f] ?? null;
+        for ($mes = 1; $mes <= 12; $mes++) {
+            $labels[] = Carbon::createFromDate($hoy->year, $mes, 1)->isoFormat('MMM');
+            $data[] = $mapa[$mes] ?? 0;
         }
 
         return [

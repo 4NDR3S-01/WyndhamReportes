@@ -90,6 +90,25 @@ class AdminPanelProvider extends PanelProvider
                         min-height: 100dvh;
                     }
 
+                    /* ========== MODO OSCURO: mantener el login legible y con sus colores de marca ==========
+                       El panel puede quedar en modo oscuro (localStorage) y Filament marca <html>
+                       con la clase "dark", lo que volvería el texto blanco sobre la tarjeta blanca.
+                       La tarjeta ya es blanca (!important) en ambos modos; aquí solo neutralizamos
+                       los FONDOS oscuros de Filament y fijamos un color base legible para el texto
+                       SIN estilo. Los colores de marca (título, etiquetas, botón) se definen más
+                       abajo con !important y se aplican IGUAL en claro y oscuro, por eso NO se
+                       sobreescriben aquí. */
+                    html.dark .fi-simple-layout,
+                    html.dark .fi-simple-main-ctn {
+                        background: transparent !important;
+                    }
+                    html.dark .fi-simple-main {
+                        color: #334155 !important; /* color base solo para texto sin estilo propio */
+                    }
+                    html.dark :where(.fi-simple-main) * {
+                        background-color: transparent !important;
+                    }
+
                     /* Animación de entrada del card */
                     @keyframes login-enter {
                         0%   { opacity: 0; transform: translateY(20px) scale(0.98); }
@@ -145,7 +164,10 @@ class AdminPanelProvider extends PanelProvider
                     }
 
                     /* ========== TIPOGRAFÍA ========== */
-                    .fi-simple-main h2 {
+                    /* El título del login es <h1 class="fi-simple-header-heading">.
+                       Color de marca fijado en AMBOS modos (no depende de .dark). */
+                    .fi-simple-main h1,
+                    .fi-simple-main .fi-simple-header-heading {
                         color: #0B3B60 !important;
                         font-weight: 800 !important;
                         font-size: 1.35rem !important;
@@ -157,7 +179,11 @@ class AdminPanelProvider extends PanelProvider
                         font-size: 0.875rem !important;
                         margin-bottom: 1.25rem !important;
                     }
-                    .fi-simple-main label {
+                    /* Etiquetas de campo: cubre <label> y el <span> interno para
+                       que el modo oscuro no las vuelva blancas. Mismo color en claro/oscuro. */
+                    .fi-simple-main label,
+                    .fi-simple-main .fi-fo-field-label,
+                    .fi-simple-main .fi-fo-field-label-content {
                         color: #334155 !important;
                         font-weight: 600 !important;
                         font-size: 0.8125rem !important;
@@ -198,6 +224,18 @@ class AdminPanelProvider extends PanelProvider
                     }
                     .fi-simple-main input::placeholder {
                         color: #94a3b8 !important;
+                    }
+
+                    /* ========== ERRORES DE VALIDACIÓN (mismo color en claro y oscuro) ==========
+                       Al ingresar credenciales inválidas, los mensajes y el borde del input
+                       deben verse igual sin importar el modo del panel. */
+                    .fi-simple-main .fi-fo-field-wrp-error-message,
+                    .fi-simple-main .fi-fo-field-wrp-error-list {
+                        color: #dc2626 !important;
+                    }
+                    .fi-simple-main .fi-fo-field-wrp-error .fi-input-wrapper {
+                        border-color: #dc2626 !important;
+                        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12) !important;
                     }
 
                     /* ========== CHECKBOX "Recordarme" ========== */
@@ -269,6 +307,21 @@ class AdminPanelProvider extends PanelProvider
                     .fi-topbar .fi-user-menu {
                         display: none !important;
                     }
+                    /* Evita el parpadeo del modal de confirmación de cierre de sesión */
+                    [x-cloak] {
+                        display: none !important;
+                    }
+                    /* Animación de entrada del modal: entra desde abajo-derecha y se centra */
+                    @keyframes modalIn {
+                        from {
+                            opacity: 0;
+                            transform: translate(-50%, -50%) scale(0.95);
+                        }
+                        to {
+                            opacity: 1;
+                            transform: translate(-50%, -50%) scale(1);
+                        }
+                    }
                 </style>'),
             )
             ->renderHook(
@@ -277,35 +330,89 @@ class AdminPanelProvider extends PanelProvider
                     $fecha = now()->translatedFormat('l, d \d\e F');
 
                     return Blade::render('<div class="me-4 flex items-center gap-3" x-data="{ time: new Date().toLocaleTimeString(\'es-ES\', { hour: \'2-digit\', minute: \'2-digit\' }) }" x-init="setInterval(() => time = new Date().toLocaleTimeString(\'es-ES\', { hour: \'2-digit\', minute: \'2-digit\' }), 1000)">
-                        <div class="flex items-center gap-3 rounded-full border border-gray-200/80 bg-white/80 px-3 py-1.5 shadow-sm backdrop-blur-md transition-all hover:bg-white dark:border-gray-700/80 dark:bg-gray-800/80 dark:hover:bg-gray-800">
-                            <div class="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-primary-50 to-primary-100 shadow-inner dark:from-primary-900/50 dark:to-primary-800/50">
-                                <x-heroicon-o-clock class="h-4 w-4 text-primary-600 dark:text-primary-400" />
+                        <div class="flex items-center gap-3 rounded-full bg-white/80 shadow-sm backdrop-blur-md transition-all hover:bg-white dark:bg-gray-800/80 dark:hover:bg-gray-800" style="border:1px solid rgba(148,163,184,0.5); padding:0.5rem 0.875rem;">
+                            <div class="flex items-center justify-center rounded-full bg-gradient-to-br from-primary-50 to-primary-100 shadow-inner dark:from-primary-900/50 dark:to-primary-800/50" style="width:2.25rem; height:2.25rem;">
+                                <x-heroicon-o-clock class="text-primary-600 dark:text-primary-400" style="width:1.25rem; height:1.25rem;" />
                             </div>
-                            <div class="leading-none pr-2">
-                                <p class="mb-0.5 text-[9px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">' . e($fecha) . '</p>
-                                <p class="text-sm font-black tracking-tight text-gray-900 dark:text-white" x-text="time"></p>
+                            <div class="leading-none" style="text-align:center; padding-right:0.5rem;">
+                                <p class="mb-0.5 font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400" style="font-size:0.6875rem;">' . e($fecha) . '</p>
+                                <p class="font-black tracking-tight text-gray-900 dark:text-white" style="font-size:1rem;" x-text="time"></p>
                             </div>
                         </div>
 
-                        <button type="button" x-data="{ theme: localStorage.getItem(\'theme\') || \'light\' }" x-on:click="theme = theme === \'dark\' ? \'light\' : \'dark\'; localStorage.setItem(\'theme\', theme); document.documentElement.classList.toggle(\'dark\', theme === \'dark\'); $dispatch(\'theme-changed\', theme);" class="relative flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white/80 text-gray-500 shadow-sm transition-all duration-300 hover:scale-105 hover:ring-2 hover:ring-primary-500/50 hover:text-primary-600 focus:outline-none dark:border-gray-700 dark:bg-gray-800/80 dark:text-gray-400 dark:hover:ring-primary-500/50 dark:hover:text-primary-400 backdrop-blur-md" title="Alternar Modo Oscuro/Claro">
-                            <div class="relative flex h-5 w-5 items-center justify-center">
-                                <x-heroicon-o-moon 
-                                    class="absolute inset-0 h-5 w-5 transition-all duration-500 ease-in-out" 
-                                    x-bind:class="theme === \'dark\' ? \'opacity-0 scale-50 rotate-90\' : \'opacity-100 scale-100 rotate-0 text-indigo-500\'" 
+                        <button type="button" x-data="{ theme: localStorage.getItem(\'theme\') || \'light\' }" x-on:click="theme = theme === \'dark\' ? \'light\' : \'dark\'; localStorage.setItem(\'theme\', theme); document.documentElement.classList.toggle(\'dark\', theme === \'dark\'); $dispatch(\'theme-changed\', theme);" class="relative flex h-14 w-14 items-center justify-center rounded-full backdrop-blur-md transition-all duration-300 hover:scale-110 focus:outline-none" x-bind:style="theme === \'dark\' ? \'background-color:#1f2937; border:2px solid #818cf8; box-shadow:0 1px 2px 0 rgba(0,0,0,0.30);\' : \'background-color:#ffffff; border:2px solid #fbbf24; box-shadow:0 1px 2px 0 rgba(0,0,0,0.10);\'" title="Alternar Modo Oscuro/Claro">
+                            <div class="relative flex h-8 w-8 items-center justify-center">
+                                <x-heroicon-o-moon
+                                    class="absolute inset-0 h-8 w-8 transition-all duration-500 ease-in-out"
+                                    x-bind:style="theme === \'dark\' ? \'opacity:1; transform:scale(1) rotate(0deg); color:#7dd3fc; filter:drop-shadow(0 0 5px rgba(125,211,252,0.85));\' : \'opacity:0; transform:scale(0.5) rotate(90deg); color:#38bdf8; filter:none;\'"
                                 />
-                                <x-heroicon-o-sun 
-                                    class="absolute inset-0 h-5 w-5 transition-all duration-500 ease-in-out" 
-                                    x-bind:class="theme !== \'dark\' ? \'opacity-0 scale-50 -rotate-90\' : \'opacity-100 scale-100 rotate-0 text-amber-400\'" 
+                                <x-heroicon-o-sun
+                                    class="absolute inset-0 h-8 w-8 transition-all duration-500 ease-in-out"
+                                    x-bind:style="theme !== \'dark\' ? \'opacity:1; transform:scale(1) rotate(0deg); color:#eab308; filter:drop-shadow(0 0 7px rgba(234,179,8,0.95));\' : \'opacity:0; transform:scale(0.5) rotate(-90deg); color:#facc15; filter:none;\'"
                                 />
                             </div>
                         </button>
 
-                        <form method="POST" action="' . route('filament.admin.auth.logout') . '" onsubmit="return confirm(\'¿Estás seguro de que deseas cerrar sesión?\');">
-                            ' . csrf_field() . '
-                            <x-filament::button color="danger" outlined="true" size="sm" icon="heroicon-m-arrow-right-on-rectangle" type="submit">
+                        <div>
+                            <x-filament::button
+                                color="danger"
+                                outlined="true"
+                                size="sm"
+                                icon="heroicon-m-arrow-right-on-rectangle"
+                                type="button"
+                                x-on:click="$dispatch(\'toggle-logout\')"
+                            >
                                 Cerrar sesión
                             </x-filament::button>
-                        </form>
+                        </div>');
+                }
+            )
+            ->renderHook(
+                PanelsRenderHook::BODY_END,
+                function (): string {
+                    return Blade::render('<div x-data="{ confirmLogout: false, dark: document.documentElement.classList.contains(\'dark\') }" @toggle-logout.window="confirmLogout = true; dark = document.documentElement.classList.contains(\'dark\')" x-cloak>
+                        <div
+                            x-show="confirmLogout"
+                            x-cloak
+                            x-transition.opacity
+                            style="position:fixed; top:0; right:0; bottom:0; left:0; z-index:9999; background-color:rgba(17,24,39,0.5);"
+                            x-on:click.self="confirmLogout = false"
+                            x-on:keydown.escape.window="confirmLogout = false"
+                        >
+                            <div
+                                x-show="confirmLogout"
+                                x-transition.opacity
+                                x-bind:style="dark ? \'position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); animation:modalIn 0.35s cubic-bezier(0.16,1,0.3,1) both; width:100%; max-width:24rem; border-radius:0.75rem; background-color:#1f2937; border:1px solid #374151; padding:1.5rem; text-align:left; box-shadow:0 20px 25px -5px rgba(0,0,0,0.25); color:#f9fafb;\' : \'position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); animation:modalIn 0.35s cubic-bezier(0.16,1,0.3,1) both; width:100%; max-width:24rem; border-radius:0.75rem; background-color:#ffffff; border:1px solid #e5e7eb; padding:1.5rem; text-align:left; box-shadow:0 20px 25px -5px rgba(0,0,0,0.10),0 10px 10px -5px rgba(0,0,0,0.04); color:#111827;\'"
+                                role="dialog"
+                                aria-modal="true"
+                            >
+                                <h2 style="font-size:1rem; font-weight:700; margin:0;">Cerrar sesión</h2>
+                                <p style="margin-top:0.5rem; font-size:0.875rem;">¿Estás seguro de que deseas cerrar sesión?</p>
+
+                                <div style="margin-top:1.5rem; display:flex; justify-content:flex-end; gap:0.75rem;">
+                                    <x-filament::button
+                                        color="gray"
+                                        outlined="true"
+                                        size="sm"
+                                        type="button"
+                                        x-on:click="confirmLogout = false"
+                                    >
+                                        Cancelar
+                                    </x-filament::button>
+
+                                    <form method="POST" action="' . route('filament.admin.auth.logout') . '">
+                                        ' . csrf_field() . '
+                                        <x-filament::button
+                                            color="danger"
+                                            size="sm"
+                                            type="submit"
+                                        >
+                                            Cerrar sesión
+                                        </x-filament::button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     </div>');
                 }
             )
