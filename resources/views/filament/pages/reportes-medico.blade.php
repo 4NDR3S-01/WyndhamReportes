@@ -243,7 +243,7 @@
 
         {{-- Kardex Mensual Detallado --}}
         @if ($this->kardexMensualDetallado->isNotEmpty())
-        <details class="card group" open>
+        <details class="card group">
             <summary class="card-header cursor-pointer select-none">
                 <div class="flex items-center gap-2">
                     <svg class="h-4 w-4 shrink-0 text-tide-500 transition group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/></svg>
@@ -312,7 +312,7 @@
 
         {{-- Comparativo Semanal --}}
         @if ($this->semanas->isNotEmpty())
-        <details class="card group" open>
+        <details class="card group">
             <summary class="card-header cursor-pointer select-none">
                 <div class="flex items-center gap-2">
                     <svg class="h-4 w-4 shrink-0 text-gray-500 transition group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/></svg>

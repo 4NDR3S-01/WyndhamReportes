@@ -112,18 +112,36 @@ class AdminPanelProvider extends PanelProvider
                         max-width: 400px !important;
                         width: 100%;
                         position: relative;
-                        overflow: visible;
+                        overflow: hidden !important; /* Evita que la barra sobresalga en las esquinas */
                     }
-                    /* Barra decorativa superior */
+                    /* Barra decorativa superior con gradiente premium */
                     .fi-simple-main::before {
                         content: "";
                         position: absolute;
                         top: 0;
-                        left: 1.5rem;
-                        right: 1.5rem;
-                        height: 3px;
-                        background: linear-gradient(90deg, #0B3B60, #0E7490, #3B4C82, #D9704A);
-                        border-radius: 0 0 3px 3px;
+                        left: 0;
+                        right: 0;
+                        height: 5px;
+                        background: linear-gradient(90deg, #0B3B60 0%, #0284c7 40%, #f59e0b 80%, #D9704A 100%);
+                        border-radius: 1.5rem 1.5rem 0 0;
+                    }
+
+                    /* ========== CORRECCIÓN DE CAPAS (Quitar contenedor interno por defecto de Filament) ========== */
+                    .fi-simple-main section,
+                    .fi-simple-main > div:not(.fi-logo),
+                    .fi-simple-main form {
+                        background: transparent !important;
+                        box-shadow: none !important;
+                        border: none !important;
+                        --tw-ring-shadow: 0 0 #0000 !important;
+                        --tw-ring-color: transparent !important;
+                    }
+                    
+                    /* Ajustar padding interno de Filament para evitar doble padding */
+                    .fi-simple-main > div:not(.fi-logo) {
+                        padding-left: 0 !important;
+                        padding-right: 0 !important;
+                        padding-bottom: 0 !important;
                     }
 
                     /* ========== TIPOGRAFÍA ========== */
@@ -152,23 +170,30 @@ class AdminPanelProvider extends PanelProvider
                         color: #0B3B60 !important;
                     }
 
-                    /* ========== INPUTS (solo texto, NO checkbox) ========== */
-                    .fi-simple-main input[type="email"],
-                    .fi-simple-main input[type="password"],
-                    .fi-simple-main input[type="text"] {
-                        color: #1e293b !important;
+                    /* ========== CONTENEDOR DE INPUTS (Filament) ========== */
+                    .fi-simple-main .fi-input-wrapper {
                         background: #ffffff !important;
                         border: 1.5px solid #e2e8f0 !important;
                         border-radius: 0.75rem !important;
-                        padding: 0.625rem 0.875rem !important;
-                        font-size: 0.9375rem !important;
                         transition: border-color 0.15s ease, box-shadow 0.15s ease;
+                        box-shadow: none !important;
+                        overflow: hidden; /* Mantiene redondeados los bordes del contenido interno */
                     }
-                    .fi-simple-main input[type="email"]:focus,
-                    .fi-simple-main input[type="password"]:focus,
-                    .fi-simple-main input[type="text"]:focus {
+                    .fi-simple-main .fi-input-wrapper:focus-within {
                         border-color: #0E7490 !important;
                         box-shadow: 0 0 0 3px rgba(14, 116, 144, 0.12) !important;
+                    }
+                    
+                    /* Limpiar estilos del input interno para que herede del wrapper */
+                    .fi-simple-main .fi-input-wrapper input {
+                        color: #1e293b !important;
+                        background: transparent !important;
+                        border: none !important;
+                        box-shadow: none !important;
+                        font-size: 0.9375rem !important;
+                    }
+                    .fi-simple-main .fi-input-wrapper input:focus {
+                        --tw-ring-shadow: 0 0 #0000 !important;
                         outline: none !important;
                     }
                     .fi-simple-main input::placeholder {
@@ -252,20 +277,30 @@ class AdminPanelProvider extends PanelProvider
                     $fecha = now()->translatedFormat('l, d \d\e F');
 
                     return Blade::render('<div class="me-4 flex items-center gap-3" x-data="{ time: new Date().toLocaleTimeString(\'es-ES\', { hour: \'2-digit\', minute: \'2-digit\' }) }" x-init="setInterval(() => time = new Date().toLocaleTimeString(\'es-ES\', { hour: \'2-digit\', minute: \'2-digit\' }), 1000)">
-                        <div class="flex items-center gap-2.5">
-                            <x-heroicon-o-clock class="h-5 w-5 text-primary-500 dark:text-primary-400" />
-                            <div class="leading-tight">
-                                <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">' . e($fecha) . '</p>
-                                <p class="text-base font-bold tracking-tight text-gray-900 dark:text-white" x-text="time"></p>
+                        <div class="flex items-center gap-3 rounded-full border border-gray-200/80 bg-white/80 px-3 py-1.5 shadow-sm backdrop-blur-md transition-all hover:bg-white dark:border-gray-700/80 dark:bg-gray-800/80 dark:hover:bg-gray-800">
+                            <div class="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-primary-50 to-primary-100 shadow-inner dark:from-primary-900/50 dark:to-primary-800/50">
+                                <x-heroicon-o-clock class="h-4 w-4 text-primary-600 dark:text-primary-400" />
+                            </div>
+                            <div class="leading-none pr-2">
+                                <p class="mb-0.5 text-[9px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">' . e($fecha) . '</p>
+                                <p class="text-sm font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300" x-text="time"></p>
                             </div>
                         </div>
 
-                        <button type="button" x-data="{ theme: localStorage.getItem(\'theme\') || \'light\' }" x-on:click="theme = theme === \'dark\' ? \'light\' : \'dark\'; localStorage.setItem(\'theme\', theme); document.documentElement.classList.toggle(\'dark\', theme === \'dark\'); $dispatch(\'theme-changed\', theme);" class="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 shadow-sm transition hover:ring-2 hover:ring-primary-500/50 hover:text-primary-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:ring-primary-500/50 dark:hover:text-primary-400" title="Alternar Modo Oscuro/Claro">
-                            <x-heroicon-o-moon x-show="theme !== \'dark\'" class="h-5 w-5" />
-                            <x-heroicon-o-sun x-show="theme === \'dark\'" class="h-5 w-5" style="display: none;" x-bind:style="\'display: block;\'" />
+                        <button type="button" x-data="{ theme: localStorage.getItem(\'theme\') || \'light\' }" x-on:click="theme = theme === \'dark\' ? \'light\' : \'dark\'; localStorage.setItem(\'theme\', theme); document.documentElement.classList.toggle(\'dark\', theme === \'dark\'); $dispatch(\'theme-changed\', theme);" class="relative flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white/80 text-gray-500 shadow-sm transition-all duration-300 hover:scale-105 hover:ring-2 hover:ring-primary-500/50 hover:text-primary-600 focus:outline-none dark:border-gray-700 dark:bg-gray-800/80 dark:text-gray-400 dark:hover:ring-primary-500/50 dark:hover:text-primary-400 backdrop-blur-md" title="Alternar Modo Oscuro/Claro">
+                            <div class="relative flex h-5 w-5 items-center justify-center">
+                                <x-heroicon-o-moon 
+                                    class="absolute inset-0 h-5 w-5 transition-all duration-500 ease-in-out" 
+                                    x-bind:class="theme === \'dark\' ? \'opacity-0 scale-50 rotate-90\' : \'opacity-100 scale-100 rotate-0 text-indigo-500\'" 
+                                />
+                                <x-heroicon-o-sun 
+                                    class="absolute inset-0 h-5 w-5 transition-all duration-500 ease-in-out" 
+                                    x-bind:class="theme !== \'dark\' ? \'opacity-0 scale-50 -rotate-90\' : \'opacity-100 scale-100 rotate-0 text-amber-400\'" 
+                                />
+                            </div>
                         </button>
 
-                        <form method="POST" action="' . route('filament.admin.auth.logout') . '">
+                        <form method="POST" action="' . route('filament.admin.auth.logout') . '" onsubmit="return confirm(\'¿Estás seguro de que deseas cerrar sesión?\');">
                             ' . csrf_field() . '
                             <x-filament::button color="danger" outlined="true" size="sm" icon="heroicon-m-arrow-right-on-rectangle" type="submit">
                                 Cerrar sesión
