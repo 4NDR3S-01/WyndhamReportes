@@ -65,10 +65,11 @@ class MedicoAtencionesDiariasWidget extends ChartWidget
             $mapa[$mes] = ($mapa[$mes] ?? 0) + (int) $fila->total;
         }
 
-        // Serie mensual continua de enero a diciembre (los meses sin atenciones quedan en 0).
+        // Serie mensual continua de enero al mes actual (los meses sin atenciones quedan en 0).
+        // Como $hoy es la fecha de hoy, al cambiar de mes el nuevo se agrega automáticamente.
         $labels = [];
         $data = [];
-        for ($mes = 1; $mes <= 12; $mes++) {
+        for ($mes = 1; $mes <= $hoy->month; $mes++) {
             $labels[] = Carbon::createFromDate($hoy->year, $mes, 1)->isoFormat('MMM');
             $data[] = $mapa[$mes] ?? 0;
         }
