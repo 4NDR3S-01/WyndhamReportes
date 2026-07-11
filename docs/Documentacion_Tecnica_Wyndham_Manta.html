@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<style>
+    /* ============================================================
+       DOCUMENTACIÓN TÉCNICA — Wyndham Manta Medical Panel v2
+       Estilo para entrega en Word (abrir como .doc)
+       ============================================================ */
+    @page {
+        size: A4;
+        margin: 2.5cm 2.5cm 2.5cm 2.5cm;
+        @top-center {
+            content: element(header);
+        }
+    }
+
+    body {
+        font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+        font-size: 11pt;
+        line-height: 1.5;
+        color: #1e293b;
+        margin: 0;
+        padding: 0;
+        counter-reset: h1-counter;
+    }
+
+    /* ============================================================
+       PORTADA
+       ============================================================ */
+    .portada {
+        text-align: center;
+        padding-top: 120px;
+        padding-bottom: 60px;
+        page-break-after: always;
+    }
+    .portada .linea-superior {
+        width: 100px;
+        height: 5px;
+        background: linear-gradient(90deg, #0B3B60, #0E7490, #D9704A);
+        margin: 0 auto 30px auto;
+        border-radius: 3px;
+    }
+    .portada h1 {
+        font-size: 26pt;
+        color: #0B3B60;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        margin-bottom: 8px;
+    }
+    .portada h2 {
+        font-size: 16pt;
+        color: #0E7490;
+        font-weight: 400;
+        margin-bottom: 40px;
+    }
+    .portada .version {
+        font-size: 10pt;
+        color: #64748b;
+        margin-top: 50px;
+    }
+    .portada .datos {
+        margin-top: 70px;
+        font-size: 10.5pt;
+        color: #475569;
+        line-height: 2;
+    }
+    .portada .datos strong {
+        color: #0B3B60;
+    }
+
+    /* ============================================================
+       TOC (Índice)
+       ============================================================ */
+    .toc {
+        page-break-after: always;
+    }
+    .toc h2 {
+        font-size: 16pt;
+        color: #0B3B60;
+        border-bottom: 2px solid #0B3B60;
+        padding-bottom: 6px;
+        margin-bottom: 18px;
+    }
+    .toc ul {
+        list-style: none;
+        padding: 0;
+    }
+    .toc ul li {
+        padding: 3px 0;
+        border-bottom: 1px dotted #e2e8f0;
+        font-size: 11pt;
+    }
+    .toc ul li a {
+        color: #0E7490;
+        text-decoration: none;
+    }
+    .toc ul li a:hover { text-decoration: underline; }
+    .toc .nivel2 { padding-left: 24px; font-size: 10pt; }
+
+    /* ============================================================
+       CONTENIDO
+       ============================================================ */
+    h1 {
+        font-size: 16pt;
+        color: #0B3B60;
+        border-bottom: 3px solid #0B3B60;
+        padding-bottom: 6px;
+        margin-top: 36px;
+        margin-bottom: 16px;
+        page-break-before: always;
+        counter-increment: h1-counter;
+    }
+    h1:first-of-type { page-break-before: avoid; }
+
+    h2 {
+        font-size: 13pt;
+        color: #0E7490;
+        margin-top: 24px;
+        margin-bottom: 10px;
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: 4px;
+    }
+
+    h3 {
+        font-size: 11.5pt;
+        color: #475569;
+        margin-top: 18px;
+        margin-bottom: 8px;
+    }
+
+    p { margin-bottom: 8px; text-align: justify; }
+
+    /* ============================================================
+       TABLAS
+       ============================================================ */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 12px 0 16px 0;
+        font-size: 9.5pt;
+    }
+    table th {
+        background-color: #0B3B60;
+        color: white;
+        font-weight: 600;
+        padding: 7px 10px;
+        text-align: left;
+    }
+    table td {
+        padding: 5px 10px;
+        border: 1px solid #cbd5e1;
+        vertical-align: top;
+    }
+    table tr:nth-child(even) td {
+        background-color: #f8fafc;
+    }
+    table tr:nth-child(odd) td {
+        background-color: #ffffff;
+    }
+
+    /* ============================================================
+       DIAGRAMAS / CÓDIGO
+       ============================================================ */
+    .diagrama {
+        font-family: 'Consolas', 'Courier New', monospace;
+        font-size: 9pt;
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        border-left: 4px solid #0E7490;
+        padding: 12px 16px;
+        margin: 12px 0;
+        white-space: pre;
+        line-height: 1.3;
+    }
+    code {
+        font-family: 'Consolas', 'Courier New', monospace;
+        font-size: 9.5pt;
+        background: #f1f5f9;
+        padding: 1px 5px;
+        border-radius: 3px;
+        color: #c0262c;
+    }
+    pre {
+        font-family: 'Consolas', 'Courier New', monospace;
+        font-size: 9pt;
+        background: #1e293b;
+        color: #e2e8f0;
+        padding: 12px 16px;
+        border-radius: 6px;
+        overflow-x: auto;
+        margin: 12px 0;
+        line-height: 1.4;
+    }
+
+    /* ============================================================
+       NOTAS / ADVERTENCIAS
+       ============================================================ */
+    .nota {
+        background: #f0f9ff;
+        border-left: 4px solid #0E7490;
+        padding: 10px 14px;
+        margin: 12px 0;
+        font-size: 10pt;
+    }
+    .advertencia {
+        background: #fef3c7;
+        border-left: 4px solid #f59e0b;
+        padding: 10px 14px;
+        margin: 12px 0;
+        font-size: 10pt;
+    }
+    .info {
+        background: #f0fdf4;
+        border-left: 4px solid #22c55e;
+        padding: 10px 14px;
+        margin: 12px 0;
+        font-size: 10pt;
+    }
+
+    /* ============================================================
+       PIE DE PÁGINA
+       ============================================================ */
+    .footer {
+        text-align: center;
+        font-size: 8.5pt;
+        color: #94a3b8;
+        border-top: 1px solid #e2e8f0;
+        padding-top: 8px;
+        margin-top: 40px;
+    }
+
+    /* ============================================================
+       LISTAS
+       ============================================================ */
+    ul, ol { margin-bottom: 8px; padding-left: 22px; }
+    li { margin-bottom: 3px; }
+
+    /* Saltos de página manuales */
+    .page-break { page-break-before: always; }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     PORTADA
+     ============================================================ -->
+<div class="portada">
+    <div class="linea-superior"></div>
+    <h1>Sistema de Gestión Hotelera<br>Wyndham Manta</h1>
+    <h2>Documentación Técnica</h2>
+    <div class="version">
+        Versión 1.0.0 &mdash; Julio 2026
+    </div>
+    <div class="datos">
+        <strong>Hotel:</strong> Wyndham Manta<br>
+        <strong>Módulos:</strong> Cocina &middot; Médico &middot; Inventario<br>
+        <strong>Tecnología:</strong> Laravel 13.8 + Filament 5.6<br>
+        <strong>Base de datos:</strong> SQLite (Dev) / MySQL (Prod)
+    </div>
+</div>
+
+<!-- ============================================================
+     ÍNDICE
+     ============================================================ -->
+<div class="toc">
+    <h2>Índice</h2>
+    <ul>
+        <li><a href="#sec1">1. Resumen del proyecto</a></li>
+        <li><a href="#sec2">2. Arquitectura general</a></li>
+        <li><a href="#sec3">3. Stack tecnológico</a></li>
+        <li><a href="#sec4">4. Estructura del proyecto</a></li>
+        <li><a href="#sec5">5. Base de datos</a></li>
+        <li class="nivel2"><a href="#sec5-1">5.1 Esquema general</a></li>
+        <li class="nivel2"><a href="#sec5-2">5.2 Modelo relacional</a></li>
+        <li><a href="#sec6">6. Módulo Cocina</a></li>
+        <li class="nivel2"><a href="#sec6-1">6.1 Dashboard de Cocina</a></li>
+        <li class="nivel2"><a href="#sec6-2">6.2 Subir Datos</a></li>
+        <li class="nivel2"><a href="#sec6-3">6.3 Reportes de Cocina</a></li>
+        <li class="nivel2"><a href="#sec6-4">6.4 Modelos</a></li>
+        <li><a href="#sec7">7. Módulo Médico</a></li>
+        <li class="nivel2"><a href="#sec7-1">7.1 Dashboard de Médico</a></li>
+        <li class="nivel2"><a href="#sec7-2">7.2 Partes Diarios</a></li>
+        <li class="nivel2"><a href="#sec7-3">7.3 Pacientes</a></li>
+        <li class="nivel2"><a href="#sec7-4">7.4 Base Médica / Catálogos</a></li>
+        <li class="nivel2"><a href="#sec7-5">7.5 Reportes Médico</a></li>
+        <li><a href="#sec8">8. Sistema de Kardex</a></li>
+        <li class="nivel2"><a href="#sec8-1">8.1 Arquitectura del Kardex</a></li>
+        <li class="nivel2"><a href="#sec8-2">8.2 Servicios</a></li>
+        <li class="nivel2"><a href="#sec8-3">8.3 Inventario</a></li>
+        <li><a href="#sec9">9. Servicios</a></li>
+        <li><a href="#sec10">10. Autenticación y permisos</a></li>
+        <li><a href="#sec11">11. Tema y estilos</a></li>
+        <li><a href="#sec12">12. Importación de datos</a></li>
+        <li><a href="#sec13">13. Despliegue</a></li>
+        <li><a href="#sec14">14. Comandos esenciales</a></li>
+        <li><a href="#sec15">15. Migración a producción</a></li>
+    </ul>
+</div>
+
+<!-- ============================================================
+     1. RESUMEN DEL PROYECTO
+     ============================================================ -->
+<h1 id="sec1">1. Resumen del proyecto</h1>
+
+<p>Sistema web interno para el Hotel <strong>Wyndham Manta</strong> desarrollado con <strong>Laravel 13.8 + Filament 5.6</strong>. Consta de dos módulos principales:</p>
+
+<table>
+<tr><th>Módulo</th><th>Propósito</th></tr>
+<tr><td><strong>Cocina</strong></td><td>Gestión de consumo de alimentos, importación de datos desde Excel, análisis de productos y generación de reportes.</td></tr>
+<tr><td><strong>Médico</strong></td><td>Gestión de atenciones médicas (partes diarios), pacientes, inventario de medicinas/insumos (Kardex), catálogos clínicos y reportes.</td></tr>
+</table>
+
+<p>El sistema está completamente localizado al español. La UI es responsiva y soporta modo oscuro. Se accede mediante un panel de administración web con inicio de sesión seguro.</p>
+
+<!-- ============================================================
+     2. ARQUITECTURA
+     ============================================================ -->
+<h1 id="sec2">2. Arquitectura general</h1>
+
+<p>El sistema sigue una arquitectura de tres capas sobre el framework Laravel, con Filament Panel como capa de presentación administrativa.</p>
+
+<div class="diagrama">┌─────────────────────────────────────────────────────────────┐
+│                    FILAMENT PANEL v5.6                        │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌────────────┐  │
+│  │  Inicio   │  │  Cocina  │  │  Médico  │  │  Reportes  │  │
+│  │ Dashboard │  │ Dashboard│  │ Dashboard│  │            │  │
+│  └──────────┘  └──────────┘  └──────────┘  └────────────┘  │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │        Páginas Livewire full-page (10 páginas)        │   │
+│  │ Partes Diarios · Pacientes · Inventario · Catálogos   │   │
+│  └──────────────────────────────────────────────────────┘   │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │            Widgets Chart.js (10 widgets)             │   │
+│  └──────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────┘
+                            │
+┌─────────────────────────────────────────────────────────────┐
+│                    LARAVEL 13.8                              │
+│  ┌─────────┐  ┌──────────┐  ┌────────┐  ┌───────────────┐  │
+│  │ Models  │  │ Services │  │ Routes │  │  Seeders      │  │
+│  │ Eloquent│  │ Negocio  │  │ web.php│  │  Población BD │  │
+│  └─────────┘  └──────────┘  └────────┘  └───────────────┘  │
+└─────────────────────────────────────────────────────────────┘
+                            │
+┌─────────────────────────────────────────────────────────────┐
+│                    BASE DE DATOS                             │
+│        SQLite (desarrollo) / MySQL (producción)             │
+└─────────────────────────────────────────────────────────────┘</div>
+
+<h2>Flujo de datos general</h2>
+<ul>
+    <li><strong>Cocina:</strong> Archivos Excel → Subida → Procesamiento → <code>cocina_consumos</code> → Dashboards / Reportes</li>
+    <li><strong>Médico:</strong> Atención médica → Parte diario → Despacho de medicamentos → Movimiento de Kardex → Reportes</li>
+    <li><strong>Inventario:</strong> Productos → Kardex mensual → Movimientos (ingresos/egresos/ajustes) → Cierres</li>
+</ul>
+
+<!-- ============================================================
+     3. STACK TECNOLÓGICO
+     ============================================================ -->
+<h1 id="sec3">3. Stack tecnológico</h1>
+
+<table>
+<tr><th>Capa</th><th>Tecnología</th><th>Versión</th></tr>
+<tr><td>Backend</td><td>PHP / Laravel</td><td>^8.3 / ^13.8</td></tr>
+<tr><td>Panel Administrativo</td><td>Filament</td><td>^5.6</td></tr>
+<tr><td>Base de datos</td><td>SQLite (dev) / MySQL (prod)</td><td>&mdash;</td></tr>
+<tr><td>Frontend</td><td>Vite + Tailwind CSS</td><td>Vite ^8 / Tailwind ^4</td></tr>
+<tr><td>Gráficos</td><td>Chart.js (vía Filament)</td><td>&mdash;</td></tr>
+<tr><td>Procesamiento Excel</td><td>PhpSpreadsheet</td><td>^5.8</td></tr>
+<tr><td>Permisos</td><td>Spatie Laravel Permission</td><td>^8.0</td></tr>
+<tr><td>Auditoría</td><td>Spatie Activity Log</td><td>*</td></tr>
+<tr><td>Procesamiento imágenes</td><td>Intervention Image</td><td>^4.1</td></tr>
+</table>
+
+<h2>Paquetes de desarrollo</h2>
+<table>
+<tr><th>Paquete</th><th>Propósito</th></tr>
+<tr><td>Laravel Pint</td><td>Formateo de código PHP (PSR-12)</td></tr>
+<tr><td>Laravel Pail</td><td>Logs en tiempo real desde consola</td></tr>
+<tr><td>PHPUnit</td><td>Pruebas unitarias y funcionales</td></tr>
+<tr><td>Collision</td><td>Mejora de la salida de errores en consola</td></tr>
+</table>
+
+<!-- ============================================================
+     4. ESTRUCTURA DEL PROYECTO
+     ============================================================ -->
+<h1 id="sec4">4. Estructura del proyecto</h1>
+
+<p>El proyecto sigue la estructura estándar de Laravel con las siguientes adiciones específicas:</p>
+
+<div class="diagrama">app/
+├── Filament/
+│   ├── Pages/                  # 10 páginas del panel
+│   │   ├── Inicio.php                    # Dashboard principal
+│   │   ├── Cocina.php                    # Dashboard de cocina
+│   │   ├── Medico.php                    # Dashboard médico
+│   │   ├── MedicoPartesDiarios.php       # CRUD partes diarios
+│   │   ├── MedicoPacientes.php           # CRUD pacientes
+│   │   ├── MedicoCatalogos.php           # CRUD catálogos base
+│   │   ├── MedicoInventario.php          # Inventario + movimientos
+│   │   ├── ReporteCocina.php             # Subida de archivos
+│   │   ├── ReportesCocina.php            # Reportes cocina
+│   │   └── ReportesMedico.php            # Reportes médico
+│   └── Widgets/                # 10 widgets de gráficos
+│       ├── InicioChartWidget.php
+│       ├── CocinaStatsWidget.php
+│       ├── CocinaProductosChartWidget.php
+│       ├── CocinaConsumoDiarioWidget.php
+│       ├── MedicoStatsWidget.php
+│       ├── MedicoAtencionesDiariasWidget.php
+│       ├── MedicoCausasChartWidget.php
+│       ├── MedicoAreasChartWidget.php
+│       ├── MedicoMedicamentosChartWidget.php
+│       └── MedicoKardexMensualWidget.php
+├── Models/                     # ~20 modelos Eloquent
+├── Services/
+│   ├── Cocina/ProcesadorArchivoConsumo.php
+│   └── Medico/
+│       ├── InventarioMedicoService.php
+│       └── KardexMensualService.php
+└── Providers/
+    └── Filament/AdminPanelProvider.php   # Configuración del panel
+
+database/
+├── migrations/                  # 15 migraciones
+└── seeders/                     # 6 seeders (datos de prueba)
+
+resources/
+├── css/filament/admin/theme.css         # Tema personalizado
+└── views/filament/pages/                # 10 vistas Blade</div>
+
+<div class="nota"><strong>Nota importante:</strong> Este proyecto <strong>no usa Filament Resources</strong>. Cada página es un componente Livewire full-page que extiende <code>Filament\Pages\Page</code>. El estado (formularios, filtros, paginación) se maneja con propiedades públicas de PHP. Las operaciones CRUD usan <code>Model::query()->updateOrCreate()</code> y validación inline, no Form Objects ni Resource tables.</div>
+
+<!-- ============================================================
+     5. BASE DE DATOS
+     ============================================================ -->
+<h1 id="sec5">5. Base de datos</h1>
+
+<h2 id="sec5-1">5.1 Esquema general</h2>
+
+<p>El sistema tiene aproximadamente 20 tablas activas distribuidas en tres grupos funcionales:</p>
+
+<h3>Tablas del sistema (Laravel + Paquetes)</h3>
+<table>
+<tr><th>Tabla</th><th>Propósito</th></tr>
+<tr><td><code>users</code></td><td>Usuarios del sistema</td></tr>
+<tr><td><code>personal_access_tokens</code></td><td>Tokens de autenticación API</td></tr>
+<tr><td><code>cache</code>, <code>cache_locks</code></td><td>Caché de Laravel</td></tr>
+<tr><td><code>sessions</code></td><td>Sesiones de usuario (driver database)</td></tr>
+<tr><td><code>jobs</code>, <code>job_batches</code></td><td>Cola de trabajos</td></tr>
+<tr><td><code>activity_log</code></td><td>Registro de auditoría (Spatie)</td></tr>
+<tr><td><code>permissions</code>, <code>roles</code>, etc.</td><td>Permisos y roles (Spatie)</td></tr>
+</table>
+
+<h3>Tablas del módulo Cocina</h3>
+<table>
+<tr><th>Tabla</th><th>Propósito</th></tr>
+<tr><td><code>cocina_archivos_importados</code></td><td>Registro de archivos Excel subidos (ruta, estado, usuario)</td></tr>
+<tr><td><code>cocina_consumos</code></td><td>Registros de consumo diario (fecha, producto, cantidad)</td></tr>
+<tr><td><code>cocina_productos</code></td><td>Catálogo de productos de cocina</td></tr>
+<tr><td><code>cocina_importacion_errores</code></td><td>Errores por fila durante la importación</td></tr>
+</table>
+
+<h3>Tablas del módulo Médico</h3>
+<table>
+<tr><th>Tabla</th><th>Propósito</th></tr>
+<tr><td><code>medico_partes_diarios</code></td><td>Atenciones médicas (tabla principal del módulo)</td></tr>
+<tr><td><code>medico_parte_medicamentos</code></td><td>Medicación administrada por atención</td></tr>
+<tr><td><code>medico_pacientes</code></td><td>Pacientes del departamento médico</td></tr>
+<tr><td><code>medico_paciente_examenes</code></td><td>Exámenes ocupacionales por paciente</td></tr>
+<tr><td><code>medico_paciente_visitas</code></td><td>Visitas anuales por paciente</td></tr>
+<tr><td><code>medico_productos</code></td><td>Productos (medicinas e insumos) del inventario</td></tr>
+<tr><td><code>medico_producto_aliases</code></td><td>Nombres alternativos para búsqueda de productos</td></tr>
+<tr><td><code>medico_kardex</code></td><td>Saldos mensuales por producto</td></tr>
+<tr><td><code>medico_kardex_movimientos</code></td><td>Movimientos individuales (ingreso/salida/ajuste)</td></tr>
+<tr><td><code>areas</code>, <code>cargos</code>, <code>causas</code></td><td>Catálogos clínicos (3 tablas)</td></tr>
+<tr><td><code>diagnosticos</code></td><td>Catálogo de diagnósticos (lista extensa)</td></tr>
+<tr><td><code>medicamentos</code></td><td>Catálogo de medicamentos</td></tr>
+<tr><td><code>entidad_certificados</code></td><td>Entidades que emiten certificados (IESS, MSP, etc.)</td></tr>
+</table>
+
+<h2 id="sec5-2">5.2 Modelo relacional</h2>
+
+<p>Diagrama simplificado de relaciones del módulo Médico:</p>
+
+<div class="diagrama">medico_pacientes
+  ├── area_id  ──→ areas
+  └── cargo_id ──→ cargos
+
+medico_paciente_examenes ──→ medico_pacientes
+medico_paciente_visitas  ──→ medico_pacientes
+
+medico_partes_diarios
+  ├── area_id              ──→ areas
+  ├── cargo_id             ──→ cargos
+  ├── causa_id             ──→ causas
+  ├── diagnostico_id       ──→ diagnosticos
+  └── entidad_certificado_id ──→ entidad_certificados
+
+medico_parte_medicamentos
+  ├── parte_diario_id ──→ medico_partes_diarios
+  └── medicamento_id   ──→ medicamentos
+
+medico_kardex_movimientos
+  ├── kardex_id       ──→ medico_kardex
+  ├── producto_id     ──→ medico_productos
+  └── parte_diario_id ──→ medico_partes_diarios (opcional)</div>
+
+<p>Diagrama del módulo Cocina:</p>
+
+<div class="diagrama">cocina_archivos_importados ── usuario_id ──→ users
+
+cocina_consumos
+  ├── archivo_importado_id ──→ cocina_archivos_importados
+  └── producto_id          ──→ cocina_productos
+
+cocina_importacion_errores ──→ cocina_archivos_importados</div>
+
+<!-- ============================================================
+     6. MÓDULO COCINA
+     ============================================================ -->
+<h1 id="sec6">6. Módulo Cocina</h1>
+
+<h2 id="sec6-1">6.1 Dashboard de Cocina</h2>
+
+<table>
+<tr><th>Propiedad</th><th>Descripción</th></tr>
+<tr><td><strong>Ruta</strong></td><td><code>/admin/cocina</code></td></tr>
+<tr><td><strong>Clase</strong></td><td><code>App\Filament\Pages\Cocina</code></td></tr>
+<tr><td><strong>Vista</strong></td><td><code>cocina.blade.php</code></td></tr>
+<tr><td><strong>Widgets</strong></td><td><code>CocinaProductosChartWidget</code> (barras), <code>CocinaConsumoDiarioWidget</code> (servicios)</td></tr>
+</table>
+
+<p>El Dashboard de Cocina es el panel principal del módulo. Desde aquí se puede:</p>
+<ul>
+    <li>Seleccionar una fecha para ver el consumo detallado de ese día.</li>
+    <li>Visualizar tarjetas de estadísticas: registros totales, productos usados, fechas registradas.</li>
+    <li>Consultar el consumo del día agrupado por unidad de medida (kilos, litros, porciones, gramos, unidades).</li>
+    <li>Ver el ranking histórico de los 10 productos más consumidos.</li>
+    <li>Usar la herramienta de <strong>Recomendación</strong>: calcula cantidades sugeridas de compra basándose en una fecha de referencia y la ocupación esperada de huéspedes.</li>
+</ul>
+
+<h2 id="sec6-2">6.2 Subir Datos</h2>
+
+<table>
+<tr><th>Propiedad</th><th>Descripción</th></tr>
+<tr><td><strong>Ruta</strong></td><td><code>/admin/cocina/subir-datos</code></td></tr>
+<tr><td><strong>Clase</strong></td><td><code>App\Filament\Pages\ReporteCocina</code></td></tr>
+<tr><td><strong>Vista</strong></td><td><code>reporte-cocina.blade.php</code></td></tr>
+</table>
+
+<p>Página para importar datos de consumo desde archivos Excel/CSV:</p>
+<ul>
+    <li><strong>Formatos soportados:</strong> <code>.xlsx</code>, <code>.xls</code>, <code>.csv</code> (máx. 10 MB).</li>
+    <li><strong>Almacenamiento:</strong> <code>storage/importaciones/cocina/</code>.</li>
+    <li><strong>Previsualización:</strong> Muestra las primeras 20 filas antes de procesar.</li>
+    <li><strong>Procesamiento:</strong> El servicio <code>ProcesadorArchivoConsumo</code> detecta encabezados dinámicamente, normaliza fechas, resuelve productos y deduplica por hash SHA-256.</li>
+    <li><strong>Historial:</strong> Los últimos 8 archivos subidos se muestran en pantalla con su estado.</li>
+</ul>
+
+<h2 id="sec6-3">6.3 Reportes de Cocina</h2>
+
+<table>
+<tr><th>Propiedad</th><th>Descripción</th></tr>
+<tr><td><strong>Ruta</strong></td><td><code>/admin/cocina/reportes</code></td></tr>
+<tr><td><strong>Clase</strong></td><td><code>App\Filament\Pages\ReportesCocina</code></td></tr>
+<tr><td><strong>Vista</strong></td><td><code>reportes-cocina.blade.php</code></td></tr>
+</table>
+
+<p>Tres tipos de descarga en formato Excel (.xlsx):</p>
+<ul>
+    <li><strong>Por día:</strong> producto, unidad y cantidad para una fecha específica.</li>
+    <li><strong>Por rango:</strong> fecha, producto, unidad y cantidad entre dos fechas.</li>
+    <li><strong>General:</strong> todos los registros del sistema.</li>
+</ul>
+<p>Adicionalmente, muestra un resumen semanal y los errores de importación.</p>
+
+<h2 id="sec6-4">6.4 Modelos del módulo Cocina</h2>
+
+<table>
+<tr><th>Modelo</th><th>Tabla</th><th>Propósito</th></tr>
+<tr><td><code>CocinaArchivoImportado</code></td><td><code>cocina_archivos_importados</code></td><td>Metadatos de archivos subidos (usuario, nombre, ruta, estado)</td></tr>
+<tr><td><code>CocinaConsumo</code></td><td><code>cocina_consumos</code></td><td>Registros de consumo diario con hash de deduplicación</td></tr>
+<tr><td><code>CocinaProducto</code></td><td><code>cocina_productos</code></td><td>Catálogo de productos con código, nombre, unidad y grupo</td></tr>
+<tr><td><code>CocinaImportacionError</code></td><td><code>cocina_importacion_errores</code></td><td>Errores de importación por fila</td></tr>
+</table>
+
+<!-- ============================================================
+     7. MÓDULO MÉDICO
+     ============================================================ -->
+<h1 id="sec7">7. Módulo Médico</h1>
+
+<h2 id="sec7-1">7.1 Dashboard de Médico</h2>
+
+<table>
+<tr><th>Propiedad</th><th>Descripción</th></tr>
+<tr><td><strong>Ruta</strong></td><td><code>/admin/medico</code></td></tr>
+<tr><td><strong>Clase</strong></td><td><code>App\Filament\Pages\Medico</code></td></tr>
+<tr><td><strong>Vista</strong></td><td><code>medico.blade.php</code></td></tr>
+<tr><td><strong>Widgets</strong></td><td>4 widgets: Atenciones Diarias, Causas, Áreas, Medicamentos</td></tr>
+</table>
+
+<p>Panel principal del módulo médico con:</p>
+<ul>
+    <li><strong>Indicadores:</strong> total atenciones, pacientes, kardex, atenciones hoy, días cubiertos.</li>
+    <li><strong>Resumen del mes:</strong> atenciones, pacientes, certificados, medicamentos distintos.</li>
+    <li><strong>Atenciones del día:</strong> tabla detallada por paciente con causa, diagnóstico y medicación.</li>
+    <li><strong>Alertas de stock:</strong> productos con saldo ≤ 2 unidades que necesitan reposición.</li>
+    <li><strong>Kardex actual:</strong> saldos vigentes de medicinas e insumos.</li>
+    <li><strong>Movimientos recientes:</strong> últimos 20 movimientos del kardex.</li>
+</ul>
+
+<h2 id="sec7-2">7.2 Partes Diarios</h2>
+
+<table>
+<tr><th>Propiedad</th><th>Descripción</th></tr>
+<tr><td><strong>Ruta</strong></td><td><code>/admin/medico/partes-diarios</code></td></tr>
+<tr><td><strong>Clase</strong></td><td><code>App\Filament\Pages\MedicoPartesDiarios</code></td></tr>
+<tr><td><strong>Vista</strong></td><td><code>medico-partes-diarios.blade.php</code></td></tr>
+</table>
+
+<p>Página principal del módulo Médico. CRUD completo de atenciones con las siguientes funcionalidades:</p>
+
+<h3>Registro de atención</h3>
+<ul>
+    <li>Modal con formulario completo de atención médica.</li>
+    <li>Búsqueda de pacientes con autocompletado (nombre, cédula, área).</li>
+    <li>Creación rápida de pacientes nuevos sin salir del formulario (<em>quick-create</em>).</li>
+    <li>Registro de certificados médicos con tipo (5 opciones), entidad, horas/días, fechas y médico que certifica.</li>
+    <li>Líneas dinámicas de medicación (medicamento + cantidad) que se descuentan del inventario al guardar.</li>
+    <li>Clasificación por tipo de salida (5 opciones) e incidente (7 opciones).</li>
+</ul>
+
+<h3>Integración con inventario</h3>
+<p>Al guardar una atención, el sistema automáticamente:</p>
+<ol>
+    <li>Registra la atención médica en <code>medico_partes_diarios</code>.</li>
+    <li>Guarda la medicación en <code>medico_parte_medicamentos</code>.</li>
+    <li>Descuenta los medicamentos del inventario creando movimientos de salida en el kardex.</li>
+</ol>
+
+<h3>Eliminación segura</h3>
+<p>Al eliminar una atención, el sistema revierte los movimientos de inventario asociados y elimina los registros de medicación, manteniendo la integridad del stock.</p>
+
+<h3>Filtros</h3>
+<ul>
+    <li>Modo "Solo hoy" / "Ver todo" con rango de fechas.</li>
+    <li>Búsqueda por texto (nombre, observación, habitación).</li>
+    <li>Filtros por área, causa, tipo de paciente y estado del certificado.</li>
+</ul>
+
+<h2 id="sec7-3">7.3 Pacientes</h2>
+
+<table>
+<tr><th>Propiedad</th><th>Descripción</th></tr>
+<tr><td><strong>Ruta</strong></td><td><code>/admin/medico/pacientes</code></td></tr>
+<tr><td><strong>Clase</strong></td><td><code>App\Filament\Pages\MedicoPacientes</code></td></tr>
+<tr><td><strong>Vista</strong></td><td><code>medico-pacientes.blade.php</code></td></tr>
+</table>
+
+<p>CRUD de pacientes con:</p>
+<ul>
+    <li>Campos: cédula, nombres, edad, área, cargo, fecha ingreso, teléfono, tipo (colaborador, aspirante, externo, paciente, huésped).</li>
+    <li>Exámenes ocupacionales: espirometría, ecografía, audiometría, optometría (con estado pendiente/vigente/vencido).</li>
+    <li>Visitas anuales: registro por año (2021-2026).</li>
+    <li>Historial médico: patologías, vacunas, fichas anteriores, antecedentes, observaciones.</li>
+</ul>
+
+<h2 id="sec7-4">7.4 Base Médica / Catálogos</h2>
+
+<table>
+<tr><th>Propiedad</th><th>Descripción</th></tr>
+<tr><td><strong>Ruta</strong></td><td><code>/admin/medico/base-medica</code></td></tr>
+<tr><td><strong>Clase</strong></td><td><code>App\Filament\Pages\MedicoCatalogos</code></td></tr>
+<tr><td><strong>Vista</strong></td><td><code>medico-catalogos.blade.php</code></td></tr>
+</table>
+
+<p>Gestión unificada de 5 catálogos en una sola interfaz:</p>
+<table>
+<tr><th>Catálogo</th><th>Modelo</th><th>Uso en el sistema</th></tr>
+<tr><td>Áreas</td><td><code>Area</code></td><td>Departamentos laborales del hotel</td></tr>
+<tr><td>Cargos</td><td><code>Cargo</code></td><td>Puestos de trabajo de colaboradores</td></tr>
+<tr><td>Causas</td><td><code>Causa</code></td><td>Motivos de atención médica</td></tr>
+<tr><td>Diagnósticos</td><td><code>Diagnostico</code></td><td>Diagnósticos médicos (lista extensa, búsqueda server-side)</td></tr>
+<tr><td>Entidades Certificado</td><td><code>EntidadCertificado</code></td><td>Origen del certificado (IESS, MSP, etc.)</td></tr>
+</table>
+<p>Todos los catálogos siguen el mismo patrón: <code>id</code>, <code>nombre</code>, <code>activo</code>, timestamps.</p>
+
+<h2 id="sec7-5">7.5 Reportes Médico</h2>
+
+<table>
+<tr><th>Propiedad</th><th>Descripción</th></tr>
+<tr><td><strong>Ruta</strong></td><td><code>/admin/medico/reportes</code></td></tr>
+<tr><td><strong>Clase</strong></td><td><code>App\Filament\Pages\ReportesMedico</code></td></tr>
+<tr><td><strong>Vista</strong></td><td><code>reportes-medico.blade.php</code></td></tr>
+</table>
+
+<h3>Reportes descargables (Excel)</h3>
+<table>
+<tr><th>Reporte</th><th>Columnas</th></tr>
+<tr><td>Parte diario por día</td><td>7 columnas: nombres, área, cargo, causa, diagnóstico, certificado, medicación</td></tr>
+<tr><td>Parte diario por rango</td><td>16 columnas: fecha, nombres, edad, área, cargo, certificado, horas, días, médico, causa, diagnóstico, medicación, observación</td></tr>
+<tr><td>Parte diario general</td><td>Todos los registros históricos (8 columnas)</td></tr>
+<tr><td>Kardex completo</td><td>Periodo, tipo, nombre, saldos, caducidad</td></tr>
+<tr><td>Kardex + movimientos</td><td>2 hojas: resumen + movimientos detallados</td></tr>
+<tr><td>Kardex mensual</td><td>Un libro por mes: atenciones, causas, medicamentos, áreas</td></tr>
+</table>
+
+<h3>Kardex mensual en pantalla</h3>
+<ul>
+    <li>Selección de mes o rango de fechas.</li>
+    <li>Generación en memoria desde movimientos reales (sin persistencia de snapshots).</li>
+    <li>Cierre/reapertura visual del kardex.</li>
+    <li>Exportación a Excel.</li>
+    <li>Historial de meses disponibles con resumen estadístico.</li>
+</ul>
+
+<!-- ============================================================
+     8. SISTEMA DE KARDEX
+     ============================================================ -->
+<h1 id="sec8">8. Sistema de Kardex</h1>
+
+<h2 id="sec8-1">8.1 Arquitectura del Kardex</h2>
+
+<p>El sistema de inventario (Kardex) sigue una estructura de tres niveles:</p>
+
+<div class="diagrama">MedicoProducto
+    │
+    ├── 1┼→ MedicoKardex (saldo mensual por producto)
+    │          │
+    │          └── 1┼→ MedicoKardexMovimiento (mov. individual)
+    │                    ├── tipo: ingreso | salida | ajuste
+    │                    ├── origen: manual | parte_diario
+    │                    └── vinculado a MedicoParteDiario
+    │
+    ├── medicamento_id → Medicamento (catálogo clínico)
+    │
+    └── MedicoProductoAlias (nombres alternativos)
+
+MedicoKardex (atributos)
+    ├── fecha_inicio / fecha_fin  (período)
+    ├── tipo: medicina | insumo
+    ├── nombre
+    ├── saldo_anterior, ingresos, egresos, total
+    └── fecha_caducidad, hash_unico</div>
+
+<h2 id="sec8-2">8.2 Servicios</h2>
+
+<h3>InventarioMedicoService</h3>
+<table>
+<tr><th>Método</th><th>Descripción</th></tr>
+<tr><td><code>registrarMovimientoProducto()</code></td><td>Registra un movimiento (ingreso/salida/ajuste) y asegura que exista un Kardex para el producto.</td></tr>
+<tr><td><code>asegurarKardexProducto()</code></td><td>Crea un registro Kardex si no existe para el producto, o devuelve el existente.</td></tr>
+</table>
+
+<h3>KardexMensualService</h3>
+<table>
+<tr><th>Método</th><th>Descripción</th></tr>
+<tr><td><code>generar(desde, hasta)</code></td><td>Calcula items del kardex para un rango de fechas. Retorna array con: producto_id, tipo, nombre, saldo_anterior, ingresos, egresos, total, fecha_caducidad.</td></tr>
+<tr><td><code>mesesDisponibles()</code></td><td>Retorna los meses con movimientos para el selector de historial.</td></tr>
+</table>
+
+<h2 id="sec8-3">8.3 Inventario</h2>
+
+<table>
+<tr><th>Propiedad</th><th>Descripción</th></tr>
+<tr><td><strong>Ruta</strong></td><td><code>/admin/medico/inventario</code></td></tr>
+<tr><td><strong>Clase</strong></td><td><code>App\Filament\Pages\MedicoInventario</code></td></tr>
+<tr><td><strong>Vista</strong></td><td><code>medico-inventario.blade.php</code></td></tr>
+</table>
+
+<p>Gestión completa de inventario médico:</p>
+<ul>
+    <li><strong>Productos:</strong> CRUD de medicinas e insumos con nombre, tipo, stock mínimo y fecha de caducidad.</li>
+    <li><strong>Sincronización automática:</strong> Al crear un producto de tipo "medicina", se sincroniza con el catálogo <code>Medicamento</code> (creación, vinculación por nombre exacto o fuzzy matching con Levenshtein).</li>
+    <li><strong>Movimientos:</strong> Ingreso, salida y ajuste con responsable y observación.</li>
+    <li><strong>Stock bajo:</strong> Alerta de productos cuyo saldo está por debajo del mínimo configurado.</li>
+    <li><strong>Detalle expandible:</strong> Al seleccionar un producto, se muestra su saldo actual y últimos 20 movimientos.</li>
+</ul>
+
+<!-- ============================================================
+     9. SERVICIOS
+     ============================================================ -->
+<h1 id="sec9">9. Servicios</h1>
+
+<h2>9.1 ProcesadorArchivoConsumo</h2>
+
+<p><strong>Ubicación:</strong> <code>app/Services/Cocina/ProcesadorArchivoConsumo.php</code></p>
+
+<p>Servicio que procesa archivos Excel/CSV del módulo Cocina. Flujo interno:</p>
+<ol>
+    <li><strong>Lectura:</strong> Carga el archivo con PhpSpreadsheet y obtiene todas las filas.</li>
+    <li><strong>Detección de encabezados:</strong> Busca filas que contengan "Fecha" y "Cantidad" (normalizado).</li>
+    <li><strong>Normalización:</strong> Parsea fechas (múltiples formatos), números (conversión de comas/puntos) e infiere el servicio (desayuno/almuerzo/cena) desde el concepto.</li>
+    <li><strong>Resolución de productos:</strong> Busca por código o nombre, actualiza si existe o crea uno nuevo.</li>
+    <li><strong>Deduplicación:</strong> Usa <code>hash_unico</code> SHA-256 (archivo + fila) más verificación de duplicados exactos por fecha+producto+servicio+concepto.</li>
+    <li><strong>Registro de errores:</strong> Las filas inválidas se registran como errores por separado.</li>
+</ol>
+
+<h2>9.2 InventarioMedicoService</h2>
+
+<p><strong>Ubicación:</strong> <code>app/Services/Medico/InventarioMedicoService.php</code></p>
+
+<p>Registro de movimientos de inventario médico. Características principales:</p>
+<ul>
+    <li>Asegura la existencia de un registro <code>MedicoKardex</code> para el producto antes de crear el movimiento.</li>
+    <li>Soporta tres orígenes: <code>manual</code> (desde inventario) y <code>parte_diario</code> (desde atención médica).</li>
+    <li>Vincula movimientos de salida con el parte diario que los originó para trazabilidad.</li>
+</ul>
+
+<h2>9.3 KardexMensualService</h2>
+
+<p><strong>Ubicación:</strong> <code>app/Services/Medico/KardexMensualService.php</code></p>
+
+<p>Generación de reportes kardex bajo demanda (sin persistencia):</p>
+<ul>
+    <li>Calcula saldos desde movimientos reales en <code>medico_kardex_movimientos</code>.</li>
+    <li>Reemplazó las tablas redundantes <code>medico_kardex_cierres</code> / <code>medico_kardex_cierre_items</code> (eliminadas en migración).</li>
+    <li>Para cada producto calcula: saldo anterior (desde kardex previo + movimientos), ingresos, egresos (incluyendo ajustes positivos/negativos) y total.</li>
+</ul>
+
+<!-- ============================================================
+     10. AUTENTICACIÓN Y PERMISOS
+     ============================================================ -->
+<h1 id="sec10">10. Autenticación y permisos</h1>
+
+<h2>10.1 Usuarios</h2>
+<ul>
+    <li><strong>Administrador por defecto:</strong> <code>admin@gmail.com</code> / <code>admin123</code></li>
+    <li><strong>Rol asignado:</strong> <code>super_admin</code> (todos los permisos)</li>
+</ul>
+
+<h2>10.2 Sistema de permisos</h2>
+<p>Implementado con <code>spatie/laravel-permission</code> v8.0. Tablas del paquete:</p>
+<ul>
+    <li><code>permissions</code> — Permisos individuales</li>
+    <li><code>roles</code> — Roles agrupadores</li>
+    <li><code>model_has_roles</code> — Asignación rol → usuario</li>
+    <li><code>model_has_permissions</code> — Permisos directos por usuario</li>
+    <li><code>role_has_permissions</code> — Permisos por rol</li>
+</ul>
+
+<h2>10.3 Personalización del login</h2>
+<p>La página de inicio de sesión tiene los siguientes elementos personalizados mediante CSS inyectado en el hook <code>PanelsRenderHook::HEAD_END</code>:</p>
+<ul>
+    <li>Imagen de fondo corporativa (<code>/images/portada.png</code>).</li>
+    <li>Tarjeta de login con efecto glassmorphism (fondo semitransparente + blur).</li>
+    <li>Barra decorativa superior con gradiente: azul → celeste → amarillo → coral.</li>
+    <li>Animación de entrada con escala y deslizamiento.</li>
+    <li>Adaptación completa a modo oscuro.</li>
+</ul>
+
+<h2>10.4 Barra superior personalizada</h2>
+<p>La barra superior del panel contiene, mediante hook <code>PanelsRenderHook::USER_MENU_BEFORE</code>:</p>
+<ul>
+    <li>Reloj en vivo (Alpine.js) con fecha formateada en español.</li>
+    <li>Botón de alternancia modo oscuro/claro con iconos de sol/luna animados.</li>
+    <li>Botón de cerrar sesión con modal de confirmación animado (hook <code>BODY_END</code>).</li>
+</ul>
+
+<!-- ============================================================
+     11. TEMA Y ESTILOS
+     ============================================================ -->
+<h1 id="sec11">11. Tema y estilos</h1>
+
+<h2>11.1 Archivo de tema</h2>
+<p><code>resources/css/filament/admin/theme.css</code> — Tema personalizado que importa la base de Filament y define tokens de diseño y componentes utilitarios.</p>
+
+<h2>11.2 Paleta de colores</h2>
+<table>
+<tr><th>Escala</th><th>Color base</th><th>Uso</th></tr>
+<tr><td><code>--color-medical-*</code></td><td>Azul cielo (#0ea5e9)</td><td>Acentos médicos</td></tr>
+<tr><td><code>--color-brand-*</code></td><td>Azul marino (#0B3B60)</td><td>Marca principal</td></tr>
+<tr><td><code>--color-ocean-*</code></td><td>Teal costero (#0E7490)</td><td>Enlaces, gráficos</td></tr>
+<tr><td><code>--color-coral-*</code></td><td>Coral (#D9704A)</td><td>Acentos de alerta</td></tr>
+<tr><td><code>--color-sand-*</code></td><td>Arena (#A68064)</td><td>Neutros cálidos</td></tr>
+<tr><td><code>--color-tide-*</code></td><td>Índigo (#3B4C82)</td><td>Variantes oscuras</td></tr>
+</table>
+
+<h2>11.3 Componentes CSS utilitarios</h2>
+<table>
+<tr><th>Clase</th><th>Propósito</th></tr>
+<tr><td><code>.stat</code>, <code>.stat-icon</code>, <code>.stat-value</code>, <code>.stat-label</code></td><td>Tarjetas de estadísticas</td></tr>
+<tr><td><code>.card</code>, <code>.card-header</code></td><td>Contenedores tipo tarjeta</td></tr>
+<tr><td><code>.pill-group</code> / <code>.pill</code></td><td>Botones de selección tipo píldora</td></tr>
+<tr><td><code>.btn-primary</code>, <code>.btn-ghost</code>, <code>.btn-danger-ghost</code>, <code>.btn-outline</code></td><td>Variantes de botones</td></tr>
+<tr><td><code>.scroll-thin</code></td><td>Scroll personalizado delgado</td></tr>
+<tr><td><code>.page-enter</code></td><td>Animación de entrada de página</td></tr>
+</table>
+
+<!-- ============================================================
+     12. IMPORTACIÓN DE DATOS
+     ============================================================ -->
+<h1 id="sec12">12. Importación de datos</h1>
+
+<h2>12.1 Seeders</h2>
+<p>Ejecutar con: <code>php artisan migrate:fresh --seed</code></p>
+
+<table>
+<tr><th>Seeder</th><th>Fuente</th><th>Propósito</th></tr>
+<tr><td><code>MedicoCatalogosSeeder</code></td><td>Excel embebido</td><td>Catálogos (áreas, cargos, causas, diagnósticos, entidades)</td></tr>
+<tr><td><code>MedicoNominaSeeder</code></td><td>Excel embebido</td><td>Pacientes iniciales desde la nómina del hotel</td></tr>
+<tr><td><code>MedicoPartesDiariosSeeder</code></td><td>&mdash;</td><td>Datos de prueba de atenciones médicas</td></tr>
+<tr><td><code>MedicoProductosInventarioSeeder</code></td><td>&mdash;</td><td>Productos de inventario de prueba</td></tr>
+<tr><td><code>MedicoKardexSeeder</code></td><td>&mdash;</td><td>Movimientos de kardex de prueba</td></tr>
+</table>
+
+<h2>12.2 Importación de archivos Cocina</h2>
+<ul>
+    <li><strong>Formatos:</strong> <code>.xlsx</code>, <code>.xls</code>, <code>.csv</code></li>
+    <li><strong>Tamaño máximo:</strong> 10 MB</li>
+    <li><strong>Almacenamiento:</strong> <code>storage/importaciones/cocina/</code></li>
+    <li><strong>Detección dinámica:</strong> Los encabezados se detectan automáticamente por nombre normalizado (ej: "cantidad", "nombrearticulo", "presentacion").</li>
+    <li><strong>Deduplicación:</strong> Doble verificación: hash SHA-256 por archivo+fila, más duplicado exacto por fecha+producto+servicio+concepto.</li>
+</ul>
+<p><strong>Archivo de datos semilla:</strong> <code>assets/DEPARTAMENTO_MEDICO.xlsx</code> — contiene múltiples hojas con catálogos, pacientes y datos iniciales.</p>
+
+<!-- ============================================================
+     13. DESPLIEGUE
+     ============================================================ -->
+<h1 id="sec13">13. Despliegue</h1>
+
+<h2>13.1 Requisitos del servidor</h2>
+<ul>
+    <li>PHP ^8.3 con extensiones: <code>gd</code>, <code>zip</code>, <code>xml</code>, <code>mbstring</code>, <code>pdo_sqlite</code> / <code>pdo_mysql</code></li>
+    <li>Composer 2.x</li>
+    <li>Node.js 20+ y NPM 10+</li>
+    <li>Base de datos: SQLite (desarrollo) o MySQL 8+ (producción)</li>
+</ul>
+
+<h2>13.2 Instalación</h2>
+<pre># 1. Clonar el repositorio
+git clone &lt;url&gt; wyndham-reportes
+cd wyndham-reportes
+
+# 2. Configurar entorno
+cp .env.example .env
+# Editar .env con las credenciales de base de datos
+
+# 3. Instalación completa (dependencias, migraciones, build frontend)
+composer setup
+
+# 4. Opcional: Poblar base de datos con datos de prueba
+php artisan migrate:fresh --seed
+
+# 5. Iniciar en modo desarrollo
+composer dev</pre>
+
+<h2>13.3 Variables de entorno clave</h2>
+<table>
+<tr><th>Variable</th><th>Descripción</th><th>Desarrollo</th><th>Producción</th></tr>
+<tr><td><code>DB_CONNECTION</code></td><td>Tipo de BD</td><td><code>sqlite</code></td><td><code>mysql</code></td></tr>
+<tr><td><code>DB_DATABASE</code></td><td>Ruta/nombre BD</td><td><code>database/database.sqlite</code></td><td><code>wyndham_reportes</code></td></tr>
+<tr><td><code>SESSION_DRIVER</code></td><td>Driver de sesión</td><td><code>file</code></td><td><code>database</code></td></tr>
+<tr><td><code>QUEUE_CONNECTION</code></td><td>Driver de cola</td><td><code>sync</code></td><td><code>database</code></td></tr>
+</table>
+
+<!-- ============================================================
+     14. COMANDOS ESENCIALES
+     ============================================================ -->
+<h1 id="sec14">14. Comandos esenciales</h1>
+
+<table>
+<tr><th>Comando</th><th>Descripción</th></tr>
+<tr><td><code>composer setup</code></td><td>Instalación completa: dependencias + migraciones + build frontend</td></tr>
+<tr><td><code>composer dev</code></td><td>Modo desarrollo: artisan serve + queue:listen + logs + vite dev</td></tr>
+<tr><td><code>composer test</code></td><td>Ejecutar pruebas (config:clear + phpunit)</td></tr>
+<tr><td><code>php artisan migrate:fresh --seed</code></td><td>Recrear BD completa con datos de prueba</td></tr>
+<tr><td><code>php artisan pint</code></td><td>Formatear código PHP (Laravel Pint / PSR-12)</td></tr>
+<tr><td><code>php artisan queue:listen</code></td><td>Procesar trabajos en cola</td></tr>
+<tr><td><code>php artisan pail</code></td><td>Ver logs en tiempo real</td></tr>
+</table>
+
+<!-- ============================================================
+     15. MIGRACIÓN A PRODUCCIÓN
+     ============================================================ -->
+<h1 id="sec15">15. Migración a producción</h1>
+
+<p>El script <code>migrate_to_mysql.php</code> copia datos desde la base SQLite local hacia una base MySQL vacía de producción.</p>
+
+<h2>Variables de entorno requeridas</h2>
+<pre>SOURCE_SQLITE_PATH=            # Ruta al archivo SQLite de origen
+TARGET_DB_HOST=                # Host de la base MySQL
+TARGET_DB_PORT=3306            # Puerto MySQL
+TARGET_DB_DATABASE=            # Nombre de la base de datos
+TARGET_DB_USERNAME=            # Usuario MySQL
+TARGET_DB_PASSWORD=            # Contraseña MySQL</pre>
+
+<h2>Proceso paso a paso</h2>
+<ol>
+    <li>En el servidor de producción, ejecutar: <code>php artisan migrate --force</code> para crear el esquema vacío.</li>
+    <li>En el entorno local (con SQLite), definir las variables de entorno de producción.</li>
+    <li>Ejecutar: <code>php migrate_to_mysql.php</code></li>
+    <li>Verificar que los datos se copiaron correctamente.</li>
+</ol>
+
+<div class="advertencia"><strong>Advertencia:</strong> La base de producción debe estar vacía (solo esquema) antes de ejecutar la migración. El script inserta datos, no actualiza registros existentes.</div>
+
+<hr>
+
+<div class="footer">
+    <p>Documentación Técnica — Sistema de Gestión Hotelera Wyndham Manta v1.0.0</p>
+    <p>Generado en julio 2026 &mdash; Documento confidencial de uso interno</p>
+</div>
+
+</body>
+</html>
