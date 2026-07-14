@@ -182,27 +182,45 @@ class ReportesCocina extends Page
 
     public function getSemanasProperty(): \Illuminate\Support\Collection
     {
-        $fechas = \App\Models\CocinaConsumo::query()
-            ->selectRaw('strftime(\'%Y-%W\', fecha) as semana, MIN(fecha) as inicio, MAX(fecha) as fin')
-            ->groupBy('semana')
-            ->orderBy('inicio')
-            ->get();
+        $rango = \App\Models\CocinaConsumo::query()
+            ->selectRaw('MIN(fecha) as min_f, MAX(fecha) as max_f')
+            ->first();
 
-        return $fechas->map(function ($f) {
+        if (! $rango || ! $rango->min_f) {
+            return collect();
+        }
+
+        $inicio = \Carbon\Carbon::parse($rango->min_f)->startOfWeek();
+        $fin = \Carbon\Carbon::parse($rango->max_f)->endOfWeek();
+
+        $semanas = collect();
+        $actual = $inicio->copy();
+
+        while ($actual->lte($fin)) {
+            $semanaInicio = $actual->copy();
+            $semanaFin = $actual->copy()->endOfWeek();
+
             $registros = (int) \App\Models\CocinaConsumo::query()
-                ->whereBetween('fecha', [$f->inicio, $f->fin])
+                ->whereBetween('fecha', [$semanaInicio->toDateString(), $semanaFin->toDateString()])
                 ->count();
-            $productos = (int) \App\Models\CocinaConsumo::query()
-                ->whereBetween('fecha', [$f->inicio, $f->fin])
-                ->distinct('producto_id')
-                ->count('producto_id');
 
-            return (object) [
-                'inicio' => $f->inicio,
-                'fin' => $f->fin,
-                'total' => $registros,
-                'productos' => $productos,
-            ];
-        });
+            if ($registros > 0) {
+                $productos = (int) \App\Models\CocinaConsumo::query()
+                    ->whereBetween('fecha', [$semanaInicio->toDateString(), $semanaFin->toDateString()])
+                    ->distinct('producto_id')
+                    ->count('producto_id');
+
+                $semanas->push((object) [
+                    'inicio' => $semanaInicio->toDateString(),
+                    'fin' => $semanaFin->toDateString(),
+                    'total' => $registros,
+                    'productos' => $productos,
+                ]);
+            }
+
+            $actual->addWeek();
+        }
+
+        return $semanas;
     }
 }

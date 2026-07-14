@@ -3,6 +3,8 @@
 namespace App\Filament\Pages;
 
 use App\Models\CocinaArchivoImportado;
+use App\Models\CocinaConsumo;
+use App\Models\CocinaImportacionError;
 use App\Services\Cocina\ProcesadorArchivoConsumo;
 use BackedEnum;
 use Filament\Notifications\Notification;
@@ -41,6 +43,8 @@ class ReporteCocina extends Page
     public ?string $rutaArchivoSubido = null;
 
     public ?int $archivoEnPreview = null;
+
+    public bool $modalEliminarTodoAbierto = false;
 
     /** @var array<int, string> */
     public array $previewEncabezados = [];
@@ -198,6 +202,55 @@ class ReporteCocina extends Page
             ->send();
 
         $this->dispatch('$refresh');
+    }
+
+    public function getTotalArchivosProperty(): int
+    {
+        return (int) CocinaArchivoImportado::query()->count();
+    }
+
+    public function solicitarEliminarTodo(): void
+    {
+        if ($this->totalArchivos === 0) {
+            return;
+        }
+
+        $this->modalEliminarTodoAbierto = true;
+    }
+
+    public function cancelarEliminarTodo(): void
+    {
+        $this->modalEliminarTodoAbierto = false;
+    }
+
+    public function eliminarTodos(): void
+    {
+        if (! $this->modalEliminarTodoAbierto) {
+            return;
+        }
+
+        $archivos = CocinaArchivoImportado::query()->get();
+
+        foreach ($archivos as $archivo) {
+            if ($archivo->ruta && Storage::exists($archivo->ruta)) {
+                Storage::delete($archivo->ruta);
+            }
+        }
+
+        // Borrado en cascada DB-agnóstico: los consumos y errores dependen
+        // del archivo, por lo que se eliminan primero.
+        CocinaConsumo::query()->delete();
+        CocinaImportacionError::query()->delete();
+        CocinaArchivoImportado::query()->delete();
+
+        $this->modalEliminarTodoAbierto = false;
+        $this->cerrarPreview();
+
+        Notification::make()
+            ->title('Archivos eliminados')
+            ->body('Se eliminaron todos los Excel, sus consumos y errores asociados.')
+            ->success()
+            ->send();
     }
 
     public function getHistorialArchivosProperty(): Collection

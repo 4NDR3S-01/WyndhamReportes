@@ -123,6 +123,7 @@
         scrollbar-width: thin;
         scrollbar-color: #cbd5e1 transparent;
     }
+    [x-cloak] { display: none !important; }
     .scroll-thin::-webkit-scrollbar { width: 5px; height: 5px; }
     .scroll-thin::-webkit-scrollbar-track { background: transparent; }
     .scroll-thin::-webkit-scrollbar-thumb {

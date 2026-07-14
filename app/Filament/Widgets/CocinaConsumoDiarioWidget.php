@@ -2,16 +2,33 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\CocinaArchivoImportado;
 use App\Models\CocinaConsumo;
 use App\Models\CocinaProducto;
 use Carbon\Carbon;
 use Filament\Widgets\ChartWidget;
+use Livewire\Attributes\On;
 
 class CocinaConsumoDiarioWidget extends ChartWidget
 {
     protected static ?int $sort = 3;
 
     protected int|string|array $columnSpan = 1;
+
+    /** @var int|null Documento fuente activo en el dashboard */
+    public ?int $archivoId = null;
+
+    #[On('cocina-archivo-cambio')]
+    public function onArchivoCambio($id = null): void
+    {
+        $this->archivoId = $id;
+    }
+
+    private function archivoId(): ?int
+    {
+        return $this->archivoId
+            ?? CocinaArchivoImportado::query()->latest('fecha_subida')->value('id');
+    }
 
     protected function getType(): string
     {
@@ -25,8 +42,14 @@ class CocinaConsumoDiarioWidget extends ChartWidget
 
     protected function getFilters(): ?array
     {
+        $aid = $this->archivoId();
+
         $productos = CocinaProducto::query()
-            ->whereHas('consumos')
+            ->whereHas('consumos', function ($q) use ($aid): void {
+                if ($aid) {
+                    $q->where('archivo_importado_id', $aid);
+                }
+            })
             ->orderBy('nombre')
             ->pluck('nombre', 'id')
             ->toArray();
@@ -37,6 +60,11 @@ class CocinaConsumoDiarioWidget extends ChartWidget
     private function buildMapaConsumo(callable $queryModifier): array
     {
         $query = CocinaConsumo::query();
+
+        if ($this->archivoId()) {
+            $query->where('archivo_importado_id', $this->archivoId());
+        }
+
         $queryModifier($query);
 
         $mapa = [];
@@ -49,7 +77,15 @@ class CocinaConsumoDiarioWidget extends ChartWidget
 
     protected function getData(): array
     {
-        $diasRaw = CocinaConsumo::query()
+        $aid = $this->archivoId();
+
+        $diasRaw = CocinaConsumo::query();
+
+        if ($aid) {
+            $diasRaw->where('archivo_importado_id', $aid);
+        }
+
+        $diasRaw = $diasRaw
             ->selectRaw('DISTINCT fecha')
             ->orderBy('fecha')
             ->pluck('fecha');
@@ -86,7 +122,13 @@ class CocinaConsumoDiarioWidget extends ChartWidget
             ];
         }
 
-        $topIds = CocinaConsumo::query()
+        $topIds = CocinaConsumo::query();
+
+        if ($aid) {
+            $topIds->where('archivo_importado_id', $aid);
+        }
+
+        $topIds = $topIds
             ->selectRaw('producto_id, SUM(cantidad) as total')
             ->groupBy('producto_id')
             ->orderByDesc('total')

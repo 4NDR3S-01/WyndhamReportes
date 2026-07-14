@@ -2,14 +2,31 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\CocinaArchivoImportado;
 use App\Models\CocinaConsumo;
 use Filament\Widgets\ChartWidget;
+use Livewire\Attributes\On;
 
 class CocinaProductosChartWidget extends ChartWidget
 {
     protected static ?int $sort = 2;
 
     protected int|string|array $columnSpan = 1;
+
+    /** @var int|null Documento fuente activo en el dashboard */
+    public ?int $archivoId = null;
+
+    #[On('cocina-archivo-cambio')]
+    public function onArchivoCambio($id = null): void
+    {
+        $this->archivoId = $id;
+    }
+
+    private function archivoId(): ?int
+    {
+        return $this->archivoId
+            ?? CocinaArchivoImportado::query()->latest('fecha_subida')->value('id');
+    }
 
     protected function getType(): string
     {
@@ -23,7 +40,13 @@ class CocinaProductosChartWidget extends ChartWidget
 
     protected function getData(): array
     {
-        $productos = CocinaConsumo::query()
+        $query = CocinaConsumo::query();
+
+        if ($this->archivoId()) {
+            $query->where('archivo_importado_id', $this->archivoId());
+        }
+
+        $productos = $query
             ->selectRaw('producto_id, SUM(cantidad) as total')
             ->with('producto')
             ->groupBy('producto_id')

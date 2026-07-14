@@ -2,13 +2,22 @@
 
 namespace App\Filament\Pages;
 
+use App\Models\CocinaArchivoImportado;
 use App\Models\CocinaConsumo;
+use App\Models\CocinaProducto;
+use App\Services\Cocina\ProcesadorArchivoConsumo;
 use BackedEnum;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
+use Livewire\Features\SupportFileUploads\WithFileUploads;
 
 class Cocina extends Page
 {
+    use WithFileUploads;
+
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-presentation-chart-line';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Cocina';
@@ -33,14 +42,111 @@ class Cocina extends Page
 
     public ?int $huespedesObjetivo = null;
 
+    /** @var int|null ID del documento fuente activo (el dashboard depende solo de él) */
+    public ?int $archivoSeleccionadoId = null;
+
+    public bool $modalArchivoAbierto = false;
+
+    /** @var mixed Archivo en proceso de subida desde el dashboard */
+    public mixed $archivo = null;
+
     public function mount(): void
     {
-        $max = CocinaConsumo::query()->max('fecha');
+        $ultimo = CocinaArchivoImportado::query()->latest('fecha_subida')->first();
+        $this->archivoSeleccionadoId = $ultimo?->id;
+
+        $max = $this->maxFecha;
         $this->fechaSeleccionada = $max ? \Carbon\Carbon::parse($max)->format('Y-m-d') : null;
         $this->fechaReferencia = $this->fechaSeleccionada;
     }
 
     public function updatedFechaSeleccionada(): void {}
+
+    // ── Selector de documento fuente ──
+    public function abrirModalArchivo(): void
+    {
+        $this->modalArchivoAbierto = true;
+    }
+
+    public function cerrarModalArchivo(): void
+    {
+        $this->modalArchivoAbierto = false;
+    }
+
+    public function seleccionarArchivo(int $id): void
+    {
+        $this->archivoSeleccionadoId = $id;
+
+        $max = $this->maxFecha;
+        $this->fechaSeleccionada = $max ? \Carbon\Carbon::parse($max)->format('Y-m-d') : null;
+        $this->fechaReferencia = $this->fechaSeleccionada;
+
+        $this->modalArchivoAbierto = false;
+        $this->dispatch('cocina-archivo-cambio', id: $id);
+        $this->dispatch('$refresh');
+    }
+
+    public function subirDesdeDashboard(): void
+    {
+        $this->validate([
+            'archivo' => ['required', 'file', 'mimes:xlsx,xls,csv', 'max:10240'],
+        ], [
+            'archivo.required' => 'Selecciona un archivo para importar.',
+            'archivo.mimes' => 'El archivo debe ser Excel (.xlsx, .xls) o CSV.',
+            'archivo.max' => 'El archivo no debe superar los 10 MB.',
+        ]);
+
+        $nombreOriginal = $this->archivo->getClientOriginalName();
+        $extension = $this->archivo->getClientOriginalExtension();
+        $tamanoBytes = $this->archivo->getSize() ?: 0;
+        $mimeType = $this->archivo->getMimeType();
+        $base = pathinfo($nombreOriginal, PATHINFO_FILENAME);
+        $nombreSeguro = now()->format('Ymd_His') . '_' . Str::slug($base) . '.' . $extension;
+
+        $ruta = $this->archivo->storeAs('importaciones/cocina', $nombreSeguro);
+        $this->archivo = null;
+
+        $nuevo = CocinaArchivoImportado::query()->create([
+            'usuario_id' => auth()->id(),
+            'nombre_original' => $nombreOriginal,
+            'nombre_guardado' => $nombreSeguro,
+            'ruta' => $ruta,
+            'extension' => mb_strtolower($extension),
+            'mime_type' => $mimeType,
+            'tamano_bytes' => $tamanoBytes,
+            'estado' => 'recibido',
+            'fecha_subida' => now(),
+        ]);
+
+        try {
+            $procesador = app(ProcesadorArchivoConsumo::class);
+            $resultado = $procesador->procesar($nuevo);
+        } catch (\Throwable $exception) {
+            Notification::make()
+                ->title('No se pudo procesar el archivo')
+                ->body($exception->getMessage())
+                ->danger()
+                ->send();
+
+            return;
+        }
+
+        $this->archivoSeleccionadoId = $nuevo->id;
+
+        $max = $this->maxFecha;
+        $this->fechaSeleccionada = $max ? \Carbon\Carbon::parse($max)->format('Y-m-d') : null;
+        $this->fechaReferencia = $this->fechaSeleccionada;
+
+        $this->modalArchivoAbierto = false;
+        $this->dispatch('cocina-archivo-cambio', id: $nuevo->id);
+        $this->dispatch('$refresh');
+
+        Notification::make()
+            ->title('Archivo cargado y procesado')
+            ->body("Filas importadas: {$resultado['importadas']}. Errores: {$resultado['errores']}. Duplicadas: {$resultado['duplicadas']}.")
+            ->success()
+            ->send();
+    }
 
     public static function getNavigationItemActiveRoutePattern(): string|array
     {
@@ -60,17 +166,45 @@ class Cocina extends Page
         ];
     }
 
+    // ── Query base: solo el documento fuente activo (o todo si no hay selección) ──
+    protected function consumoQuery(): Builder
+    {
+        $query = CocinaConsumo::query();
+
+        if ($this->archivoSeleccionadoId) {
+            $query->where('archivo_importado_id', $this->archivoSeleccionadoId);
+        }
+
+        return $query;
+    }
+
+    public function getArchivoSeleccionadoProperty(): ?CocinaArchivoImportado
+    {
+        if (! $this->archivoSeleccionadoId) {
+            return null;
+        }
+
+        return CocinaArchivoImportado::query()->find($this->archivoSeleccionadoId);
+    }
+
+    public function getArchivosDisponiblesProperty(): Collection
+    {
+        return CocinaArchivoImportado::query()
+            ->orderByDesc('fecha_subida')
+            ->get();
+    }
+
     // ── Datos para stat cards inline ──
     public function getRegistrosUltimaFechaProperty(): int
     {
-        return (int) CocinaConsumo::query()
+        return (int) $this->consumoQuery()
             ->whereDate('fecha', $this->maxFecha)
             ->count();
     }
 
     public function getProductosUltimaFechaProperty(): int
     {
-        return (int) CocinaConsumo::query()
+        return (int) $this->consumoQuery()
             ->whereDate('fecha', $this->maxFecha)
             ->distinct('producto_id')
             ->count('producto_id');
@@ -78,39 +212,67 @@ class Cocina extends Page
 
     public function getFechasRegistradasProperty(): int
     {
-        return (int) CocinaConsumo::query()
+        return (int) $this->consumoQuery()
             ->distinct('fecha')
             ->count('fecha');
     }
 
     public function getMinFechaProperty(): ?string
     {
-        return CocinaConsumo::query()->min('fecha');
+        return $this->consumoQuery()->min('fecha');
     }
 
     public function getMaxFechaProperty(): ?string
     {
-        return CocinaConsumo::query()->max('fecha');
+        return $this->consumoQuery()->max('fecha');
     }
 
     public function getTotalProperty(): int
     {
-        return (int) CocinaConsumo::query()->count();
+        return (int) $this->consumoQuery()->count();
     }
 
     public function getProductosCountProperty(): int
     {
-        return (int) \App\Models\CocinaProducto::query()->count();
+        return (int) $this->consumoQuery()
+            ->distinct('producto_id')
+            ->count('producto_id');
     }
 
     public function getArchivosProperty(): int
     {
-        return (int) \App\Models\CocinaArchivoImportado::query()->count();
+        return (int) CocinaArchivoImportado::query()->count();
+    }
+
+    public function getProductoTopProperty(): ?object
+    {
+        if ($this->total === 0) {
+            return null;
+        }
+
+        $fila = $this->consumoQuery()
+            ->select('producto_id')
+            ->selectRaw('SUM(cantidad) as total')
+            ->groupBy('producto_id')
+            ->orderByDesc('total')
+            ->first();
+
+        if (! $fila) {
+            return null;
+        }
+
+        $producto = CocinaProducto::query()->find($fila->producto_id);
+
+        return (object) [
+            'nombre' => $producto?->nombre ?? 'Sin nombre',
+            'total' => (float) $fila->total,
+            'unidad' => mb_strtolower(trim($producto?->unidad_medida ?? 'unidad')),
+        ];
     }
 
     public function getFechasDisponiblesProperty(): Collection
     {
-        return CocinaConsumo::query()
+        return $this->consumoQuery()
             ->distinct('fecha')
             ->orderBy('fecha', 'desc')
             ->pluck('fecha');
@@ -123,7 +285,7 @@ class Cocina extends Page
         }
 
         $agrupado = [];
-        $filas = CocinaConsumo::query()
+        $filas = $this->consumoQuery()
             ->with('producto')
             ->whereDate('fecha', $this->fechaSeleccionada)
             ->select('producto_id')
@@ -164,12 +326,21 @@ class Cocina extends Page
             return collect();
         }
 
-        return \App\Models\CocinaProducto::query()
-            ->whereHas('consumos')
+        return CocinaProducto::query()
+            ->whereHas('consumos', function (Builder $q): void {
+                if ($this->archivoSeleccionadoId) {
+                    $q->where('archivo_importado_id', $this->archivoSeleccionadoId);
+                }
+            })
             ->get()
-            ->map(function (\App\Models\CocinaProducto $p) {
-                $totalC = (float) $p->consumos()->sum('cantidad');
-                $dias = (int) $p->consumos()->distinct('fecha')->count('fecha');
+            ->map(function (CocinaProducto $p) {
+                $totalC = (float) $p->consumos()
+                    ->when($this->archivoSeleccionadoId, fn (Builder $q) => $q->where('archivo_importado_id', $this->archivoSeleccionadoId))
+                    ->sum('cantidad');
+                $dias = (int) $p->consumos()
+                    ->when($this->archivoSeleccionadoId, fn (Builder $q) => $q->where('archivo_importado_id', $this->archivoSeleccionadoId))
+                    ->distinct('fecha')
+                    ->count('fecha');
                 $promedio = $dias > 0 ? $totalC / $dias : 0;
 
                 $u = mb_strtolower(trim($p->unidad_medida ?? 'unidad'));
@@ -217,7 +388,7 @@ class Cocina extends Page
 
         $factor = $this->huespedesObjetivo / max(1, $this->huespedesReferencia);
 
-        return CocinaConsumo::query()
+        return $this->consumoQuery()
             ->with('producto')
             ->whereDate('fecha', $this->fechaReferencia)
             ->select('producto_id', 'unidad_medida')

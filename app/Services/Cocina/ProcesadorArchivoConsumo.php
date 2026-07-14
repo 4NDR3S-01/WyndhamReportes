@@ -236,23 +236,56 @@ class ProcesadorArchivoConsumo
             return null;
         }
 
+        $limiteInferior = 2000;
+        $limiteSuperior = now()->year;
+
+        // Numero serial de Excel (fecha almacenada como numero)
         if (is_numeric($valor)) {
-            return ExcelDate::excelToDateTimeObject((float) $valor)->format('Y-m-d');
+            try {
+                $fecha = ExcelDate::excelToDateTimeObject((float) $valor);
+            } catch (\Throwable) {
+                return null;
+            }
+
+            // Solo corrige el desfase del sistema 1900 vs 1904 (anos cercanos a 1900).
+            $year = (int) $fecha->format('Y');
+            if ($year >= 1900 && $year < 2000) {
+                $ajustada = (clone $fecha)->modify('+1462 days');
+                if ((int) $ajustada->format('Y') >= $limiteInferior && (int) $ajustada->format('Y') <= $limiteSuperior) {
+                    $fecha = $ajustada;
+                }
+            }
+
+            $year = (int) $fecha->format('Y');
+            if ($year < $limiteInferior || $year > $limiteSuperior) {
+                return null;
+            }
+
+            return $fecha->format('Y-m-d');
         }
 
-        foreach (['d/m/Y', 'd-m-Y', 'Y-m-d', 'm/d/Y'] as $format) {
+        $texto = trim((string) $valor);
+
+        // Un numero suelto (ano o dia aislado, p. ej. "2027") no es una fecha valida.
+        if (preg_match('/^\d{1,4}$/', $texto)) {
+            return null;
+        }
+
+        // El Excel usa de forma consistente dia/mes/ano. Se prueba ESE orden primero
+        // y se excluye mes/dia/ano (formato US) para no invertir fechas ambiguas
+        // (donde el dia <= 12). Solo se admiten anos de 4 cifras.
+        foreach (['d/m/Y', 'd-m-Y', 'Y-m-d', 'Y/m/d'] as $format) {
             try {
-                return Carbon::createFromFormat($format, trim((string) $valor))->format('Y-m-d');
+                $fecha = Carbon::createFromFormat($format, $texto);
+                if ($fecha !== false && $fecha->year >= $limiteInferior && $fecha->year <= $limiteSuperior) {
+                    return $fecha->format('Y-m-d');
+                }
             } catch (\Throwable) {
                 // Sigue intentando otros formatos frecuentes.
             }
         }
 
-        try {
-            return Carbon::parse((string) $valor)->format('Y-m-d');
-        } catch (\Throwable) {
-            return null;
-        }
+        return null;
     }
 
     private function parsearNumero(mixed $valor, bool $permitirNegativo = false): ?float
