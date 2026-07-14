@@ -14,8 +14,6 @@ class MedicoAtencionesDiariasWidget extends ChartWidget
 
     protected int|string|array $columnSpan = 1;
 
-    protected ?string $maxHeight = '300px';
-
     protected string $view = 'filament.widgets.skeleton-chart';
 
     protected function getType(): string
@@ -32,7 +30,6 @@ class MedicoAtencionesDiariasWidget extends ChartWidget
     {
         return [
             'responsive' => true,
-            'maintainAspectRatio' => false,
             'pointRadius' => 3,
             'pointHoverRadius' => 6,
             'scales' => [
