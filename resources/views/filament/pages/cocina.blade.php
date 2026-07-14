@@ -126,7 +126,6 @@
                 <div class="border-t border-ocean-100 px-5 pb-4 dark:border-ocean-900">
                     <div class="mt-3 grid gap-3 sm:grid-cols-2">
                         <div>
-                            <label class="text-xs font-medium text-gray-700 dark:text-gray-300">Fecha referencia</label>
                             <x-cocina.date-picker
                                 field="fechaReferencia"
                                 label="Fecha referencia"
