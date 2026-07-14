@@ -85,12 +85,11 @@
             <section class="card">
                 <div class="card-header">
                     <span class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Consumo del dia</span>
-                    <select wire:model.live="fechaSeleccionada" class="select-sm">
-                        @foreach ($this->fechasDisponibles as $f)
-                            @php $fd = \Carbon\Carbon::parse($f)->format('Y-m-d'); @endphp
-                            <option value="{{ $fd }}">{{ \Carbon\Carbon::parse($f)->format('d/m/Y') }}</option>
-                        @endforeach
-                    </select>
+                    <x-cocina.date-picker
+                        field="fechaSeleccionada"
+                        label="Fecha"
+                        :available="$this->fechasDisponibles->map(fn ($f) => \Carbon\Carbon::parse($f)->format('Y-m-d'))->values()->all()"
+                    />
                 </div>
 
                 @if ($this->fechaSeleccionada && count($this->consumoDelDia) > 0)
@@ -128,12 +127,12 @@
                     <div class="mt-3 grid gap-3 sm:grid-cols-3">
                         <div>
                             <label class="text-xs font-medium text-gray-700 dark:text-gray-300">Fecha referencia</label>
-                            <select wire:model.live="fechaReferencia" class="select-sm mt-1">
-                                @foreach ($this->fechasDisponibles as $f)
-                                    @php $fd = \Carbon\Carbon::parse($f)->format('Y-m-d'); @endphp
-                                    <option value="{{ $fd }}">{{ \Carbon\Carbon::parse($f)->format('d/m/Y') }}</option>
-                                @endforeach
-                            </select>
+                            <x-cocina.date-picker
+                                field="fechaReferencia"
+                                label="Fecha referencia"
+                                align="left"
+                                :available="$this->fechasDisponibles->map(fn ($f) => \Carbon\Carbon::parse($f)->format('Y-m-d'))->values()->all()"
+                            />
                         </div>
                         <div>
                             <label class="text-xs font-medium text-gray-700 dark:text-gray-300">Huespedes ese dia</label>

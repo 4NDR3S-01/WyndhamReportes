@@ -195,9 +195,13 @@ class ReporteCocina extends Page
             return;
         }
 
+        $resumen = $resultado['errores'] > 0
+            ? " Filas importadas: {$resultado['importadas']}. Errores: {$resultado['errores']}{$resultado['resumen']}. Duplicadas: {$resultado['duplicadas']}."
+            : " Filas importadas: {$resultado['importadas']}. Errores: {$resultado['errores']}. Duplicadas: {$resultado['duplicadas']}.";
+
         Notification::make()
             ->title('Archivo procesado')
-            ->body("Filas importadas: {$resultado['importadas']}. Errores: {$resultado['errores']}. Duplicadas: {$resultado['duplicadas']}.")
+            ->body($resumen)
             ->success()
             ->send();
 

@@ -36,13 +36,24 @@ class ProcesadorArchivoConsumo
             $importadas = 0;
             $errores = 0;
             $duplicadas = 0;
+            $ultimaFecha = null;
+            $motivos = [];
 
             foreach ($filas as $indice => $fila) {
                 $numeroFila = $indice + 2;
-                $resultado = $this->normalizarFila($fila, $encabezados, $numeroFila);
+                $resultado = $this->normalizarFila($fila, $encabezados, $numeroFila, $ultimaFecha);
+
+                // Arrastra la ultima fecha valida hacia las filas siguientes del mismo
+                // grupo/dia (comun en reportes donde la fecha se muestra una sola vez).
+                if ($resultado['datos']['fecha'] !== null) {
+                    $ultimaFecha = $resultado['datos']['fecha'];
+                }
 
                 if ($resultado['errores'] !== []) {
                     $errores++;
+                    foreach ($resultado['motivos'] as $motivo) {
+                        $motivos[$motivo] = ($motivos[$motivo] ?? 0) + 1;
+                    }
                     foreach ($resultado['errores'] as $mensaje) {
                         CocinaImportacionError::query()->create([
                             'archivo_importado_id' => $archivo->id,
@@ -100,11 +111,21 @@ class ProcesadorArchivoConsumo
                 'observaciones' => $duplicadas > 0 ? "Se omitieron {$duplicadas} filas duplicadas." : null,
             ]);
 
+            $resumen = '';
+            if ($motivos !== []) {
+                $partes = [];
+                foreach ($motivos as $motivo => $cantidad) {
+                    $partes[] = "{$cantidad} {$motivo}";
+                }
+                $resumen = ' (' . implode(', ', $partes) . ')';
+            }
+
             return [
                 'importadas' => $importadas,
                 'errores' => $errores,
                 'total' => count($filas),
                 'duplicadas' => $duplicadas,
+                'resumen' => $resumen,
             ];
         });
     }
@@ -130,8 +151,8 @@ class ProcesadorArchivoConsumo
         throw new \RuntimeException('No se encontro una fila de encabezados con Fecha y Cantidad.');
     }
 
-    /** @return array{datos: array<string, mixed>, errores: array<int, string>} */
-    private function normalizarFila(array $fila, array $encabezados, int $numeroFila): array
+    /** @return array{datos: array<string, mixed>, errores: array<int, string>, motivos: array<int, string>} */
+    private function normalizarFila(array $fila, array $encabezados, int $numeroFila, ?string &$ultimaFecha): array
     {
         $mapa = [];
 
@@ -139,7 +160,15 @@ class ProcesadorArchivoConsumo
             $mapa[$this->normalizarEncabezado($encabezado)] = $fila[$indice] ?? null;
         }
 
-        $fecha = $this->parsearFecha($this->valor($mapa, ['fecha']));
+        $fechaCruda = $this->valor($mapa, ['fecha']);
+        $fecha = $this->parsearFecha($fechaCruda);
+
+        // Forward-fill: si la fila no trae fecha pero es del mismo grupo/dia
+        // (reporte con fecha combinada), se hereda la ultima fecha valida.
+        if ($fecha === null && $ultimaFecha !== null && trim((string) $fechaCruda) === '') {
+            $fecha = $ultimaFecha;
+        }
+
         $codigo = trim((string) $this->valor($mapa, ['codigoarticulo', 'codigo', 'codarticulo']));
         $producto = trim((string) $this->valor($mapa, ['nombrearticulo', 'articulo', 'producto']));
         $unidad = trim((string) $this->valor($mapa, ['presentacion', 'unidad', 'unidadmedida']));
@@ -148,21 +177,26 @@ class ProcesadorArchivoConsumo
         $cantidad = $this->parsearNumero($this->valor($mapa, ['cantidad']));
         $valor = $this->parsearNumero($this->valor($mapa, ['valor']), true);
         $errores = [];
+        $motivos = [];
 
         if (! $fecha) {
-            $errores[] = "Fila {$numeroFila}: fecha invalida.";
+            $errores[] = "Fila {$numeroFila}: fecha invalida (valor: " . $this->resumir($fechaCruda) . ').';
+            $motivos[] = 'fecha invalida';
         }
 
         if ($producto === '') {
             $errores[] = "Fila {$numeroFila}: producto vacio.";
+            $motivos[] = 'producto vacio';
         }
 
         if ($unidad === '') {
             $errores[] = "Fila {$numeroFila}: presentacion/unidad vacia.";
+            $motivos[] = 'unidad vacia';
         }
 
         if ($cantidad === null || $cantidad < 0) {
-            $errores[] = "Fila {$numeroFila}: cantidad invalida.";
+            $errores[] = "Fila {$numeroFila}: cantidad invalida (valor: " . $this->resumir($this->valor($mapa, ['cantidad'])) . ').';
+            $motivos[] = 'cantidad invalida';
         }
 
         return [
@@ -178,7 +212,20 @@ class ProcesadorArchivoConsumo
                 'servicio' => $this->inferirServicio($concepto),
             ],
             'errores' => $errores,
+            'motivos' => $motivos,
         ];
+    }
+
+    private function resumir(mixed $valor): string
+    {
+        if ($valor === null) {
+            return 'null';
+        }
+
+        $texto = (string) $valor;
+        $texto = str_replace(["\n", "\r", "\t"], ' ', $texto);
+
+        return mb_strlen($texto) > 40 ? mb_substr($texto, 0, 40) . '…' : $texto;
     }
 
     private function resolverProducto(array $datos): CocinaProducto
@@ -272,9 +319,9 @@ class ProcesadorArchivoConsumo
         }
 
         // El Excel usa de forma consistente dia/mes/ano. Se prueba ESE orden primero
-        // y se excluye mes/dia/ano (formato US) para no invertir fechas ambiguas
-        // (donde el dia <= 12). Solo se admiten anos de 4 cifras.
-        foreach (['d/m/Y', 'd-m-Y', 'Y-m-d', 'Y/m/d'] as $format) {
+        // y el formato mes/dia/ano (US) solo como respaldo, para no invertir fechas
+        // ambiguas (dia <= 12) que el usuario reporto como "salen mes/dia/ano".
+        foreach (['d/m/Y', 'd-m-Y', 'm/d/Y', 'Y-m-d', 'Y/m/d'] as $format) {
             try {
                 $fecha = Carbon::createFromFormat($format, $texto);
                 if ($fecha !== false && $fecha->year >= $limiteInferior && $fecha->year <= $limiteSuperior) {

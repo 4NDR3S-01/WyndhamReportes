@@ -62,6 +62,16 @@ class Cocina extends Page
 
     public function updatedFechaSeleccionada(): void {}
 
+    public function setFecha(string $campo, ?string $valor): void
+    {
+        if (! in_array($campo, ['fechaSeleccionada', 'fechaReferencia'], true)) {
+            return;
+        }
+
+        $this->{$campo} = $valor;
+        $this->dispatch('$refresh');
+    }
+
     // ── Selector de documento fuente ──
     public function abrirModalArchivo(): void
     {
@@ -141,9 +151,13 @@ class Cocina extends Page
         $this->dispatch('cocina-archivo-cambio', id: $nuevo->id);
         $this->dispatch('$refresh');
 
+        $resumen = $resultado['errores'] > 0
+            ? " Filas importadas: {$resultado['importadas']}. Errores: {$resultado['errores']}{$resultado['resumen']}. Duplicadas: {$resultado['duplicadas']}."
+            : " Filas importadas: {$resultado['importadas']}. Errores: {$resultado['errores']}. Duplicadas: {$resultado['duplicadas']}.";
+
         Notification::make()
             ->title('Archivo cargado y procesado')
-            ->body("Filas importadas: {$resultado['importadas']}. Errores: {$resultado['errores']}. Duplicadas: {$resultado['duplicadas']}.")
+            ->body($resumen)
             ->success()
             ->send();
     }

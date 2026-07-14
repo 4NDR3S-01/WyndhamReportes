@@ -32,12 +32,17 @@ class CocinaConsumoDiarioWidget extends ChartWidget
 
     protected function getType(): string
     {
-        return 'line';
+        return 'bar';
     }
 
     public function getHeading(): ?string
     {
         return 'Consumo diario';
+    }
+
+    public function getDescription(): ?string
+    {
+        return 'Total consumido por día (barras apiladas por producto).';
     }
 
     protected function getFilters(): ?array
@@ -68,7 +73,7 @@ class CocinaConsumoDiarioWidget extends ChartWidget
         $queryModifier($query);
 
         $mapa = [];
-        foreach ($query->selectRaw("fecha, SUM(cantidad) as total")->groupBy('fecha')->get() as $c) {
+        foreach ($query->selectRaw('fecha, SUM(cantidad) as total')->groupBy('fecha')->get() as $c) {
             $mapa[Carbon::parse($c->fecha)->format('Y-m-d')] = (float) $c->total;
         }
 
@@ -98,13 +103,14 @@ class CocinaConsumoDiarioWidget extends ChartWidget
             $labels[] = Carbon::parse($f)->format('d/m');
         }
 
+        // Filtro: un solo producto -> una barra por dia (sin huecos).
         if ($this->filter && $this->filter !== 'todos') {
             $producto = CocinaProducto::query()->find($this->filter);
             $mapa = $this->buildMapaConsumo(fn ($q) => $q->where('producto_id', $this->filter));
 
             $data = [];
             foreach ($dias as $f) {
-                $data[] = $mapa[$f] ?? null;
+                $data[] = $mapa[$f] ?? 0;
             }
 
             return [
@@ -112,16 +118,16 @@ class CocinaConsumoDiarioWidget extends ChartWidget
                     [
                         'label' => $producto?->nombre ?? 'Producto seleccionado',
                         'data' => $data,
-                        'borderColor' => '#0E7490',
-                        'backgroundColor' => 'rgba(14, 116, 144, 0.1)',
-                        'fill' => true,
-                        'tension' => 0.3,
+                        'backgroundColor' => '#0E7490',
+                        'borderRadius' => 4,
+                        'maxBarThickness' => 38,
                     ],
                 ],
                 'labels' => $labels,
             ];
         }
 
+        // Todos: barras apiladas de los 5 productos mas consumidos.
         $topIds = CocinaConsumo::query();
 
         if ($aid) {
@@ -140,7 +146,7 @@ class CocinaConsumoDiarioWidget extends ChartWidget
         }
 
         $productos = CocinaProducto::query()->whereIn('id', $topIds)->get()->keyBy('id');
-        $colors = ['#0E7490', '#A68064', '#4D7C5E', '#ef4444', '#3B4C82'];
+        $colors = ['#0E7490', '#A68064', '#4D7C5E', '#D9704A', '#3B4C82'];
 
         $datasets = [];
         foreach ($topIds as $i => $pid) {
@@ -149,22 +155,52 @@ class CocinaConsumoDiarioWidget extends ChartWidget
 
             $data = [];
             foreach ($dias as $f) {
-                $data[] = $mapa[$f] ?? null;
+                $data[] = $mapa[$f] ?? 0;
             }
 
             $datasets[] = [
                 'label' => $p?->nombre ?? 'Producto ' . $pid,
                 'data' => $data,
-                'borderColor' => $colors[$i % count($colors)],
-                'backgroundColor' => 'transparent',
-                'fill' => false,
-                'tension' => 0.3,
+                'backgroundColor' => $colors[$i % count($colors)],
+                'borderRadius' => 3,
+                'maxBarThickness' => 38,
             ];
         }
 
         return [
             'datasets' => $datasets,
             'labels' => $labels,
+        ];
+    }
+
+    protected function getOptions(): array
+    {
+        return [
+            'responsive' => true,
+            'maintainAspectRatio' => false,
+            'plugins' => [
+                'legend' => [
+                    'display' => true,
+                    'position' => 'bottom',
+                    'labels' => ['boxWidth' => 12, 'usePointStyle' => true],
+                ],
+                'tooltip' => [
+                    'mode' => 'index',
+                    'intersect' => false,
+                ],
+            ],
+            'scales' => [
+                'x' => [
+                    'stacked' => true,
+                    'grid' => ['display' => false],
+                    'ticks' => ['maxRotation' => 0, 'autoSkip' => true, 'maxTicksLimit' => 14],
+                ],
+                'y' => [
+                    'stacked' => true,
+                    'beginAtZero' => true,
+                    'ticks' => ['precision' => 0],
+                ],
+            ],
         ];
     }
 }
