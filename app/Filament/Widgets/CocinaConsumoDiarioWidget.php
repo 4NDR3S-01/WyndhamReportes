@@ -32,7 +32,7 @@ class CocinaConsumoDiarioWidget extends ChartWidget
 
     protected function getType(): string
     {
-        return 'bar';
+        return 'line';
     }
 
     public function getHeading(): ?string
@@ -42,7 +42,7 @@ class CocinaConsumoDiarioWidget extends ChartWidget
 
     public function getDescription(): ?string
     {
-        return 'Total consumido por día (barras apiladas por producto).';
+        return 'Total consumido por día, desglosado por producto.';
     }
 
     protected function getFilters(): ?array
@@ -118,9 +118,12 @@ class CocinaConsumoDiarioWidget extends ChartWidget
                     [
                         'label' => $producto?->nombre ?? 'Producto seleccionado',
                         'data' => $data,
-                        'backgroundColor' => '#0E7490',
-                        'borderRadius' => 4,
-                        'maxBarThickness' => 38,
+                        'backgroundColor' => '#0E749040',
+                        'borderColor' => '#0E7490',
+                        'fill' => true,
+                        'tension' => 0.3,
+                        'pointRadius' => 0,
+                        'pointHitRadius' => 8,
                     ],
                 ],
                 'labels' => $labels,
@@ -161,9 +164,12 @@ class CocinaConsumoDiarioWidget extends ChartWidget
             $datasets[] = [
                 'label' => $p?->nombre ?? 'Producto ' . $pid,
                 'data' => $data,
-                'backgroundColor' => $colors[$i % count($colors)],
-                'borderRadius' => 3,
-                'maxBarThickness' => 38,
+                'backgroundColor' => $colors[$i % count($colors)] . '40',
+                'borderColor' => $colors[$i % count($colors)],
+                'fill' => true,
+                'tension' => 0.3,
+                'pointRadius' => 0,
+                'pointHitRadius' => 8,
             ];
         }
 
@@ -178,6 +184,11 @@ class CocinaConsumoDiarioWidget extends ChartWidget
         return [
             'responsive' => true,
             'maintainAspectRatio' => false,
+            'interaction' => [
+                'mode' => 'nearest',
+                'axis' => 'x',
+                'intersect' => false,
+            ],
             'plugins' => [
                 'legend' => [
                     'display' => true,
@@ -193,11 +204,13 @@ class CocinaConsumoDiarioWidget extends ChartWidget
                 'x' => [
                     'stacked' => true,
                     'grid' => ['display' => false],
+                    'title' => ['display' => true, 'text' => 'Fecha'],
                     'ticks' => ['maxRotation' => 0, 'autoSkip' => true, 'maxTicksLimit' => 14],
                 ],
                 'y' => [
                     'stacked' => true,
                     'beginAtZero' => true,
+                    'title' => ['display' => true, 'text' => 'Cantidad'],
                     'ticks' => ['precision' => 0],
                 ],
             ],
