@@ -10,19 +10,13 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class ReportesCocina extends Page
 {
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-chart-pie';
-
-    protected static string|\UnitEnum|null $navigationGroup = 'Cocina';
-
-    protected static ?string $navigationLabel = 'Reportes';
-
     protected static ?string $title = 'Reportes de cocina';
 
     protected ?string $heading = '';
 
     protected static ?string $slug = 'cocina/reportes';
 
-    protected static ?int $navigationSort = 4;
+    protected static bool $shouldRegisterNavigation = false;
 
     protected string $view = 'filament.pages.reportes-cocina';
 

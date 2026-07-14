@@ -321,6 +321,28 @@
                 </div>
             @endif
         </section>
+
+        {{-- Reportes descargados --}}
+        <section class="card">
+            <div class="card-header">
+                <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-950 dark:text-white">Reportes descargados</h3>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Descarga los reportes generados a partir de los datos importados.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="px-6 py-12 text-center sm:px-8">
+                <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-ocean-50 text-ocean-500 dark:bg-ocean-950/30 dark:text-ocean-400">
+                    <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                    </svg>
+                </div>
+                <h4 class="mt-4 text-sm font-semibold text-gray-950 dark:text-white">Reportes en desarrollo</h4>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Los reportes de consumo estaran disponibles proximamente.</p>
+            </div>
+        </section>
     </div>
 
     @if ($modalEliminarTodoAbierto)
