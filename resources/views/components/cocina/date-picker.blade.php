@@ -13,6 +13,7 @@
 <div
     x-data="cocinaDatePicker('{{ $field }}', @js($availableJson))"
     x-init="init()"
+    x-effect="syncAvailable()"
     class="relative"
     x-cloak
 >
@@ -81,6 +82,7 @@ function cocinaDatePicker(field, available) {
         viewYear: 0,
         viewMonth: 0,
         init() {
+            this.syncAvailable();
             const sel = this.$wire[field];
             if (sel && available.includes(sel)) {
                 this.selected = sel;
@@ -96,6 +98,11 @@ function cocinaDatePicker(field, available) {
                     this.selected = first;
                     this.$wire.call('setFecha', field, first);
                 }
+            }
+        },
+        syncAvailable() {
+            if (this.$wire && this.$wire.fechasDisponiblesRaw && Array.isArray(this.$wire.fechasDisponiblesRaw)) {
+                this.available = this.$wire.fechasDisponiblesRaw;
             }
         },
         toggle() {

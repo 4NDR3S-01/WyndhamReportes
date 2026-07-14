@@ -58,6 +58,8 @@ class Cocina extends Page
         $ultimo = CocinaArchivoImportado::query()->latest('fecha_subida')->first();
         $this->archivoSeleccionadoId = $ultimo?->id;
 
+        $this->syncFechasDisponibles();
+
         $max = $this->maxFecha;
         $this->fechaSeleccionada = $max ? \Carbon\Carbon::parse($max)->format('Y-m-d') : null;
         $this->fechaReferencia = $this->fechaSeleccionada;
@@ -73,6 +75,15 @@ class Cocina extends Page
 
         $this->{$campo} = $valor;
         $this->dispatch('$refresh');
+    }
+
+    /** Sincroniza las fechas disponibles (Y-m-d) del documento activo para el calendario reactivo. */
+    protected function syncFechasDisponibles(): void
+    {
+        $this->fechasDisponiblesRaw = $this->fechasDisponibles
+            ->map(fn ($f) => \Carbon\Carbon::parse($f)->format('Y-m-d'))
+            ->values()
+            ->all();
     }
 
     // ── Selector de documento fuente ──
@@ -93,6 +104,8 @@ class Cocina extends Page
         $max = $this->maxFecha;
         $this->fechaSeleccionada = $max ? \Carbon\Carbon::parse($max)->format('Y-m-d') : null;
         $this->fechaReferencia = $this->fechaSeleccionada;
+
+        $this->syncFechasDisponibles();
 
         $this->modalArchivoAbierto = false;
         $this->dispatch('cocina-archivo-cambio', id: $id);
@@ -149,6 +162,8 @@ class Cocina extends Page
         $max = $this->maxFecha;
         $this->fechaSeleccionada = $max ? \Carbon\Carbon::parse($max)->format('Y-m-d') : null;
         $this->fechaReferencia = $this->fechaSeleccionada;
+
+        $this->syncFechasDisponibles();
 
         $this->modalArchivoAbierto = false;
         $this->dispatch('cocina-archivo-cambio', id: $nuevo->id);

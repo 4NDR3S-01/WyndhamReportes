@@ -88,7 +88,7 @@
                     <x-cocina.date-picker
                         field="fechaSeleccionada"
                         label="Fecha"
-                        :available="$this->fechasDisponibles->map(fn ($f) => \Carbon\Carbon::parse($f)->format('Y-m-d'))->values()->all()"
+                        :available="$this->fechasDisponiblesRaw"
                     />
                 </div>
 
@@ -131,7 +131,7 @@
                                 field="fechaReferencia"
                                 label="Fecha referencia"
                                 align="left"
-                                :available="$this->fechasDisponibles->map(fn ($f) => \Carbon\Carbon::parse($f)->format('Y-m-d'))->values()->all()"
+                                :available="$this->fechasDisponiblesRaw"
                             />
                         </div>
                         <div>

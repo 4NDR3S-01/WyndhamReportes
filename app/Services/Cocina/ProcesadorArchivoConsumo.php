@@ -135,7 +135,7 @@ class ProcesadorArchivoConsumo
     {
         $spreadsheet = IOFactory::load($rutaAbsoluta);
         $sheet = $spreadsheet->getActiveSheet();
-        $rows = $sheet->toArray(null, true, true, false);
+        $rows = $sheet->toArray(null, true, false, false);
         $rows = array_values(array_filter($rows, fn (array $row): bool => array_filter($row, fn ($value): bool => $value !== null && $value !== '') !== []));
 
         foreach ($rows as $index => $row) {
@@ -319,9 +319,14 @@ class ProcesadorArchivoConsumo
         }
 
         // El Excel usa de forma consistente dia/mes/ano. Se prueba ESE orden primero
+        // (incluyendo variantes sin cero inicial y año de 2 dígitos),
         // y el formato mes/dia/ano (US) solo como respaldo, para no invertir fechas
         // ambiguas (dia <= 12) que el usuario reporto como "salen mes/dia/ano".
-        foreach (['d/m/Y', 'd-m-Y', 'm/d/Y', 'Y-m-d', 'Y/m/d'] as $format) {
+        //
+        // NOTA: las celdas de fecha real de Excel ya llegan como número serial
+        // (formatData=false en toArray) y las resuelve ExcelDate::excelToDateTimeObject;
+        // este loop solo aplica a celdas de texto.
+        foreach (['d/m/Y', 'd-m-Y', 'd/m/y', 'd-m-y', 'j/n/Y', 'j-n-Y', 'j/n/y', 'j-n-y', 'm/d/Y', 'm-d-Y', 'Y-m-d', 'Y/m/d'] as $format) {
             try {
                 $fecha = Carbon::createFromFormat($format, $texto);
                 if ($fecha !== false && $fecha->year >= $limiteInferior && $fecha->year <= $limiteSuperior) {
