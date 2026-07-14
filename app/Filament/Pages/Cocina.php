@@ -40,8 +40,6 @@ class Cocina extends Page
 
     public ?int $huespedesReferencia = null;
 
-    public ?int $huespedesObjetivo = null;
-
     /** @var int|null ID del documento fuente activo (el dashboard depende solo de él) */
     public ?int $archivoSeleccionadoId = null;
 
@@ -414,11 +412,11 @@ class Cocina extends Page
 
     public function getRecomendacionProperty(): Collection
     {
-        if (! $this->fechaReferencia || ! $this->huespedesReferencia || ! $this->huespedesObjetivo || $this->total === 0) {
+        if (! $this->fechaReferencia || ! $this->huespedesReferencia || $this->total === 0) {
             return collect();
         }
 
-        $factor = $this->huespedesObjetivo / max(1, $this->huespedesReferencia);
+        $huespedes = max(1, $this->huespedesReferencia);
 
         return $this->consumoQuery()
             ->with('producto')
@@ -428,17 +426,17 @@ class Cocina extends Page
             ->groupBy('producto_id', 'unidad_medida')
             ->orderByDesc('total_cantidad')
             ->get()
-            ->map(function ($c) use ($factor) {
+            ->map(function ($c) use ($huespedes) {
                 $u = mb_strtolower(trim($c->unidad_medida ?? 'unidad'));
                 $esEntero = (str_contains($u, 'unidad') || str_contains($u, 'porcion')) && fmod($c->total_cantidad, 1) == 0;
-                $sugerido = $c->total_cantidad * $factor;
-                $sugerido = $esEntero ? ceil($sugerido) : round($sugerido, 2);
+                $porHuesped = $c->total_cantidad / $huespedes;
+                $porHuesped = $esEntero ? ceil($porHuesped) : round($porHuesped, 3);
 
                 return (object) [
                     'nombre' => $c->producto?->nombre ?? 'Sin nombre',
                     'unidad' => $u,
                     'consumoBase' => $c->total_cantidad,
-                    'sugerido' => $sugerido,
+                    'sugerido' => $porHuesped,
                     'esEntero' => $esEntero,
                 ];
             })

@@ -124,7 +124,7 @@
                     <svg class="h-4 w-4 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/></svg>
                 </summary>
                 <div class="border-t border-ocean-100 px-5 pb-4 dark:border-ocean-900">
-                    <div class="mt-3 grid gap-3 sm:grid-cols-3">
+                    <div class="mt-3 grid gap-3 sm:grid-cols-2">
                         <div>
                             <label class="text-xs font-medium text-gray-700 dark:text-gray-300">Fecha referencia</label>
                             <x-cocina.date-picker
@@ -138,18 +138,17 @@
                             <label class="text-xs font-medium text-gray-700 dark:text-gray-300">Huespedes ese dia</label>
                             <input type="number" min="1" wire:model.live.debounce.400ms="huespedesReferencia" placeholder="Ej. 120" class="input mt-1">
                         </div>
-                        <div>
-                            <label class="text-xs font-medium text-gray-700 dark:text-gray-300">Huespedes esperados</label>
-                            <input type="number" min="1" wire:model.live.debounce.400ms="huespedesObjetivo" placeholder="Ej. 150" class="input mt-1">
-                        </div>
                     </div>
 
                     @if ($this->recomendacion->isNotEmpty())
-                        <div class="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                        <div class="mt-3">
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Consumo promedio por huesped en la fecha seleccionada.</p>
+                        </div>
+                        <div class="mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                             @foreach ($this->recomendacion as $rec)
                                 <div class="flex items-center justify-between rounded-xl border border-ocean-100 bg-ocean-50/60 px-3 py-2 text-sm dark:border-ocean-900 dark:bg-ocean-950/30">
                                     <span class="truncate font-medium text-gray-950 dark:text-white">{{ $rec->nombre }}</span>
-                                    <span class="ml-2 shrink-0 font-semibold text-ocean-700 dark:text-ocean-300">{{ $this->formatoValor($rec->sugerido, $rec->esEntero) }} <span class="text-xs font-normal">{{ $rec->unidad }}</span></span>
+                                    <span class="ml-2 shrink-0 whitespace-nowrap font-semibold text-ocean-700 dark:text-ocean-300">{{ $this->formatoValor($rec->sugerido, $rec->esEntero) }} <span class="text-xs font-normal">{{ $rec->unidad }}/huesped</span></span>
                                 </div>
                             @endforeach
                         </div>
