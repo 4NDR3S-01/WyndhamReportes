@@ -298,7 +298,38 @@ class AdminPanelProvider extends PanelProvider
                             animation: none !important;
                         }
                     }
-                </style>') : Blade::render('<style>
+                </style>') . <<<HTML
+<script>
+    (function () {
+        var html = document.documentElement;
+
+        // Solo actúa mientras la pantalla de login está visible, para NO
+        // afectar el modo (claro/oscuro) que el usuario tiene guardado en el
+        // resto de la aplicación tras iniciar sesión.
+        var isLoginPage = function () {
+            return !!document.querySelector('form[action*="auth/login"], .fi-simple-layout');
+        };
+
+        var forceLight = function () {
+            if (!isLoginPage()) {
+                document.removeEventListener('livewire:navigated', forceLight);
+                return;
+            }
+            // El login siempre se muestra en modo claro/blanco.
+            html.classList.remove('dark');
+        };
+
+        // 1) Inmediato: deshace la aplicación síncrona de modo oscuro que hace
+        //    el layout de Filament al cargar la página.
+        forceLight();
+
+        // 2) Filament reaplica el modo oscuro en cada navegación de Livewire,
+        //    incluido el montaje inicial de esta página de login. Lo neutralizamos.
+        document.addEventListener('livewire:navigated', forceLight);
+    })();
+</script>
+HTML
+            : Blade::render('<style>
                     /* Ocultar el selector de temas duplicado */
                     .fi-theme-switcher {
                         display: none !important;
@@ -330,7 +361,7 @@ class AdminPanelProvider extends PanelProvider
                     $fecha = now()->translatedFormat('l, d \d\e F');
 
                     return Blade::render('<div class="me-4 flex items-center gap-3" x-data="{ time: new Date().toLocaleTimeString(\'es-ES\', { hour: \'2-digit\', minute: \'2-digit\' }) }" x-init="setInterval(() => time = new Date().toLocaleTimeString(\'es-ES\', { hour: \'2-digit\', minute: \'2-digit\' }), 1000)">
-                        <div class="flex items-center gap-3 rounded-full bg-white/80 shadow-sm backdrop-blur-md transition-all hover:bg-white dark:bg-gray-800/80 dark:hover:bg-gray-800" style="border:1px solid rgba(148,163,184,0.5); padding:0.5rem 0.875rem;">
+                        <div class="flex items-center gap-3 rounded-full border-0 bg-transparent shadow-none transition-colors" style="padding:0.25rem 0.5rem;">
                             <div class="flex items-center justify-center rounded-full bg-gradient-to-br from-primary-50 to-primary-100 shadow-inner dark:from-primary-900/50 dark:to-primary-800/50" style="width:2.25rem; height:2.25rem;">
                                 <x-heroicon-o-clock class="text-primary-600 dark:text-primary-400" style="width:1.25rem; height:1.25rem;" />
                             </div>
@@ -340,14 +371,14 @@ class AdminPanelProvider extends PanelProvider
                             </div>
                         </div>
 
-                        <button type="button" x-data="{ theme: localStorage.getItem(\'theme\') || \'light\' }" x-on:click="theme = theme === \'dark\' ? \'light\' : \'dark\'; localStorage.setItem(\'theme\', theme); document.documentElement.classList.toggle(\'dark\', theme === \'dark\'); $dispatch(\'theme-changed\', theme);" class="relative flex h-14 w-14 items-center justify-center rounded-full backdrop-blur-md transition-all duration-300 hover:scale-110 focus:outline-none" x-bind:style="theme === \'dark\' ? \'background-color:#1f2937; border:2px solid #818cf8; box-shadow:0 1px 2px 0 rgba(0,0,0,0.30);\' : \'background-color:#ffffff; border:2px solid #fbbf24; box-shadow:0 1px 2px 0 rgba(0,0,0,0.10);\'" title="Alternar Modo Oscuro/Claro">
-                            <div class="relative flex h-8 w-8 items-center justify-center">
+                        <button type="button" x-data="{ theme: localStorage.getItem(\'theme\') || \'light\' }" x-on:click="theme = theme === \'dark\' ? \'light\' : \'dark\'; localStorage.setItem(\'theme\', theme); document.documentElement.classList.toggle(\'dark\', theme === \'dark\'); $dispatch(\'theme-changed\', theme);" class="relative flex h-10 w-10 items-center justify-center rounded-full backdrop-blur-md transition-all duration-300 hover:scale-105 focus:outline-none" x-bind:style="theme === \'dark\' ? \'background-color:#1f2937; border:2px solid #818cf8; box-shadow:0 1px 2px 0 rgba(0,0,0,0.30);\' : \'background-color:#ffffff; border:2px solid #fbbf24; box-shadow:0 1px 2px 0 rgba(0,0,0,0.10);\'" title="Alternar Modo Oscuro/Claro">
+                            <div class="relative flex h-5 w-5 items-center justify-center">
                                 <x-heroicon-o-moon
-                                    class="absolute inset-0 h-8 w-8 transition-all duration-500 ease-in-out"
+                                    class="absolute inset-0 h-5 w-5 transition-all duration-500 ease-in-out"
                                     x-bind:style="theme === \'dark\' ? \'opacity:1; transform:scale(1) rotate(0deg); color:#7dd3fc; filter:drop-shadow(0 0 5px rgba(125,211,252,0.85));\' : \'opacity:0; transform:scale(0.5) rotate(90deg); color:#38bdf8; filter:none;\'"
                                 />
                                 <x-heroicon-o-sun
-                                    class="absolute inset-0 h-8 w-8 transition-all duration-500 ease-in-out"
+                                    class="absolute inset-0 h-5 w-5 transition-all duration-500 ease-in-out"
                                     x-bind:style="theme !== \'dark\' ? \'opacity:1; transform:scale(1) rotate(0deg); color:#eab308; filter:drop-shadow(0 0 7px rgba(234,179,8,0.95));\' : \'opacity:0; transform:scale(0.5) rotate(-90deg); color:#facc15; filter:none;\'"
                                 />
                             </div>
