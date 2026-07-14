@@ -200,7 +200,7 @@
                             @if ($this->totalArchivos === 0) disabled @endif
                             class="btn-danger-ghost disabled:cursor-not-allowed disabled:opacity-50"
                         >
-                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12.56 0c.342.052.682.107 1.022.166m10.422 0a48.11 48.11 0 0 1-3.478-.397M4.772 5.79m6.114 0a.99.99 0 0 1 .51.858M6.159 5.79l-.51.858m0 0a48.108 48.108 0 0 0 3.478-.397m0 0L9.26 9" /></svg>
+                            <x-heroicon-o-trash class="h-4 w-4" />
                             Eliminar todo
                         </button>
                     </div>
@@ -289,6 +289,18 @@
                                                 @else
                                                     <span class="chip bg-gray-100 text-gray-500 ring-1 ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700">Consolidado</span>
                                                 @endif
+
+                                                <button
+                                                    type="button"
+                                                    wire:click="solicitarEliminarArchivo({{ $archivoHistorial->id }})"
+                                                    wire:loading.attr="disabled"
+                                                    wire:target="solicitarEliminarArchivo({{ $archivoHistorial->id }})"
+                                                    class="btn-danger-ghost"
+                                                    title="Eliminar archivo"
+                                                >
+                                                    <x-heroicon-o-trash class="h-4 w-4" />
+                                                    <span class="sr-only">Eliminar</span>
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -324,7 +336,7 @@
                 <div class="modal-accent" style="background: linear-gradient(90deg, #ef4444, #dc2626, #b91c1c);"></div>
                 <div class="bg-gradient-to-br from-red-50 via-white to-white px-5 py-5 text-center dark:from-red-950/30 dark:via-gray-900 dark:to-gray-900">
                     <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-100 ring-4 ring-red-50 dark:bg-red-950/30 dark:ring-red-950/10">
-                        <svg class="h-7 w-7 text-red-500 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12.56 0c.342.052.682.107 1.022.166m10.422 0a48.11 48.11 0 0 1-3.478-.397M4.772 5.79m6.114 0a.99.99 0 0 1 .51.858M6.159 5.79l-.51.858m0 0a48.108 48.108 0 0 0 3.478-.397m0 0L9.26 9" /></svg>
+                        <x-heroicon-o-trash class="h-7 w-7 text-red-500 dark:text-red-400" />
                     </div>
                     <h4 class="mt-4 text-base font-bold text-gray-900 dark:text-white">Eliminar todos los Excel</h4>
                     <p class="mt-2 text-sm leading-relaxed text-gray-500 dark:text-gray-400">
@@ -339,6 +351,40 @@
                     <button wire:click="eliminarTodos"
                         class="flex-1 px-4 py-3.5 text-sm font-semibold text-red-600 transition hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/20">
                         Eliminar todo
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    @if ($archivoAEliminar)
+        <div class="modal-overlay" wire:click.self="cancelarEliminarArchivo" x-data
+             x-on:keydown.escape.window="$wire.cancelarEliminarArchivo()"
+             x-transition:enter="transition ease-out duration-100"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-75"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0">
+            <div class="modal-panel w-[calc(100%-1rem)] sm:max-w-sm mx-auto" @click.stop>
+                <div class="modal-accent" style="background: linear-gradient(90deg, #ef4444, #dc2626, #b91c1c);"></div>
+                <div class="bg-gradient-to-br from-red-50 via-white to-white px-5 py-5 text-center dark:from-red-950/30 dark:via-gray-900 dark:to-gray-900">
+                    <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-100 ring-4 ring-red-50 dark:bg-red-950/30 dark:ring-red-950/10">
+                        <x-heroicon-o-trash class="h-7 w-7 text-red-500 dark:text-red-400" />
+                    </div>
+                    <h4 class="mt-4 text-base font-bold text-gray-900 dark:text-white">Eliminar Excel</h4>
+                    <p class="mt-2 text-sm leading-relaxed text-gray-500 dark:text-gray-400">
+                        Se eliminara el archivo <strong class="font-semibold text-gray-900 dark:text-white">{{ $nombreArchivoAEliminar }}</strong> y todos sus consumos y errores asociados. Esta accion no se puede deshacer.
+                    </p>
+                </div>
+                <div class="flex border-t border-gray-100 dark:border-gray-800">
+                    <button wire:click="cancelarEliminarArchivo"
+                        class="flex-1 border-r border-gray-100 px-4 py-3.5 text-sm font-semibold text-gray-600 transition hover:bg-gray-50 dark:border-gray-800 dark:text-gray-400 dark:hover:bg-gray-950">
+                        Cancelar
+                    </button>
+                    <button wire:click="eliminarArchivo"
+                        class="flex-1 px-4 py-3.5 text-sm font-semibold text-red-600 transition hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/20">
+                        Eliminar
                     </button>
                 </div>
             </div>

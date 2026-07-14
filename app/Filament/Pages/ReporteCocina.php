@@ -46,6 +46,10 @@ class ReporteCocina extends Page
 
     public bool $modalEliminarTodoAbierto = false;
 
+    public ?int $archivoAEliminar = null;
+
+    public ?string $nombreArchivoAEliminar = null;
+
     /** @var array<int, string> */
     public array $previewEncabezados = [];
 
@@ -253,6 +257,70 @@ class ReporteCocina extends Page
         Notification::make()
             ->title('Archivos eliminados')
             ->body('Se eliminaron todos los Excel, sus consumos y errores asociados.')
+            ->success()
+            ->send();
+    }
+
+    public function solicitarEliminarArchivo(int $archivoId): void
+    {
+        $archivo = CocinaArchivoImportado::query()->find($archivoId);
+
+        if (! $archivo) {
+            Notification::make()
+                ->title('Archivo no encontrado')
+                ->danger()
+                ->send();
+
+            return;
+        }
+
+        $this->archivoAEliminar = $archivoId;
+        $this->nombreArchivoAEliminar = $archivo->nombre_original;
+    }
+
+    public function cancelarEliminarArchivo(): void
+    {
+        $this->archivoAEliminar = null;
+        $this->nombreArchivoAEliminar = null;
+    }
+
+    public function eliminarArchivo(): void
+    {
+        if ($this->archivoAEliminar === null) {
+            return;
+        }
+
+        $archivo = CocinaArchivoImportado::query()->find($this->archivoAEliminar);
+
+        if (! $archivo) {
+            Notification::make()
+                ->title('Archivo no encontrado')
+                ->danger()
+                ->send();
+
+            $this->cancelarEliminarArchivo();
+
+            return;
+        }
+
+        $nombreOriginal = $archivo->nombre_original;
+
+        // Eliminar archivo físico
+        if ($archivo->ruta && Storage::exists($archivo->ruta)) {
+            Storage::delete($archivo->ruta);
+        }
+
+        // Eliminar consumos y errores asociados
+        $archivo->consumos()->delete();
+        $archivo->errores()->delete();
+        $archivo->delete();
+
+        $this->cancelarEliminarArchivo();
+        $this->cerrarPreview();
+
+        Notification::make()
+            ->title('Archivo eliminado')
+            ->body("Se eliminaron el archivo «{$nombreOriginal}» y sus datos asociados.")
             ->success()
             ->send();
     }
