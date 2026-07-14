@@ -50,6 +50,9 @@ class Cocina extends Page
     /** @var mixed Archivo en proceso de subida desde el dashboard */
     public mixed $archivo = null;
 
+    /** @var array Fechas disponibles (Y-m-d) del documento activo, para el calendario reactivo */
+    public array $fechasDisponiblesRaw = [];
+
     public function mount(): void
     {
         $ultimo = CocinaArchivoImportado::query()->latest('fecha_subida')->first();
