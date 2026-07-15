@@ -333,7 +333,6 @@ Panel principal con:
 - **Eliminación masiva**: botón "Eliminar todo" que borra todos los archivos, consumos y errores de cocina. Incluye confirmación modal.
 - **Resumen detallado de errores**: al procesar un archivo, el resumen incluye desglose por motivo de error entre paréntesis (ej: "Errores: 3 (2 fecha inválida, 1 producto vacío).").
 - Historial de archivos subidos con estado (recibido, procesado, procesado_con_errores).
-- **Reportes descargados**: sección al final de la página con un placeholder visual para futuros reportes de consumo. Actualmente muestra el mensaje "Reportes en desarrollo" indicando que los reportes descargables desde esta página estarán disponibles próximamente.
 
 ### 6.3 Reportes de Cocina (`ReportesCocina.php`)
 
