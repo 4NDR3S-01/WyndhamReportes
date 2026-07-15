@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class Cocina extends Page
 {
@@ -71,7 +73,9 @@ class Cocina extends Page
             return;
         }
 
-        $this->{$campo} = $valor;
+        // Ambas secciones comparten la misma fecha: cambiar una sincroniza la otra.
+        $this->fechaSeleccionada = $valor;
+        $this->fechaReferencia = $valor;
         $this->dispatch('$refresh');
     }
 
@@ -430,7 +434,9 @@ class Cocina extends Page
                 $u = mb_strtolower(trim($c->unidad_medida ?? 'unidad'));
                 $esEntero = (str_contains($u, 'unidad') || str_contains($u, 'porcion')) && fmod($c->total_cantidad, 1) == 0;
                 $porHuesped = $c->total_cantidad / $huespedes;
-                $porHuesped = $esEntero ? ceil($porHuesped) : round($porHuesped, 3);
+                // Unidades/porciones: redondeo hacia arriba (no se puede servir media unidad).
+                // Kilos, litros, gramos: 2 decimales, suficiente para cocina.
+                $porHuesped = $esEntero ? ceil($porHuesped) : round($porHuesped, 2);
 
                 return (object) [
                     'nombre' => $c->producto?->nombre ?? 'Sin nombre',
@@ -442,5 +448,150 @@ class Cocina extends Page
             })
             ->filter(fn ($r) => $r->sugerido > 0)
             ->values();
+    }
+
+    // ── Exportación de recomendación ──
+
+    public function exportarRecomendacionExcel(): void
+    {
+        $recomendacion = $this->recomendacion;
+
+        if ($recomendacion->isEmpty()) {
+            Notification::make()
+                ->title('Sin datos para exportar')
+                ->body('Completa los campos de fecha y huéspedes para generar la recomendación.')
+                ->warning()
+                ->send();
+
+            return;
+        }
+
+        $spreadsheet = $this->generarSpreadsheetRecomendacion();
+
+        $dir = storage_path('app/temp');
+        if (! is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+
+        $filename = 'recomendacion_cocina_' . uniqid() . '.xlsx';
+        $path = "{$dir}/{$filename}";
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($path);
+
+        $this->redirect(route('descargar.temp', ['file' => $filename]));
+    }
+
+    public function exportarRecomendacionPdf(): void
+    {
+        $recomendacion = $this->recomendacion;
+
+        if ($recomendacion->isEmpty()) {
+            Notification::make()
+                ->title('Sin datos para exportar')
+                ->body('Completa los campos de fecha y huéspedes para generar la recomendación.')
+                ->warning()
+                ->send();
+
+            return;
+        }
+
+        $dir = storage_path('app/temp');
+        if (! is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+
+        // Si Dompdf está disponible, genera PDF real
+        if (class_exists(\Dompdf\Dompdf::class)) {
+            $spreadsheet = $this->generarSpreadsheetRecomendacion();
+            $writer = new \PhpOffice\PhpSpreadsheet\Writer\Pdf\Dompdf($spreadsheet);
+            $filename = 'recomendacion_cocina_' . uniqid() . '.pdf';
+            $path = "{$dir}/{$filename}";
+            $writer->save($path);
+
+            $this->redirect(route('descargar.temp', ['file' => $filename]));
+
+            return;
+        }
+
+        // Fallback: reporte HTML imprimible (sin dependencia externa)
+        $html = view('exports.recomendacion-cocina', [
+            'recomendacion' => $recomendacion,
+            'fechaReferencia' => $this->fechaReferencia,
+            'huespedesReferencia' => $this->huespedesReferencia,
+            'archivo' => $this->archivoSeleccionado?->nombre_original,
+        ])->render();
+
+        $filename = 'recomendacion_cocina_' . uniqid() . '.html';
+        $path = "{$dir}/{$filename}";
+        file_put_contents($path, $html);
+
+        $this->redirect(route('ver.temp', ['file' => $filename]));
+    }
+
+    protected function generarSpreadsheetRecomendacion(): Spreadsheet
+    {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Recomendacion');
+
+        // Título
+        $sheet->setCellValue('A1', 'Recomendación de Producción — Wyndham Manta');
+        $sheet->mergeCells('A1:D1');
+        $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14);
+
+        // Subtítulo con parámetros
+        $fecha = \Carbon\Carbon::parse($this->fechaReferencia)->format('d/m/Y');
+        $info = "Fecha: {$fecha}  |  Huéspedes: {$this->huespedesReferencia}";
+        if ($this->archivoSeleccionado) {
+            $info .= '  |  Documento: ' . $this->archivoSeleccionado->nombre_original;
+        }
+        $sheet->setCellValue('A2', $info);
+        $sheet->mergeCells('A2:D2');
+        $sheet->getStyle('A2')->getFont()->setItalic(true)->setSize(10)->getColor()->setARGB('FF666666');
+
+        // Encabezados (fila 4)
+        $encabezados = ['Producto', 'Unidad', 'Consumo Base', 'Por Persona'];
+        $col = 'A';
+        foreach ($encabezados as $h) {
+            $sheet->setCellValue($col . '4', $h);
+            $col++;
+        }
+        $headerStyle = $sheet->getStyle('A4:D4');
+        $headerStyle->getFont()->setBold(true)->getColor()->setARGB('FFFFFFFF');
+        $headerStyle->getFill()
+            ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+            ->getStartColor()->setARGB('FF0E7490');
+        $headerStyle->getAlignment()->setHorizontal('center');
+
+        // Datos
+        $row = 5;
+        foreach ($this->recomendacion as $rec) {
+            $sheet->setCellValue("A{$row}", $rec->nombre);
+            $sheet->setCellValue("B{$row}", $rec->unidad);
+            $sheet->setCellValueExplicit("C{$row}", (string) $rec->consumoBase, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+            $sheet->setCellValueExplicit("D{$row}", (string) $rec->sugerido, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+            $sheet->getStyle("A{$row}:D{$row}")->getAlignment()->setVertical('center');
+            $row++;
+        }
+
+        // Ancho de columnas
+        $sheet->getColumnDimension('A')->setWidth(38);
+        $sheet->getColumnDimension('B')->setWidth(14);
+        $sheet->getColumnDimension('C')->setWidth(18);
+        $sheet->getColumnDimension('D')->setWidth(18);
+
+        // Bordes en la tabla
+        $lastDataRow = $row - 1;
+        $sheet->getStyle("A4:D{$lastDataRow}")->getBorders()
+            ->getAllBorders()
+            ->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+
+        // Fila de timestamp
+        $sheet->setCellValue('A' . ($lastDataRow + 2), 'Generado el ' . now()->format('d/m/Y H:i'));
+        $sheet->mergeCells('A' . ($lastDataRow + 2) . ':D' . ($lastDataRow + 2));
+        $sheet->getStyle('A' . ($lastDataRow + 2))->getFont()->setSize(9)->getColor()->setARGB('FF999999');
+
+        return $spreadsheet;
     }
 }

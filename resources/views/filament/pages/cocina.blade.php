@@ -82,9 +82,14 @@
         @endif
 
         @if ($this->total > 0 && $this->fechasDisponibles->isNotEmpty())
-            <section class="card">
+            <section class="card page-enter">
                 <div class="card-header">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Consumo del dia</span>
+                    <div class="flex items-center gap-2">
+                        <span class="flex h-6 w-6 items-center justify-center rounded-lg bg-ocean-50 text-ocean-600 dark:bg-ocean-950/50 dark:text-ocean-300">
+                            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5"/></svg>
+                        </span>
+                        <span class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Consumo del día</span>
+                    </div>
                     <x-cocina.date-picker
                         field="fechaSeleccionada"
                         label="Fecha"
@@ -95,18 +100,22 @@
                 @if ($this->fechaSeleccionada && count($this->consumoDelDia) > 0)
                     <div class="border-t border-gray-100 px-5 pb-4 dark:border-gray-800">
                         @foreach ($this->consumoDelDia as $u => $items)
-                            <div class="mt-2 first:mt-0">
-                                <div class="mb-2">
+                            <div class="mt-3 first:mt-0">
+                                <div class="mb-2 flex items-center gap-2">
                                     <span class="chip bg-ocean-50 text-ocean-700 ring-1 ring-ocean-100 dark:bg-ocean-950/50 dark:text-ocean-300 dark:ring-ocean-900">
                                         {{ match($u) { 'kilo' => 'Kilos', 'litro' => 'Litros', 'porcion' => 'Porciones', 'gramo' => 'Gramos', default => 'Unidades' } }}
-                                        &middot; {{ $this->formatoSegunUnidad($this->totalesPorUnidad[$u] ?? 0, $u) }}
                                     </span>
+                                    <span class="text-[11px] font-medium text-gray-400 dark:text-gray-500">{{ $this->formatoSegunUnidad($this->totalesPorUnidad[$u] ?? 0, $u) }} total</span>
                                 </div>
-                                <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                                <div class="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                                     @foreach ($items as $item)
-                                        <div class="flex items-center justify-between rounded-xl border border-gray-100 bg-gray-50/70 px-3 py-2 text-sm dark:border-gray-800 dark:bg-gray-950/40">
-                                            <span class="truncate font-medium text-gray-950 dark:text-white">{{ $item->producto?->nombre ?? 'Sin nombre' }}</span>
-                                            <span class="ml-2 shrink-0 font-semibold text-gray-700 dark:text-gray-300">{{ $this->formatoSegunUnidad($item->total_cantidad, $u) }}</span>
+                                        <div class="group relative flex items-center justify-between gap-3 overflow-hidden rounded-2xl border border-gray-100 bg-white px-4 py-3 transition duration-200 hover:z-10 hover:-translate-y-0.5 hover:border-ocean-200 hover:shadow-lg dark:border-gray-800 dark:bg-gray-900/50 dark:hover:border-ocean-800">
+                                            <div class="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-ocean-400 via-ocean-500 to-ocean-400 opacity-0 transition-opacity duration-200 group-hover:opacity-100 dark:from-ocean-500 dark:via-ocean-400 dark:to-ocean-500"></div>
+                                            <div class="flex min-w-0 flex-1 items-center gap-1.5">
+                                                <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-ocean-400/70 dark:bg-ocean-500/60"></span>
+                                                <span class="truncate text-sm font-semibold leading-snug text-gray-900 dark:text-white">{{ $item->producto?->nombre ?? 'Sin nombre' }}</span>
+                                            </div>
+                                            <span class="shrink-0 rounded-2xl bg-ocean-50 px-2.5 py-1.5 text-base font-bold tabular-nums leading-none text-ocean-700 dark:bg-ocean-950/70 dark:text-ocean-300">{{ $this->formatoSegunUnidad($item->total_cantidad, $u) }}</span>
                                         </div>
                                     @endforeach
                                 </div>
@@ -118,42 +127,96 @@
         @endif
 
         @if ($this->total > 0)
-            <details class="card group" open>
-                <summary class="card-header flex cursor-pointer items-center justify-between gap-2 text-xs font-semibold uppercase tracking-wide text-ocean-700 dark:text-ocean-300 select-none">
-                    Recomendacion de produccion
-                    <svg class="h-4 w-4 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/></svg>
-                </summary>
-                <div class="border-t border-ocean-100 px-5 pb-4 dark:border-ocean-900">
-                    <div class="mt-3 grid gap-3 sm:grid-cols-2">
-                        <div>
+            <section class="card page-enter">
+                <div class="card-header">
+                    <div class="flex items-center gap-2">
+                        <span class="flex h-6 w-6 items-center justify-center rounded-lg bg-ocean-100 text-ocean-700 dark:bg-ocean-950/50 dark:text-ocean-300">
+                            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 0 0-2.455 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z"/></svg>
+                        </span>
+                        <span class="text-xs font-semibold uppercase tracking-wide text-ocean-700 dark:text-ocean-300">Recomendación de producción</span>
+                        @if ($this->fechaReferencia)
+                            <span class="chip-sm bg-ocean-50 text-ocean-600 dark:bg-ocean-950/50 dark:text-ocean-300">{{ \Carbon\Carbon::parse($this->fechaReferencia)->format('d/m/Y') }}</span>
+                        @endif
+                    </div>
+                    <span class="flex items-center gap-1.5">
+                        @if ($this->recomendacion->isNotEmpty())
+                            <button wire:click="exportarRecomendacionExcel"
+                                class="chip bg-green-50 text-green-700 ring-1 ring-green-200 hover:bg-green-100 dark:bg-green-950/40 dark:text-green-300 dark:ring-green-800 dark:hover:bg-green-950/60 cursor-pointer transition"
+                                title="Descargar Excel">
+                                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                                Excel
+                            </button>
+                            <button wire:click="exportarRecomendacionPdf"
+                                class="chip bg-red-50 text-red-700 ring-1 ring-red-200 hover:bg-red-100 dark:bg-red-950/40 dark:text-red-300 dark:ring-red-800 dark:hover:bg-red-950/60 cursor-pointer transition"
+                                title="Descargar PDF">
+                                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                                PDF
+                            </button>
+                        @endif
+                    </span>
+                </div>
+
+                <div class="border-t border-gray-100 px-5 pb-5 dark:border-gray-800">
+                    <div class="mt-3 flex flex-wrap items-end gap-3">
+                        <div class="w-48">
                             <x-cocina.date-picker
                                 field="fechaReferencia"
-                                label="Fecha referencia"
+                                label="Fecha"
                                 align="left"
                                 :available="$this->fechasDisponiblesRaw"
                             />
                         </div>
-                        <div>
-                            <label class="text-xs font-medium text-gray-700 dark:text-gray-300">Huespedes ese dia</label>
-                            <input type="number" min="1" wire:model.live.debounce.400ms="huespedesReferencia" placeholder="Ej. 120" class="input mt-1">
+                        <div class="w-36">
+                            <label class="text-xs font-medium text-gray-700 dark:text-gray-300">Huéspedes</label>
+                            <div class="relative mt-1">
+                                <input type="number" min="1" wire:model.live.debounce.400ms="huespedesReferencia" placeholder="120"
+                                    class="input w-full pl-7">
+                                <svg class="absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/></svg>
+                            </div>
                         </div>
+                        @if ($this->recomendacion->isNotEmpty())
+                            <div class="flex items-center gap-1 self-end pb-px">
+                                <span class="text-[11px] text-gray-400 dark:text-gray-500">{{ $this->recomendacion->count() }} productos</span>
+                            </div>
+                        @endif
                     </div>
 
                     @if ($this->recomendacion->isNotEmpty())
-                        <div class="mt-3">
-                            <p class="text-xs text-gray-500 dark:text-gray-400">Consumo promedio por huesped en la fecha seleccionada.</p>
-                        </div>
-                        <div class="mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                        <div class="mt-4 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                             @foreach ($this->recomendacion as $rec)
-                                <div class="flex items-center justify-between rounded-xl border border-ocean-100 bg-ocean-50/60 px-3 py-2 text-sm dark:border-ocean-900 dark:bg-ocean-950/30">
-                                    <span class="truncate font-medium text-gray-950 dark:text-white">{{ $rec->nombre }}</span>
-                                    <span class="ml-2 shrink-0 whitespace-nowrap font-semibold text-ocean-700 dark:text-ocean-300">{{ $this->formatoValor($rec->sugerido, $rec->esEntero) }} <span class="text-xs font-normal">{{ $rec->unidad }}/huesped</span></span>
+                                <div class="group relative flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white transition duration-200 hover:z-10 hover:-translate-y-0.5 hover:border-ocean-200 hover:shadow-lg dark:border-gray-800 dark:bg-gray-900/60 dark:hover:border-ocean-800">
+                                    {{-- Línea de acento superior, visible solo en hover --}}
+                                    <div class="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-ocean-400 via-ocean-500 to-ocean-400 opacity-0 transition-opacity duration-200 group-hover:opacity-100 dark:from-ocean-500 dark:via-ocean-400 dark:to-ocean-500"></div>
+
+                                    <div class="flex items-start gap-3 px-4 py-3.5">
+                                        {{-- Izquierda: nombre + unidad --}}
+                                        <div class="min-w-0 flex-1">
+                                            <div class="flex items-start gap-1.5">
+                                                <span class="mt-[5px] h-1.5 w-1.5 shrink-0 rounded-full bg-ocean-400/70 dark:bg-ocean-500/60"></span>
+                                                <span class="block truncate text-sm font-semibold leading-snug text-gray-900 dark:text-white">{{ $rec->nombre }}</span>
+                                            </div>
+                                            <span class="mt-1.5 inline-flex rounded-lg bg-gray-100 px-2 py-0.5 text-[11px] font-medium leading-none text-gray-500 dark:bg-gray-800 dark:text-gray-400">{{ $rec->unidad }}</span>
+                                        </div>
+
+                                        {{-- Derecha: valor hero --}}
+                                        <div class="flex shrink-0 flex-col items-end">
+                                            <span class="inline-flex rounded-2xl bg-ocean-50 px-2.5 py-1.5 text-base font-bold tabular-nums leading-none text-ocean-700 dark:bg-ocean-950/70 dark:text-ocean-300">
+                                                {{ $this->formatoValor($rec->sugerido, $rec->esEntero) }}
+                                            </span>
+                                            <span class="mt-1 text-[10px] font-medium leading-none text-gray-400 dark:text-gray-500">/persona</span>
+                                        </div>
+                                    </div>
                                 </div>
                             @endforeach
                         </div>
+                    @elseif ($this->fechaReferencia && $this->huespedesReferencia)
+                        <div class="mt-4 flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-200 py-8 dark:border-gray-800">
+                            <p class="text-sm text-gray-400 dark:text-gray-500">Sin datos de consumo para esta fecha.</p>
+                            <p class="mt-0.5 text-xs text-gray-300 dark:text-gray-600">Probá con otra fecha o verificá el documento cargado.</p>
+                        </div>
                     @endif
                 </div>
-            </details>
+            </section>
         @endif
     </div>
 
