@@ -1,6 +1,6 @@
 # Manual de Usuario — Sistema de Gestión Hotelera Wyndham Manta
 
-**Versión:** 1.0.0  
+**Versión:** 1.1.0  
 **Última actualización:** Julio 2026  
 **Hotel:** Wyndham Manta
 
@@ -51,6 +51,7 @@ Es una plataforma web interna del Hotel Wyndham Manta que permite:
 - Fondo: imagen del hotel
 - Tarjeta blanca translúcida con el logo
 - Campos: **Correo electrónico** y **Contraseña**
+- La pantalla de login siempre se muestra en modo claro, independientemente del tema que tengas configurado.
 
 ### 2.2 Credenciales
 
@@ -72,6 +73,8 @@ Si olvidaste tu contraseña, contacta al administrador del sistema para restable
 
 1. Haz clic en el botón circular (sol/luna) en la barra superior.
 2. El tema se guarda automáticamente para tu próxima visita.
+
+> **Nota:** El botón de tema ha sido rediseñado para ser más compacto. El reloj de la barra superior también tiene un estilo más minimalista y transparente.
 
 ---
 
@@ -102,25 +105,38 @@ En esta pantalla encontrarás:
 - **Total registros**: todos los registros históricos
 - **Productos**: total de productos en el catálogo
 - **Archivos importados**: total de archivos subidos
+- **Producto top**: producto más consumido en total, con su cantidad y unidad (nuevo)
+
+#### Seleccionar archivo fuente
+El dashboard ahora permite elegir **qué archivo importado** usar como fuente:
+
+1. Haz clic en **Seleccionar archivo** en la parte superior del dashboard.
+2. Se abre un modal con la lista de archivos subidos.
+3. Selecciona el archivo cuyos datos quieres visualizar.
+4. El dashboard se actualiza para mostrar solo los datos de ese archivo.
+
+También puedes **subir un archivo directamente desde el dashboard** sin ir a la página de Subir Datos.
 
 #### Consumo del día
-1. Usa el selector de fecha para elegir un día.
-2. La tabla se actualiza mostrando los productos consumidos, agrupados por tipo de unidad (kilos, litros, porciones, gramos, unidades).
+1. Usa el selector de fecha (calendario interactivo) para elegir un día.
+2. El calendario solo muestra las fechas que tienen datos en el archivo seleccionado.
+3. La tabla se actualiza mostrando los productos consumidos, agrupados por tipo de unidad (kilos, litros, porciones, gramos, unidades).
 
 #### Top 10 productos
-Lista de los 10 productos más consumidos históricamente.
+Lista de los 10 productos más consumidos históricamente (del archivo seleccionado).
 
 #### Recomendación (herramienta de planificación)
-Esta herramienta te ayuda a calcular cuánto comprar basado en la ocupación del hotel:
+Esta herramienta te ayuda a calcular la **ración por huésped** basada en un día de referencia:
 
 1. Selecciona una **fecha de referencia** (un día típico).
 2. Ingresa cuántos **huéspedes había** ese día.
-3. Ingresa cuántos **huéspedes esperas** para el evento/día que planeas.
-4. El sistema calculará las cantidades sugeridas de cada producto.
+3. El sistema calculará el consumo por huésped de cada producto.
+
+> **Cambio importante:** Ya no necesitas ingresar un número objetivo de huéspedes. La recomendación ahora muestra cuánto se consumió **por persona**, útil para planificar menús y compras de forma más precisa.
 
 #### Gráficos
-- **Productos más consumidos**: gráfico de barras con el top 10.
-- **Consumo por servicio**: distribución entre desayuno, almuerzo y cena.
+- **Productos más consumidos**: gráfico de barras con el top 10 (filtrado por archivo activo).
+- **Consumo diario**: evolución diaria del consumo. Puedes filtrar por producto individual o ver los 5 productos más consumidos apilados. Los tooltips son interactivos, y los puntos en las líneas son invisibles pero con área de impacto ampliada para mejor usabilidad.
 
 ---
 
@@ -148,7 +164,13 @@ Aquí puedes importar archivos Excel con los consumos diarios.
 2. El sistema leerá el archivo, detectará automáticamente las columnas (fecha, producto, cantidad) y creará los registros.
 3. Verás un resumen: filas importadas, errores y duplicados.
 
-> ✅ **Tip:** Los encabezados deben incluir al menos "Fecha" y "Cantidad". El resto de columnas se detectan automáticamente por nombre.
+> **Nuevo:** El resumen de errores ahora incluye un desglose detallado entre paréntesis, por ejemplo: "Errores: 3 (2 fecha inválida, 1 producto vacío)."
+
+#### Eliminar archivos
+- **Eliminar individual**: cada archivo en el historial tiene un botón de eliminar que borra el archivo, sus consumos y errores asociados.
+- **Eliminar todo**: botón en la parte superior que borra **todos** los archivos, consumos y errores de cocina. Incluye una confirmación para evitar accidentes.
+
+> ✅ **Tip:** Los encabezados deben incluir al menos "Fecha" y "Cantidad". El resto de columnas se detectan automáticamente por nombre. Las filas sin fecha heredan la última fecha válida del grupo automáticamente (útil en reportes donde la fecha aparece una sola vez para varias filas).
 
 #### ¿Qué pasa si hay errores?
 - Las filas con problemas se registran como errores.
@@ -159,7 +181,7 @@ Aquí puedes importar archivos Excel con los consumos diarios.
 
 ### 4.3 Reportes de Cocina
 
-**Menú:** Cocina → Reportes
+> **Nota de navegación:** La página de Reportes de Cocina ya no aparece en el menú lateral. Se accede desde el Dashboard de Cocina.
 
 #### Descargar reportes
 Puedes descargar reportes en formato Excel:
@@ -174,7 +196,7 @@ Puedes descargar reportes en formato Excel:
 Tabla resumen que muestra por semana: fecha inicio, fecha fin, total registros y productos distintos.
 
 #### Errores de importación
-Lista los errores ocurridos al procesar archivos, con el número de fila y el mensaje de error.
+Lista los errores ocurridos al procesar archivos, con el número de fila, el mensaje de error y el motivo agrupado.
 
 ---
 
@@ -422,7 +444,7 @@ Consulta el detalle en la sección [6.2 Reportes Médico](#62-reportes-médico).
 
 ### 6.1 Reportes de Cocina
 
-**Menú:** Cocina → Reportes
+> **Navegación:** Los reportes de cocina ya no tienen una entrada en el menú lateral. Accede a ellos desde el Dashboard de Cocina.
 
 #### Reportes descargables
 
@@ -492,7 +514,7 @@ La tabla "Semanas consumidas" te da una vista rápida de cada semana: inicio, fi
 | Posible causa | Solución |
 |---------------|----------|
 | No hay datos cargados | Primero debes importar archivos (Cocina) o registrar atenciones (Médico) |
-| Filtro incorrecto | Revisa que la fecha/mes seleccionado tenga datos |
+| Filtro incorrecto | Revisa que la fecha/mes seleccionado tenga datos. En Cocina, verifica que el archivo fuente seleccionado sea el correcto. |
 | Permisos insuficientes | Contacta al administrador |
 
 ### 7.3 Error al subir un archivo de Cocina
@@ -545,7 +567,13 @@ Los reportes se descargan en Excel (.xlsx), por lo que puedes editarlos y darles
 Sí. El panel es responsivo y se adapta a pantallas de diferentes tamaños, aunque está optimizado para uso en computadoras.
 
 ### ¿Cada cuánto debo subir datos de cocina?
-Depende del flujo de trabajo del departamento. Puedes subir un archivo por día o acumular varios y subirlos juntos. El sistema maneja deduplicación automática.
+Depende del flujo de trabajo del departamento. Puedes subir un archivo por día o acumular varios y subirlos juntos. El sistema maneja deduplicación automática y forward-fill de fechas para facilitar la carga.
+
+### ¿Qué es el archivo fuente en el Dashboard de Cocina?
+El dashboard ahora permite seleccionar qué archivo importado usar como fuente de datos. Esto es útil cuando tienes datos de diferentes períodos o pruebas, y quieres enfocarte en un conjunto específico.
+
+### ¿Qué significa "forward-fill" de fechas?
+Cuando el Excel tiene la fecha escrita una sola vez para un grupo de filas (común en reportes de cocina), el sistema rellena automáticamente las filas siguientes con esa misma fecha. Así no necesitas repetir la fecha en cada fila.
 
 ---
 
@@ -563,6 +591,7 @@ Depende del flujo de trabajo del departamento. Puedes subir un archivo por día 
 | **Colaborador** | Empleado del hotel |
 | **Examen ocupacional** | Examen médico periódico (espirometría, audiometría, etc.) |
 | **Deduplicación** | Mecanismo que evita registrar la misma información dos veces |
+| **Forward-fill** | Relleno automático de fechas hacia filas siguientes |
 
 ---
 

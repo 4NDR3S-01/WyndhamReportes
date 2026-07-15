@@ -3,876 +3,606 @@
 <head>
 <meta charset="UTF-8">
 <style>
-    /* ============================================================
-       MANUAL DE USUARIO — Wyndham Manta Medical Panel
-       Estilo para entrega en Word (abrir como .doc)
-       ============================================================ */
-    @page {
-        size: A4;
-        margin: 2.5cm 2.5cm 2.5cm 2.5cm;
-    }
-
-    body {
-        font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
-        font-size: 11pt;
-        line-height: 1.5;
-        color: #1e293b;
-        margin: 0;
-        padding: 0;
-    }
-
-    /* ============================================================
-       PORTADA
-       ============================================================ */
-    .portada {
-        text-align: center;
-        padding-top: 100px;
-        padding-bottom: 60px;
-        page-break-after: always;
-    }
-    .portada .linea-superior {
-        width: 80px;
-        height: 5px;
-        background: linear-gradient(90deg, #0B3B60, #0E7490, #D9704A);
-        margin: 0 auto 30px auto;
-        border-radius: 3px;
-    }
-    .portada h1 {
-        font-size: 26pt;
-        color: #0B3B60;
-        font-weight: 800;
-        letter-spacing: -0.02em;
-        margin-bottom: 10px;
-    }
-    .portada h2 {
-        font-size: 15pt;
-        color: #0E7490;
-        font-weight: 400;
-        margin-bottom: 30px;
-    }
-    .portada .version {
-        font-size: 10pt;
-        color: #64748b;
-        margin-top: 50px;
-    }
-    .portada .destinatarios {
-        margin-top: 60px;
-        font-size: 10.5pt;
-        color: #475569;
-        line-height: 2;
-    }
-    .portada .destinatarios strong {
-        color: #0B3B60;
-    }
-    .portada .wyndham-logo {
-        font-size: 14pt;
-        color: #0B3B60;
-        font-weight: 700;
-        letter-spacing: 0.05em;
-        margin-bottom: 5px;
-    }
-
-    /* ============================================================
-       TOC
-       ============================================================ */
-    .toc {
-        page-break-after: always;
-    }
-    .toc h3 {
-        font-size: 16pt;
-        color: #0B3B60;
-        border-bottom: 2px solid #0B3B60;
-        padding-bottom: 6px;
-        margin-bottom: 18px;
-    }
-    .toc ul {
-        list-style: none;
-        padding: 0;
-    }
-    .toc ul li {
-        padding: 4px 0;
-        border-bottom: 1px dotted #e2e8f0;
-        font-size: 11pt;
-    }
-    .toc ul li a { color: #0E7490; text-decoration: none; }
-    .toc .nivel2 { padding-left: 24px; font-size: 10pt; }
-
-    /* ============================================================
-       CONTENIDO
-       ============================================================ */
-    h1 {
-        font-size: 16pt;
-        color: #0B3B60;
-        border-bottom: 3px solid #0B3B60;
-        padding-bottom: 6px;
-        margin-top: 32px;
-        margin-bottom: 14px;
-        page-break-before: always;
-    }
-    h1:first-of-type { page-break-before: avoid; }
-
-    h2 {
-        font-size: 13pt;
-        color: #0E7490;
-        margin-top: 22px;
-        margin-bottom: 10px;
-        border-bottom: 1px solid #e2e8f0;
-        padding-bottom: 4px;
-    }
-
-    h3 {
-        font-size: 11.5pt;
-        color: #475569;
-        margin-top: 16px;
-        margin-bottom: 8px;
-    }
-
-    p { margin-bottom: 8px; text-align: justify; }
-
-    /* ============================================================
-       TABLAS
-       ============================================================ */
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 10px 0 14px 0;
-        font-size: 10pt;
-    }
-    table th {
-        background-color: #0B3B60;
-        color: white;
-        font-weight: 600;
-        padding: 6px 10px;
-        text-align: left;
-    }
-    table td {
-        padding: 5px 10px;
-        border: 1px solid #cbd5e1;
-        vertical-align: top;
-    }
-    table tr:nth-child(even) td { background-color: #f8fafc; }
-
-    /* ============================================================
-       PASOS / PROCEDIMIENTOS
-       ============================================================ */
-    .paso {
-        background: #f8fafc;
-        border-left: 4px solid #0E7490;
-        padding: 10px 14px;
-        margin: 10px 0;
-        page-break-inside: avoid;
-    }
-    .paso .numero {
-        display: inline-block;
-        background: #0E7490;
-        color: white;
-        font-weight: 700;
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        text-align: center;
-        line-height: 24px;
-        font-size: 10pt;
-        margin-right: 8px;
-    }
-
-    /* ============================================================
-       NOTAS Y ADVERTENCIAS
-       ============================================================ */
-    .nota {
-        background: #f0f9ff;
-        border-left: 4px solid #0E7490;
-        padding: 10px 14px;
-        margin: 12px 0;
-        font-size: 10pt;
-        page-break-inside: avoid;
-    }
-    .importante {
-        background: #fef3c7;
-        border-left: 4px solid #f59e0b;
-        padding: 10px 14px;
-        margin: 12px 0;
-        font-size: 10pt;
-        page-break-inside: avoid;
-    }
-    .peligro {
-        background: #fef2f2;
-        border-left: 4px solid #ef4444;
-        padding: 10px 14px;
-        margin: 12px 0;
-        font-size: 10pt;
-        page-break-inside: avoid;
-    }
-    .tip {
-        background: #f0fdf4;
-        border-left: 4px solid #22c55e;
-        padding: 10px 14px;
-        margin: 12px 0;
-        font-size: 10pt;
-        page-break-inside: avoid;
-    }
-
-    code {
-        font-family: 'Consolas', 'Courier New', monospace;
-        font-size: 9.5pt;
-        background: #f1f5f9;
-        padding: 1px 5px;
-        border-radius: 3px;
-    }
-
-    .footer {
-        text-align: center;
-        font-size: 8.5pt;
-        color: #94a3b8;
-        border-top: 1px solid #e2e8f0;
-        padding-top: 8px;
-        margin-top: 40px;
-    }
-
-    ul, ol { margin-bottom: 8px; padding-left: 22px; }
-    li { margin-bottom: 3px; }
-
-    .page-break { page-break-before: always; }
+@page { size: A4; margin: 2.5cm 2.5cm 2.5cm 2.5cm; }
+body { font-family: 'Calibri', 'Segoe UI', Arial, sans-serif; font-size: 11pt; line-height: 1.5; color: #1e293b; margin: 0; padding: 0; }
+.portada { text-align: center; padding-top: 120px; padding-bottom: 60px; page-break-after: always; }
+.portada .linea-superior { width: 100px; height: 5px; background: linear-gradient(90deg, #0B3B60, #0E7490, #D9704A); margin: 0 auto 30px auto; border-radius: 3px; }
+.portada h1 { font-size: 26pt; color: #0B3B60; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 8px; }
+.portada h2 { font-size: 16pt; color: #0E7490; font-weight: 400; margin-bottom: 40px; }
+.portada .version { font-size: 10pt; color: #64748b; margin-top: 50px; }
+.portada .datos { margin-top: 70px; font-size: 10.5pt; color: #475569; line-height: 2; }
+.portada .datos strong { color: #0B3B60; }
+.toc { page-break-after: always; }
+.toc h2 { font-size: 16pt; color: #0B3B60; border-bottom: 2px solid #0B3B60; padding-bottom: 6px; margin-bottom: 18px; }
+.toc ul { list-style: none; padding: 0; }
+.toc ul li { padding: 3px 0; border-bottom: 1px dotted #e2e8f0; font-size: 11pt; }
+.toc ul li a { color: #0E7490; text-decoration: none; }
+.toc .nivel2 { padding-left: 24px; font-size: 10pt; }
+h1 { font-size: 16pt; color: #0B3B60; border-bottom: 3px solid #0B3B60; padding-bottom: 6px; margin-top: 36px; margin-bottom: 16px; page-break-before: always; }
+h1:first-of-type { page-break-before: avoid; }
+h2 { font-size: 13pt; color: #0E7490; margin-top: 24px; margin-bottom: 10px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; }
+h3 { font-size: 11.5pt; color: #475569; margin-top: 18px; margin-bottom: 8px; }
+p { margin-bottom: 8px; text-align: justify; }
+table { width: 100%; border-collapse: collapse; margin: 12px 0 16px 0; font-size: 9.5pt; }
+table th { background-color: #0B3B60; color: white; font-weight: 600; padding: 7px 10px; text-align: left; }
+table td { padding: 5px 10px; border: 1px solid #cbd5e1; vertical-align: top; }
+table tr:nth-child(even) td { background-color: #f8fafc; }
+table tr:nth-child(odd) td { background-color: #ffffff; }
+.diagrama { font-family: 'Consolas', 'Courier New', monospace; font-size: 9pt; background: #f1f5f9; border: 1px solid #e2e8f0; border-left: 4px solid #0E7490; padding: 12px 16px; margin: 12px 0; white-space: pre; line-height: 1.3; overflow-x: auto; }
+code { font-family: 'Consolas', 'Courier New', monospace; font-size: 9.5pt; background: #f1f5f9; padding: 1px 5px; border-radius: 3px; color: #c0262c; }
+pre { font-family: 'Consolas', 'Courier New', monospace; font-size: 9pt; background: #1e293b; color: #e2e8f0; padding: 12px 16px; border-radius: 6px; overflow-x: auto; margin: 12px 0; line-height: 1.4; }
+.nota { background: #f0f9ff; border-left: 4px solid #0E7490; padding: 10px 14px; margin: 12px 0; font-size: 10pt; }
+.advertencia { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 10px 14px; margin: 12px 0; font-size: 10pt; }
+.info { background: #f0fdf4; border-left: 4px solid #22c55e; padding: 10px 14px; margin: 12px 0; font-size: 10pt; }
+.footer { text-align: center; font-size: 8.5pt; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 8px; margin-top: 40px; }
+ul, ol { margin-bottom: 8px; padding-left: 22px; }
+li { margin-bottom: 3px; }
 </style>
 </head>
 <body>
 
-<!-- ============================================================
-     PORTADA
-     ============================================================ -->
+<!-- PORTADA -->
 <div class="portada">
     <div class="linea-superior"></div>
-    <div class="wyndham-logo">WYNDHAM MANTA</div>
-    <h1>Sistema de Gestión Hotelera</h1>
+    <h1>Sistema de Gestión Hotelera<br>Wyndham Manta</h1>
     <h2>Manual de Usuario</h2>
-    <div class="version">
-        Versión 1.0.0 &mdash; Julio 2026
-    </div>
-    <div class="destinatarios">
-        <strong>Dirigido a:</strong><br>
-        Personal del Departamento de Cocina<br>
-        Personal del Departamento Médico<br>
-        Administradores y Supervisores del Hotel
-    </div>
-    <div style="margin-top:40px; font-size:10pt; color:#94a3b8;">
-        Documento de uso interno &mdash; Hotel Wyndham Manta
+    <div class="version">Versión 1.1.0 &mdash; Julio 2026</div>
+    <div class="datos">
+        <strong>Hotel:</strong> Wyndham Manta<br>
+        <strong>Módulos:</strong> Cocina &middot; Médico &middot; Inventario<br>
+        <strong>Rol:</strong> Personal de cocina, médicos, administrativos, supervisores
     </div>
 </div>
 
-<!-- ============================================================
-     ÍNDICE
-     ============================================================ -->
-<div class="toc">
-    <h3>Índice</h3>
-    <ul>
-        <li><a href="#sec1">1. Introducción</a></li>
-        <li class="nivel2"><a href="#sec1-1">1.1 ¿Qué es este sistema?</a></li>
-        <li class="nivel2"><a href="#sec1-2">1.2 Roles y usuarios</a></li>
-        <li><a href="#sec2">2. Acceso al sistema</a></li>
-        <li class="nivel2"><a href="#sec2-1">2.1 Ingresar al sistema</a></li>
-        <li class="nivel2"><a href="#sec2-2">2.2 Pantalla principal</a></li>
-        <li class="nivel2"><a href="#sec2-3">2.3 Cerrar sesión</a></li>
-        <li class="nivel2"><a href="#sec2-4">2.4 Modo oscuro / claro</a></li>
-        <li><a href="#sec3">3. Módulo Cocina</a></li>
-        <li class="nivel2"><a href="#sec3-1">3.1 Dashboard de Cocina</a></li>
-        <li class="nivel2"><a href="#sec3-2">3.2 Herramienta de Recomendación</a></li>
-        <li class="nivel2"><a href="#sec3-3">3.3 Subir datos de consumo</a></li>
-        <li class="nivel2"><a href="#sec3-4">3.4 Reportes de Cocina</a></li>
-        <li><a href="#sec4">4. Módulo Médico</a></li>
-        <li class="nivel2"><a href="#sec4-1">4.1 Dashboard de Médico</a></li>
-        <li class="nivel2"><a href="#sec4-2">4.2 Partes Diarios (Atenciones)</a></li>
-        <li class="nivel2"><a href="#sec4-3">4.3 Pacientes</a></li>
-        <li class="nivel2"><a href="#sec4-4">4.4 Base Médica (Catálogos)</a></li>
-        <li class="nivel2"><a href="#sec4-5">4.5 Inventario</a></li>
-        <li class="nivel2"><a href="#sec4-6">4.6 Reportes Médico</a></li>
-        <li><a href="#sec5">5. Preguntas frecuentes</a></li>
-        <li><a href="#sec6">6. Glosario</a></li>
-    </ul>
-</div>
-
-<!-- ============================================================
-     1. INTRODUCCIÓN
-     ============================================================ -->
-<h1 id="sec1">1. Introducción</h1>
-
-<h2 id="sec1-1">1.1 ¿Qué es este sistema?</h2>
-
-<p>Es una plataforma web interna del <strong>Hotel Wyndham Manta</strong> diseñada para facilitar la gestión diaria de dos departamentos clave:</p>
-
-<table>
-<tr><th>Departamento</th><th>¿Qué permite hacer?</th></tr>
-<tr><td><strong>Cocina</strong></td><td>Importar datos de consumo de alimentos desde Excel, visualizar estadísticas de consumo, calcular cantidades para planificación y generar reportes descargables.</td></tr>
-<tr><td><strong>Médico</strong></td><td>Registrar atenciones médicas diarias, gestionar el directorio de pacientes, controlar el inventario de medicinas e insumos (Kardex), administrar catálogos clínicos y generar todo tipo de reportes.</td></tr>
-</table>
-
-<h2 id="sec1-2">1.2 Roles y usuarios</h2>
-
-<table>
-<tr><th>Rol</th><th>Uso principal del sistema</th></tr>
-<tr><td>Personal de cocina</td><td>Subir archivos de consumo, visualizar dashboards y descargar reportes.</td></tr>
-<tr><td>Médicos / Enfermeros</td><td>Registrar atenciones, recetar medicación, consultar historial de pacientes.</td></tr>
-<tr><td>Administrativos médicos</td><td>Gestionar pacientes, catálogos, inventario y generar reportes.</td></tr>
-<tr><td>Supervisores / Gerencia</td><td>Revisar estadísticas generales, monitorear stock y tomar decisiones basadas en datos.</td></tr>
-</table>
-
-<!-- ============================================================
-     2. ACCESO AL SISTEMA
-     ============================================================ -->
-<h1 id="sec2">2. Acceso al sistema</h1>
-
-<h2 id="sec2-1">2.1 Ingresar al sistema</h2>
-
-<div class="paso">
-    <span class="numero">1</span>
-    <strong>Abre tu navegador web</strong> (Chrome, Firefox o Edge).
-</div>
-<div class="paso">
-    <span class="numero">2</span>
-    <strong>Ve a la dirección del sistema</strong> (ej: <code>http://wyndham-manta.local/admin</code> &mdash; la URL te la proporcionará el administrador).
-</div>
-<div class="paso">
-    <span class="numero">3</span>
-    <strong>Ingresa tus credenciales:</strong>
-    <ul>
-        <li><strong>Correo electrónico:</strong> tu correo asignado</li>
-        <li><strong>Contraseña:</strong> la proporcionada por el administrador</li>
-    </ul>
-</div>
-
-<div class="importante">
-    <strong>Usuario administrador por defecto:</strong><br>
-    Correo: <code>admin@gmail.com</code><br>
-    Contraseña: <code>admin123</code><br>
-    <em>Se recomienda cambiar la contraseña después del primer inicio de sesión.</em>
-</div>
-
-<h2 id="sec2-2">2.2 Pantalla principal</h2>
-
-<p>Al ingresar, verás el <strong>Panel de Inicio</strong> con un resumen general del sistema. En el menú lateral izquierdo encontrarás los módulos disponibles:</p>
-
-<ul>
-    <li><strong>Inicio</strong> &mdash; Panel principal con indicadores globales.</li>
-    <li><strong>Cocina</strong> &mdash; Grupo colapsable con Dashboard, Subir datos y Reportes.</li>
-    <li><strong>Médico</strong> &mdash; Grupo colapsable con Dashboard, Partes diarios, Pacientes, Base médica, Inventario y Reportes.</li>
-</ul>
-
-<p>En la barra superior verás:</p>
-<ul>
-    <li><strong>Reloj</strong> con la fecha y hora actual en vivo.</li>
-    <li><strong>Botón de modo oscuro</strong> (sol/luna) para alternar entre tema claro y oscuro.</li>
-    <li><strong>Botón de Cerrar sesión</strong> para salir del sistema.</li>
-</ul>
-
-<h2 id="sec2-3">2.3 Cerrar sesión</h2>
-
-<div class="paso"><span class="numero">1</span> Haz clic en el botón <strong>Cerrar sesión</strong> (icono de puerta con flecha) en la esquina superior derecha.</div>
-<div class="paso"><span class="numero">2</span> En la ventana emergente, haz clic en <strong>Cerrar sesión</strong> para confirmar, o <strong>Cancelar</strong> si deseas permanecer en el sistema.</div>
-
-<h2 id="sec2-4">2.4 Modo oscuro / claro</h2>
-
-<p>Haz clic en el botón circular (sol ☀️ / luna 🌙) en la barra superior para alternar entre el tema claro y oscuro. La preferencia se guarda automáticamente para tu próxima visita.</p>
-
-<!-- ============================================================
-     3. MÓDULO COCINA
-     ============================================================ -->
-<h1 id="sec3">3. Módulo Cocina</h1>
-
-<h2 id="sec3-1">3.1 Dashboard de Cocina</h2>
-
-<p><strong>Menú:</strong> Cocina → Dashboard</p>
-
-<p>Este es el panel principal del módulo de cocina. Desde aquí puedes:</p>
-
-<h3>Indicadores principales</h3>
-<p>En la parte superior verás tarjetas con estadísticas clave:</p>
-<ul>
-    <li><strong>Registros última fecha:</strong> cuántos productos se consumieron en el último día registrado.</li>
-    <li><strong>Productos usados:</strong> variedad de productos distintos en esa fecha.</li>
-    <li><strong>Fechas registradas:</strong> cuántos días diferentes tienen datos.</li>
-    <li><strong>Total registros:</strong> todos los registros históricos de consumo.</li>
-    <li><strong>Productos:</strong> total de productos en el catálogo.</li>
-    <li><strong>Archivos importados:</strong> total de archivos Excel subidos.</li>
-</ul>
-
-<h3>Consumo del día</h3>
+<h1>Manual de Usuario — Sistema de Gestión Hotelera Wyndham Manta</h1>
+<p><strong>Versión:</strong> 1.1.0</p>
+<p><strong>Última actualización:</strong> Julio 2026</p>
+<p><strong>Hotel:</strong> Wyndham Manta</p>
+<hr>
+<h2>Índice</h2>
 <ol>
-    <li>Usa el <strong>selector de fecha</strong> para elegir un día específico.</li>
-    <li>La tabla se actualiza automáticamente mostrando los productos consumidos.</li>
-    <li>Los productos se agrupan por tipo de unidad: kilos, litros, porciones, gramos y unidades.</li>
+<li>[Introducción](#1-introducción)</li>
+<li>[Acceso al sistema](#2-acceso-al-sistema)</li>
+<li>[Panel de Inicio](#3-panel-de-inicio)</li>
+<li>[Módulo Cocina](#4-módulo-cocina)</li>
+<li>[Módulo Médico](#5-módulo-médico)</li>
+<li>[Reportes](#6-reportes)</li>
+<li>[Solución de problemas](#7-solución-de-problemas)</li>
+<li>[Preguntas frecuentes](#8-preguntas-frecuentes)</li>
 </ol>
-
-<h3>Top 10 productos</h3>
-<p>Lista de los 10 productos más consumidos en todo el histórico del sistema.</p>
-
-<h2 id="sec3-2">3.2 Herramienta de Recomendación</h2>
-
-<p>Esta herramienta te ayuda a planificar las cantidades de compra para eventos o días con ocupación especial.</p>
-
-<div class="paso">
-    <span class="numero">1</span>
-    <strong>Selecciona una fecha de referencia</strong> (un día típico de operación normal).
-</div>
-<div class="paso">
-    <span class="numero">2</span>
-    <strong>Ingresa cuántos huéspedes había</strong> ese día de referencia.
-</div>
-<div class="paso">
-    <span class="numero">3</span>
-    <strong>Ingresa cuántos huéspedes esperas</strong> para el día o evento que estás planificando.
-</div>
-<div class="paso">
-    <span class="numero">4</span>
-    El sistema calculará automáticamente las <strong>cantidades sugeridas</strong> de cada producto, ajustadas proporcionalmente a la ocupación esperada.
-</div>
-
-<div class="tip">
-    <strong>Ejemplo:</strong> Si el día de referencia consumiste 10 kg de arroz con 100 huéspedes, y esperas 150 huéspedes, el sistema sugerirá 15 kg.
-</div>
-
-<h2 id="sec3-3">3.3 Subir datos de consumo</h2>
-
+<hr>
+<h2>1. Introducción</h2>
+<h3>1.1 ¿Qué es este sistema?</h3>
+<p>Es una plataforma web interna del Hotel Wyndham Manta que permite:</p>
+<ul>
+<li><strong>Departamento de Cocina</strong>: importar datos de consumo de alimentos desde archivos Excel y visualizar estadísticas.</li>
+<li><strong>Departamento Médico</strong>: registrar atenciones médicas, gestionar pacientes, controlar inventario de medicinas e insumos, y generar reportes.</li>
+</ul>
+<h3>1.2 ¿Quiénes lo usan?</h3>
+<table>
+<tr><th>Rol</th><th>Uso principal</th></tr>
+<tr><td>Personal de cocina</td><td>Subir datos de consumo, ver reportes</td></tr>
+<tr><td>Médicos / Enfermeros</td><td>Registrar atenciones, recetar medicación</td></tr>
+<tr><td>Administrativos médicos</td><td>Gestionar pacientes, catálogos, inventario</td></tr>
+<tr><td>Supervisores</td><td>Generar reportes, revisar estadísticas</td></tr>
+</table>
+<hr>
+<h2>2. Acceso al sistema</h2>
+<h3>2.1 Ingresar</h3>
+<ol>
+<li>Abre tu navegador web (Chrome, Firefox, Edge).</li>
+<li>Ve a la dirección del sistema (ej: <code>http://wyndham-manta.local/admin</code> o la URL que te hayan proporcionado).</li>
+<li>Verás la pantalla de inicio de sesión:</li>
+</ol>
+<p>![Pantalla de login]</p>
+<ul>
+<li>Fondo: imagen del hotel</li>
+<li>Tarjeta blanca translúcida con el logo</li>
+<li>Campos: <strong>Correo electrónico</strong> y <strong>Contraseña</strong></li>
+<li>La pantalla de login siempre se muestra en modo claro, independientemente del tema que tengas configurado.</li>
+</ul>
+<h3>2.2 Credenciales</h3>
+<ul>
+<li><strong>Usuario administrador:</strong> <code>admin@gmail.com</code></li>
+<li><strong>Contraseña:</strong> <code>admin123</code></li>
+</ul>
+<div class="advertencia">⚠️ <strong>Importante:</strong> Cambia la contraseña después del primer inicio de sesión.</div>
+<h3>2.3 Recuperar acceso</h3>
+<p>Si olvidaste tu contraseña, contacta al administrador del sistema para restablecerla.</p>
+<h3>2.4 Cerrar sesión</h3>
+<ol>
+<li>Haz clic en el botón <strong>Cerrar sesión</strong> (icono de puerta con flecha) en la esquina superior derecha.</li>
+<li>Confirma en la ventana emergente.</li>
+</ol>
+<h3>2.5 Modo oscuro / claro</h3>
+<ol>
+<li>Haz clic en el botón circular (sol/luna) en la barra superior.</li>
+<li>El tema se guarda automáticamente para tu próxima visita.</li>
+</ol>
+<div class="nota"><strong>Nota:</strong> El botón de tema ha sido rediseñado para ser más compacto. El reloj de la barra superior también tiene un estilo más minimalista y transparente.</div>
+<hr>
+<h2>3. Panel de Inicio</h2>
+<p>Al ingresar, verás el <strong>Panel de Inicio</strong> con un resumen general:</p>
+<ul>
+<li><strong>Total archivos importados</strong> (Cocina)</li>
+<li><strong>Total consumos registrados</strong> (Cocina)</li>
+<li><strong>Total productos en catálogo</strong> (Cocina)</li>
+</ul>
+<hr>
+<h2>4. Módulo Cocina</h2>
+<h3>4.1 Dashboard de Cocina</h3>
+<p><strong>Menú:</strong> Cocina → Dashboard</p>
+<p>![Dashboard Cocina]</p>
+<p>En esta pantalla encontrarás:</p>
+<p><strong>Indicadores principales (tarjetas superiores)</strong></p>
+<ul>
+<li><strong>Registros última fecha</strong>: cuántos productos se consumieron en el último registro</li>
+<li><strong>Productos usados</strong>: variedad de productos distintos en esa fecha</li>
+<li><strong>Fechas registradas</strong>: cuántos días diferentes tienen datos</li>
+<li><strong>Total registros</strong>: todos los registros históricos</li>
+<li><strong>Productos</strong>: total de productos en el catálogo</li>
+<li><strong>Archivos importados</strong>: total de archivos subidos</li>
+<li><strong>Producto top</strong>: producto más consumido en total, con su cantidad y unidad (nuevo)</li>
+</ul>
+<p><strong>Seleccionar archivo fuente</strong></p>
+<p>El dashboard ahora permite elegir <strong>qué archivo importado</strong> usar como fuente:</p>
+<ol>
+<li>Haz clic en <strong>Seleccionar archivo</strong> en la parte superior del dashboard.</li>
+<li>Se abre un modal con la lista de archivos subidos.</li>
+<li>Selecciona el archivo cuyos datos quieres visualizar.</li>
+<li>El dashboard se actualiza para mostrar solo los datos de ese archivo.</li>
+</ol>
+<p>También puedes <strong>subir un archivo directamente desde el dashboard</strong> sin ir a la página de Subir Datos.</p>
+<p><strong>Consumo del día</strong></p>
+<ol>
+<li>Usa el selector de fecha (calendario interactivo) para elegir un día.</li>
+<li>El calendario solo muestra las fechas que tienen datos en el archivo seleccionado.</li>
+<li>La tabla se actualiza mostrando los productos consumidos, agrupados por tipo de unidad (kilos, litros, porciones, gramos, unidades).</li>
+</ol>
+<p><strong>Top 10 productos</strong></p>
+<p>Lista de los 10 productos más consumidos históricamente (del archivo seleccionado).</p>
+<p><strong>Recomendación (herramienta de planificación)</strong></p>
+<p>Esta herramienta te ayuda a calcular la <strong>ración por huésped</strong> basada en un día de referencia:</p>
+<ol>
+<li>Selecciona una <strong>fecha de referencia</strong> (un día típico).</li>
+<li>Ingresa cuántos <strong>huéspedes había</strong> ese día.</li>
+<li>El sistema calculará el consumo por huésped de cada producto.</li>
+</ol>
+<div class="advertencia"><strong>Cambio importante:</strong> Ya no necesitas ingresar un número objetivo de huéspedes. La recomendación ahora muestra cuánto se consumió <strong>por persona</strong>, útil para planificar menús y compras de forma más precisa.</div>
+<p><strong>Gráficos</strong></p>
+<ul>
+<li><strong>Productos más consumidos</strong>: gráfico de barras con el top 10 (filtrado por archivo activo).</li>
+<li><strong>Consumo diario</strong>: evolución diaria del consumo. Puedes filtrar por producto individual o ver los 5 productos más consumidos apilados. Los tooltips son interactivos, y los puntos en las líneas son invisibles pero con área de impacto ampliada para mejor usabilidad.</li>
+</ul>
+<hr>
+<h3>4.2 Subir Datos de Cocina</h3>
 <p><strong>Menú:</strong> Cocina → Subir datos</p>
-
-<p>Aquí puedes importar archivos Excel con los consumos diarios del hotel.</p>
-
-<h3>Paso 1: Seleccionar el archivo</h3>
-<div class="paso">
-    <span class="numero">1</span>
-    Haz clic en <strong>Seleccionar archivo</strong> y elige un archivo Excel (<code>.xlsx</code>, <code>.xls</code>) o CSV.
-    <br><em>Peso máximo: 10 MB.</em>
-</div>
-
-<h3>Paso 2: Cargar</h3>
-<div class="paso">
-    <span class="numero">2</span>
-    Haz clic en <strong>Subir datos</strong>. El archivo se guarda en el sistema con estado "recibido".
-</div>
-
-<h3>Paso 3: Previsualizar (opcional)</h3>
-<div class="paso">
-    <span class="numero">3</span>
-    En la tabla "Archivos subidos recientemente", haz clic en <strong>Previsualizar</strong> para ver las primeras 20 filas del archivo y verificar que se leyó correctamente.
-</div>
-
-<h3>Paso 4: Procesar</h3>
-<div class="paso">
-    <span class="numero">4</span>
-    Haz clic en <strong>Procesar archivo</strong>. El sistema leerá el archivo, detectará las columnas automáticamente y creará los registros de consumo. Verás un resumen con:
-    <ul>
-        <li>Filas importadas correctamente.</li>
-        <li>Filas con errores (si las hay).</li>
-        <li>Filas duplicadas omitidas.</li>
-    </ul>
-</div>
-
-<div class="nota">
-    <strong>¿Qué encabezados necesita el archivo?</strong><br>
-    El sistema busca columnas como "Fecha" y "Cantidad" como mínimo. También detecta automáticamente: Código Artículo, Nombre Artículo, Presentación/Unidad, Concepto y Grupo/Categoría. Los nombres pueden variar ligeramente.
-</div>
-
-<h2 id="sec3-4">3.4 Reportes de Cocina</h2>
-
-<p><strong>Menú:</strong> Cocina → Reportes</p>
-
-<h3>Descargar reportes en Excel</h3>
-
+<p>Aquí puedes importar archivos Excel con los consumos diarios.</p>
+<p><strong>Paso 1: Seleccionar archivo</strong></p>
+<ol>
+<li>Haz clic en <strong>Seleccionar archivo</strong>.</li>
+<li>Elige un archivo Excel (<code>.xlsx</code>, <code>.xls</code>) o CSV.</li>
+<li>Peso máximo: 10 MB.</li>
+</ol>
+<p><strong>Paso 2: Cargar</strong></p>
+<ol>
+<li>Haz clic en <strong>Subir datos</strong>.</li>
+<li>El archivo se guarda en el sistema con estado "recibido".</li>
+</ol>
+<p><strong>Paso 3: Previsualizar (opcional)</strong></p>
+<ol>
+<li>En la tabla <strong>Archivos subidos recientemente</strong>, haz clic en <strong>Previsualizar</strong>.</li>
+<li>Se mostrarán las primeras 20 filas para que verifiques que los datos se leyeron correctamente.</li>
+</ol>
+<p><strong>Paso 4: Procesar</strong></p>
+<ol>
+<li>Haz clic en <strong>Procesar archivo</strong>.</li>
+<li>El sistema leerá el archivo, detectará automáticamente las columnas (fecha, producto, cantidad) y creará los registros.</li>
+<li>Verás un resumen: filas importadas, errores y duplicados.</li>
+</ol>
+<div class="info"><strong>Nuevo:</strong> El resumen de errores ahora incluye un desglose detallado entre paréntesis, por ejemplo: "Errores: 3 (2 fecha inválida, 1 producto vacío)."</div>
+<p><strong>Eliminar archivos</strong></p>
+<ul>
+<li><strong>Eliminar individual</strong>: cada archivo en el historial tiene un botón de eliminar que borra el archivo, sus consumos y errores asociados.</li>
+<li><strong>Eliminar todo</strong>: botón en la parte superior que borra <strong>todos</strong> los archivos, consumos y errores de cocina. Incluye una confirmación para evitar accidentes.</li>
+</ul>
+<div class="info">✅ <strong>Tip:</strong> Los encabezados deben incluir al menos "Fecha" y "Cantidad". El resto de columnas se detectan automáticamente por nombre. Las filas sin fecha heredan la última fecha válida del grupo automáticamente (útil en reportes donde la fecha aparece una sola vez para varias filas).</div>
+<p><strong>¿Qué pasa si hay errores?</strong></p>
+<ul>
+<li>Las filas con problemas se registran como errores.</li>
+<li>Puedes ver los errores en la sección <strong>Reportes</strong> de Cocina.</li>
+<li>El archivo quedará marcado como "procesado con errores" si algunas filas fallaron.</li>
+</ul>
+<hr>
+<h3>4.3 Reportes de Cocina</h3>
+<div class="nota"><strong>Nota de navegación:</strong> La página de Reportes de Cocina ya no aparece en el menú lateral. Se accede desde el Dashboard de Cocina.</div>
+<p><strong>Descargar reportes</strong></p>
+<p>Puedes descargar reportes en formato Excel:</p>
 <table>
 <tr><th>Opción</th><th>Qué incluye</th></tr>
-<tr><td><strong>Descargar día</strong></td><td>Elige una fecha y descarga un Excel con los productos y cantidades consumidas ese día.</td></tr>
-<tr><td><strong>Descargar rango</strong></td><td>Elige fecha de inicio y fin. Descarga un Excel detallado con fecha, producto, unidad y cantidad.</td></tr>
-<tr><td><strong>Descargar todo</strong></td><td>Todos los registros históricos del sistema en un solo archivo.</td></tr>
+<tr><td><strong>Descargar día</strong></td><td>Elige una fecha → descarga Excel con productos y cantidades</td></tr>
+<tr><td><strong>Descargar rango</strong></td><td>Elige fecha inicio y fin → descarga Excel detallado</td></tr>
+<tr><td><strong>Descargar todo</strong></td><td>Todos los registros históricos</td></tr>
 </table>
-
-<h3>Resumen semanal</h3>
-<p>La tabla "Semanas consumidas" te muestra un resumen por semana: fechas, total de registros y cantidad de productos distintos.</p>
-
-<h3>Errores de importación</h3>
-<p>Lista los errores que ocurrieron al procesar archivos, indicando el número de fila y el mensaje de error para facilitar la corrección.</p>
-
-<!-- ============================================================
-     4. MÓDULO MÉDICO
-     ============================================================ -->
-<h1 id="sec4">4. Módulo Médico</h1>
-
-<h2 id="sec4-1">4.1 Dashboard de Médico</h2>
-
+<p><strong>Semanas consumidas</strong></p>
+<p>Tabla resumen que muestra por semana: fecha inicio, fecha fin, total registros y productos distintos.</p>
+<p><strong>Errores de importación</strong></p>
+<p>Lista los errores ocurridos al procesar archivos, con el número de fila, el mensaje de error y el motivo agrupado.</p>
+<hr>
+<h2>5. Módulo Médico</h2>
+<h3>5.1 Dashboard de Médico</h3>
 <p><strong>Menú:</strong> Médico → Dashboard</p>
-
-<h3>Indicadores principales</h3>
+<p><strong>Indicadores principales</strong></p>
 <ul>
-    <li><strong>Total atenciones:</strong> todas las consultas médicas registradas.</li>
-    <li><strong>Total pacientes:</strong> cantidad de personas distintas atendidas.</li>
-    <li><strong>Total Kardex:</strong> registros activos en el inventario.</li>
-    <li><strong>Última fecha:</strong> el día más reciente con atenciones registradas.</li>
-    <li><strong>Atenciones hoy:</strong> atenciones en el último día registrado.</li>
-    <li><strong>Días cubiertos:</strong> cuántos días diferentes tienen atenciones.</li>
+<li><strong>Total atenciones</strong>: todas las consultas registradas</li>
+<li><strong>Total pacientes</strong>: personas atendidas</li>
+<li><strong>Total Kardex</strong>: registros de inventario</li>
+<li><strong>Última fecha</strong>: el día más reciente con datos</li>
+<li><strong>Atenciones hoy</strong>: atenciones en el último día registrado</li>
+<li><strong>Días cubiertos</strong>: cuántos días diferentes tienen atenciones</li>
 </ul>
-
-<h3>Resumen del mes</h3>
+<p><strong>Resumen del mes</strong></p>
 <ol>
-    <li>Selecciona un mes en el selector.</li>
-    <li>El sistema mostrará: atenciones realizadas, pacientes distintos, días con atención, atenciones con certificado y medicamentos distintos usados.</li>
+<li>Selecciona un mes del selector.</li>
+<li>Verás: atenciones, pacientes distintos, días con atención, atenciones con certificado, medicamentos distintos usados.</li>
 </ol>
-
-<h3>Atenciones del día</h3>
+<p><strong>Atenciones del día</strong></p>
 <ol>
-    <li>Selecciona una fecha en el calendario.</li>
-    <li>Se listarán todas las atenciones de ese día, ordenadas por nombre del paciente.</li>
-    <li>Cada fila muestra: nombre, edad, área, cargo, causa, diagnóstico, certificado y medicación.</li>
+<li>Selecciona una fecha.</li>
+<li>Se listan todas las atenciones de ese día ordenadas por nombre del paciente.</li>
+<li>Cada fila muestra: nombre, edad, área, cargo, causa, diagnóstico, tipo de certificado, medicación.</li>
 </ol>
-
-<h3>Alertas de stock</h3>
-<p>Muestra los productos de inventario con saldo igual o menor a 2 unidades. Es una alerta visual para identificar rápidamente qué necesita reposición.</p>
-
-<h3>Gráficos</h3>
+<p><strong>Alertas de stock</strong></p>
+<p>Muestra productos de inventario con saldo igual o menor a 2 unidades. Útil para saber qué necesita reposición urgente.</p>
+<p><strong>Gráficos</strong></p>
 <ul>
-    <li><strong>Atenciones mensuales:</strong> gráfico de línea con el acumulado por mes del año actual.</li>
-    <li><strong>Distribución de causas:</strong> gráfico de pastel con los motivos de atención más frecuentes.</li>
-    <li><strong>Atenciones por área:</strong> gráfico de barras comparativas entre departamentos.</li>
-    <li><strong>Medicamentos más usados:</strong> ranking de medicación más recetada.</li>
+<li><strong>Atenciones mensuales</strong>: línea con el acumulado por mes del año actual.</li>
+<li><strong>Distribución de causas</strong>: pastel con los motivos de atención más frecuentes.</li>
+<li><strong>Atenciones por área</strong>: barras comparativas entre departamentos.</li>
+<li><strong>Medicamentos más usados</strong>: ranking de medicación.</li>
 </ul>
-
-<h2 id="sec4-2">4.2 Partes Diarios (Atenciones Médicas)</h2>
-
+<hr>
+<h3>5.2 Partes Diarios (Atenciones Médicas)</h3>
 <p><strong>Menú:</strong> Médico → Partes diarios</p>
-
-<p>Esta es la pantalla principal del módulo médico. Aquí se registra cada atención que se realiza a un paciente.</p>
-
-<h3>Vista general de la lista</h3>
+<p>Esta es la pantalla principal del módulo médico. Aquí registras cada atención que realizas.</p>
+<p><strong>Vista general</strong></p>
 <ul>
-    <li>Por defecto, la tabla muestra las atenciones del <strong>día de hoy</strong>.</li>
-    <li>Puedes cambiar a <strong>"Ver todo"</strong> para ver un rango de fechas más amplio.</li>
-    <li>Usa los <strong>filtros</strong> para refinar la búsqueda por texto, área, causa, tipo de paciente o estado del certificado.</li>
+<li>La tabla muestra las atenciones del día actual por defecto.</li>
+<li>Puedes cambiar a <strong>Ver todo</strong> para ver un rango de fechas más amplio.</li>
+<li>Usa los <strong>filtros</strong> para refinar la búsqueda.</li>
 </ul>
-
-<h3>Registrar una nueva atención</h3>
-
-<p><strong>Paso 1: Abrir el formulario</strong></p>
-<div class="paso">
-    <span class="numero">1</span>
-    Haz clic en el botón <strong>Nueva atención</strong> (azul). Se abrirá un modal con el formulario completo.
-</div>
-
-<p><strong>Paso 2: Buscar o crear paciente</strong></p>
-<div class="paso">
-    <span class="numero">2</span>
-    Escribe el nombre, cédula o área en el buscador. El sistema te sugerirá pacientes existentes.<br>
-    Si el paciente <strong>no existe</strong>, haz clic en <strong>➕ Crear paciente</strong> para registrarlo rápidamente sin cerrar el formulario.
-</div>
-
-<p><strong>Paso 3: Datos de la atención</strong></p>
-
+<p><strong>Registrar una nueva atención</strong></p>
+<ol>
+<li>Haz clic en <strong>Nueva atención</strong> (botón azul).</li>
+<li>Se abrirá un modal con el formulario.</li>
+</ol>
+<p><strong>Paso 1: Buscar paciente</strong></p>
+<ul>
+<li>Escribe el nombre, cédula o área en el buscador.</li>
+<li>El sistema te sugerirá pacientes existentes.</li>
+<li>Si el paciente no existe, haz clic en <strong>➕ Crear paciente</strong> para registrarlo rápidamente.</li>
+</ul>
+<p><strong>Paso 2: Datos de la atención</strong></p>
 <table>
-<tr><th>Campo</th><th>Descripción</th><th>Obligatorio</th></tr>
-<tr><td>Fecha</td><td>Fecha de la atención (por defecto el día de hoy)</td><td>Sí</td></tr>
-<tr><td>Nombres</td><td>Nombre completo del paciente</td><td>Sí</td></tr>
-<tr><td>Tipo paciente</td><td>Colaborador, Aspirante, Externo, Paciente o Huésped</td><td>Sí</td></tr>
-<tr><td>Habitación</td><td>Número de habitación (solo para huéspedes)</td><td>Si es huésped</td></tr>
-<tr><td>Turno</td><td>Mañana, Tarde o Noche</td><td>No</td></tr>
-<tr><td>Área</td><td>Departamento del paciente</td><td>No</td></tr>
-<tr><td>Cargo</td><td>Puesto de trabajo del colaborador</td><td>No</td></tr>
-<tr><td>Causa</td><td>Motivo de la atención (ej: dolor de cabeza, fiebre, etc.)</td><td><strong>Sí</strong></td></tr>
-<tr><td>Diagnóstico</td><td>Diagnóstico médico (escribe ≥ 2 letras para buscar)</td><td>No</td></tr>
+<tr><th>Campo</th><th>Descripción</th></tr>
+<tr><td>Fecha</td><td>Fecha de la atención (por defecto hoy)</td></tr>
+<tr><td>Tipo paciente</td><td>Colaborador, Aspirante, Externo, Huésped</td></tr>
+<tr><td>Habitación</td><td>Solo para huéspedes</td></tr>
+<tr><td>Turno</td><td>Mañana, Tarde, Noche</td></tr>
+<tr><td>Área</td><td>Departamento del paciente</td></tr>
+<tr><td>Cargo</td><td>Puesto de trabajo</td></tr>
+<tr><td>Causa</td><td>Motivo de la atención (obligatorio)</td></tr>
+<tr><td>Diagnóstico</td><td>Desde el catálogo (escribe ≥ 2 letras para buscar)</td></tr>
 </table>
-
-<p><strong>Paso 4: Certificado médico (opcional)</strong></p>
-<div class="paso">
-    <span class="numero">4</span>
-    Si el paciente requiere certificado:
-    <ol>
-        <li>Selecciona el <strong>tipo de certificado</strong>: REPOSO, SUBSIDIO, ALTA MÉDICA, REPOSO POR ACCIDENTE LABORAL o REPOSO POR ENFERMEDAD COMÚN.</li>
-        <li>Elige la <strong>entidad que certifica</strong> (IESS, MSP, etc.).</li>
-        <li>Indica las <strong>horas o días</strong> de descanso.</li>
-        <li>Selecciona <strong>fechas de inicio y fin</strong> del certificado.</li>
-        <li>Elige el <strong>médico que certifica</strong> de la lista de personal médico.</li>
-    </ol>
-</div>
-
-<p><strong>Paso 5: Medicación</strong></p>
-<div class="paso">
-    <span class="numero">5</span>
-    <ol>
-        <li>Haz clic en <strong>➕ Agregar medicamento</strong>.</li>
-        <li>Selecciona el medicamento de la lista desplegable.</li>
-        <li>Indica la <strong>cantidad</strong> administrada.</li>
-        <li>Puedes agregar varias líneas de medicamentos si es necesario.</li>
-        <li>Usa el botón <strong>✕</strong> para quitar un medicamento.</li>
-    </ol>
-</div>
-
-<p><strong>Paso 6: Tipo de salida e incidente</strong></p>
-<div class="paso">
-    <span class="numero">6</span>
-    <ul>
-        <li><strong>Tipo de salida:</strong> ALTA, REPOSO, DERIVACIÓN A ESPECIALISTA, OBSERVACIÓN u HOSPITALIZACIÓN.</li>
-        <li><strong>Incidente:</strong> solo si aplica (CAÍDA, CORTE, QUEMADURA, EXPOSICIÓN QUÍMICA, GOLPE/CONTUSIÓN, ACCIDENTE DE TRÁNSITO, OTRO).</li>
-    </ul>
-</div>
-
-<p><strong>Paso 7: Guardar</strong></p>
-<div class="paso">
-    <span class="numero">7</span>
-    Haz clic en <strong>Guardar</strong>. El sistema registrará la atención, guardará la medicación y <strong>descontará automáticamente los medicamentos del inventario</strong>.
-</div>
-
-<div class="importante">
-    <strong>Importante:</strong> Al guardar una atención, los medicamentos recetados se descuentan del inventario automáticamente. No es necesario hacer un registro separado en el módulo de inventario.
-</div>
-
-<h3>Editar una atención</h3>
+<p><strong>Paso 3: Certificado médico (opcional)</strong></p>
+<p>Si el paciente requiere certificado:</p>
 <ol>
-    <li>Busca la atención en la tabla.</li>
-    <li>Haz clic en el botón <strong>Editar</strong> (icono de lápiz ✏️).</li>
-    <li>Se abrirá el formulario con todos los datos cargados.</li>
-    <li>Realiza los cambios necesarios y haz clic en <strong>Guardar</strong>.</li>
+<li>Marca un tipo de certificado: REPOSO, SUBSIDIO, ALTA MÉDICA, etc.</li>
+<li>Elige la entidad que certifica.</li>
+<li>Indica horas o días de descanso.</li>
+<li>Fechas de inicio y fin.</li>
+<li>Médico que certifica.</li>
 </ol>
-
-<h3>Eliminar una atención</h3>
+<p><strong>Paso 4: Medicación</strong></p>
 <ol>
-    <li>Haz clic en el botón <strong>Eliminar</strong> (icono de papelera 🗑️).</li>
-    <li>Confirma la eliminación en la ventana emergente.</li>
-    <li>El sistema eliminará la atención y <strong>revertirá los movimientos de inventario</strong> asociados.</li>
+<li>Haz clic en <strong>➕ Agregar medicamento</strong>.</li>
+<li>Selecciona el medicamento y la cantidad.</li>
+<li>Puedes agregar varias líneas.</li>
 </ol>
-
-<h3>Filtros disponibles</h3>
+<p><strong>Paso 5: Tipo de salida e incidente</strong></p>
+<ul>
+<li><strong>Tipo de salida</strong>: ALTA, REPOSO, DERIVACIÓN, OBSERVACIÓN, HOSPITALIZACIÓN.</li>
+<li><strong>Incidente</strong>: solo si aplica (caída, corte, quemadura, etc.).</li>
+</ul>
+<p><strong>Paso 6: Guardar</strong></p>
+<ul>
+<li>Haz clic en <strong>Guardar</strong>.</li>
+<li>El sistema registra la atención Y descuenta automáticamente los medicamentos del inventario.</li>
+</ul>
+<p><strong>Editar una atención</strong></p>
+<ol>
+<li>Busca la atención en la tabla.</li>
+<li>Haz clic en el botón <strong>Editar</strong> (icono de lápiz).</li>
+<li>Se abrirá el modal con todos los datos cargados.</li>
+<li>Realiza los cambios y haz clic en <strong>Guardar</strong>.</li>
+</ol>
+<p><strong>Eliminar una atención</strong></p>
+<ol>
+<li>Haz clic en el botón <strong>Eliminar</strong> (icono de papelera).</li>
+<li>Confirma la eliminación en la ventana emergente.</li>
+<li>El sistema eliminará la atención Y revertirá los movimientos de inventario asociados.</li>
+</ol>
+<p><strong>Filtros</strong></p>
 <table>
-<tr><th>Filtro</th><th>Cómo funciona</th></tr>
-<tr><td>Solo hoy / Ver todo</td><td>Alterna entre el día actual y un rango de fechas personalizado</td></tr>
-<tr><td>Buscar texto</td><td>Busca por nombre del paciente, observación o habitación</td></tr>
-<tr><td>Área</td><td>Filtra por departamento específico</td></tr>
+<tr><th>Filtro</th><th>Cómo usarlo</th></tr>
+<tr><td>Solo hoy / Ver todo</td><td>Alterna entre el día actual y un rango</td></tr>
+<tr><td>Buscar texto</td><td>Escribe nombre, observación o habitación</td></tr>
+<tr><td>Área</td><td>Filtra por departamento</td></tr>
 <tr><td>Causa</td><td>Filtra por motivo de atención</td></tr>
-<tr><td>Tipo paciente</td><td>Colaborador, huésped, externo, etc.</td></tr>
+<tr><td>Tipo paciente</td><td>Colaborador, huésped, etc.</td></tr>
 <tr><td>Estado</td><td>Con certificado o sin certificado</td></tr>
 </table>
-
-<h2 id="sec4-3">4.3 Pacientes</h2>
-
+<hr>
+<h3>5.3 Pacientes</h3>
 <p><strong>Menú:</strong> Médico → Pacientes</p>
-
-<p>Gestión completa del directorio de pacientes del departamento médico.</p>
-
-<h3>Registrar un nuevo paciente</h3>
+<p>Gestión completa del directorio de pacientes.</p>
+<p><strong>Lista de pacientes</strong></p>
+<ul>
+<li>Tabla con todos los pacientes, ordenados por estado (activos primero) y alfabéticamente.</li>
+<li>Cada fila muestra: nombre, cédula, edad, área, cargo, tipo, exámenes, estado.</li>
+</ul>
+<p><strong>Registrar un nuevo paciente</strong></p>
 <ol>
-    <li>Haz clic en <strong>Nuevo paciente</strong>.</li>
-    <li>Completa los campos obligatorios: <strong>nombre</strong> (obligatorio) y opcionalmente: cédula, edad, área, cargo, fecha de ingreso, teléfono.</li>
-    <li><strong>Exámenes:</strong> registra las fechas de los exámenes ocupacionales (espirometría, ecografía, audiometría, optometría).</li>
-    <li><strong>Visitas:</strong> registra las fechas de visitas anuales (2021-2026).</li>
-    <li><strong>Historial:</strong> completa patologías, vacunas, fichas anteriores, antecedentes y observaciones si están disponibles.</li>
-    <li>Haz clic en <strong>Guardar</strong>.</li>
+<li>Haz clic en <strong>Nuevo paciente</strong>.</li>
+<li>Completa los campos obligatorios (nombre).</li>
+<li>Opcionalmente completa: cédula, edad, área, cargo, fecha de ingreso, teléfono.</li>
+<li>En la pestaña <strong>Exámenes</strong>, registra las fechas de: espirometría, ecografía, audiometría, optometría.</li>
+<li>En la pestaña <strong>Visitas</strong>, registra visitas anuales (2021-2026).</li>
+<li>En <strong>Historial</strong>, puedes agregar: patologías, vacunas, fichas anteriores, antecedentes, observaciones.</li>
+<li>Haz clic en <strong>Guardar</strong>.</li>
 </ol>
-
-<h3>Ver detalle de paciente</h3>
+<p><strong>Editar paciente</strong></p>
+<ol>
+<li>Haz clic en el nombre del paciente o en el botón <strong>Editar</strong>.</li>
+<li>Modifica los campos necesarios.</li>
+<li>Haz clic en <strong>Guardar</strong>.</li>
+</ol>
+<p><strong>Ver detalle de paciente</strong></p>
 <p>Haz clic en la fila del paciente para expandir su información completa, incluyendo:</p>
 <ul>
-    <li>Datos personales completos.</li>
-    <li>Estado de exámenes: <strong>🟢 Vigente</strong> (menos de 1 año), <strong>🟡 Pendiente</strong> (sin realizar) o <strong>🔴 Vencido</strong> (más de 1 año).</li>
-    <li>Historial de visitas por año.</li>
+<li>Datos personales</li>
+<li>Estado de exámenes (vigente, vencido o pendiente)</li>
+<li>Visitas por año</li>
 </ul>
-
-<h3>Buscar y filtrar pacientes</h3>
+<p><strong>Activar / Desactivar paciente</strong></p>
+<ul>
+<li>Usa el botón de alternancia (check/tachado) para activar o desactivar un paciente.</li>
+<li>Los pacientes inactivos no aparecen en los buscadores de partes diarios.</li>
+</ul>
+<p><strong>Buscar y filtrar</strong></p>
 <table>
 <tr><th>Filtro</th><th>Descripción</th></tr>
-<tr><td>Buscar</td><td>Por nombre, cédula o nombre del área</td></tr>
+<tr><td>Buscar</td><td>Por nombre, cédula o área</td></tr>
 <tr><td>Área</td><td>Departamento específico</td></tr>
 <tr><td>Tipo</td><td>Colaborador, aspirante, externo, paciente, huésped</td></tr>
 <tr><td>Estado</td><td>Activos o inactivos</td></tr>
 </table>
-
-<h2 id="sec4-4">4.4 Base Médica (Catálogos)</h2>
-
+<hr>
+<h3>5.4 Base Médica (Catálogos)</h3>
 <p><strong>Menú:</strong> Médico → Base médica</p>
-
-<p>Esta página te permite gestionar los catálogos que alimentan los formularios del sistema. Todos los catálogos se administran de la misma manera.</p>
-
-<h3>Catálogos disponibles</h3>
+<p>Aquí se gestionan los catálogos que alimentan los formularios del sistema.</p>
+<p><strong>Catálogos disponibles</strong></p>
 <table>
-<tr><th>Catálogo</th><th>¿Qué contiene?</th><th>¿Dónde se usa?</th></tr>
-<tr><td><strong>Áreas</strong></td><td>Departamentos del hotel (Cocina, Limpieza, Recepción, etc.)</td><td>Partes diarios y pacientes</td></tr>
-<tr><td><strong>Cargos</strong></td><td>Puestos de trabajo (Chef, Botones, Recepcionista, etc.)</td><td>Partes diarios y pacientes</td></tr>
-<tr><td><strong>Causas</strong></td><td>Motivos de atención (Dolor de cabeza, Fiebre, etc.)</td><td>Partes diarios (campo obligatorio)</td></tr>
-<tr><td><strong>Diagnósticos</strong></td><td>Lista extensa de diagnósticos médicos</td><td>Partes diarios</td></tr>
-<tr><td><strong>Entidades certificado</strong></td><td>Origen del certificado (IESS, MSP, Privado, etc.)</td><td>Certificados en partes diarios</td></tr>
+<tr><th>Catálogo</th><th>Ejemplos de registros</th></tr>
+<tr><td><strong>Áreas</strong></td><td>Cocina, Limpieza, Recepción, Mantenimiento</td></tr>
+<tr><td><strong>Cargos</strong></td><td>Chef, Botones, Recepcionista, Doctor</td></tr>
+<tr><td><strong>Causas</strong></td><td>Dolor de cabeza, Fiebre, Accidente laboral</td></tr>
+<tr><td><strong>Diagnósticos</strong></td><td>Lista extensa de diagnósticos médicos</td></tr>
+<tr><td><strong>Entidades certificado</strong></td><td>IESS, MSP, Privado, Municipal</td></tr>
 </table>
-
-<h3>Cómo administrar un catálogo</h3>
+<p><strong>Cómo usar</strong></p>
 <ol>
-    <li>Selecciona el tipo de catálogo en las pestañas superiores (Áreas, Cargos, Causas, etc.).</li>
-    <li>Verás la lista de registros con su estado (activo/inactivo).</li>
-    <li><strong>Agregar:</strong> haz clic en "Nuevo [nombre del catálogo]", escribe el nombre y guarda.</li>
-    <li><strong>Editar:</strong> haz clic en el lápiz ✏️ junto al registro que deseas modificar.</li>
-    <li><strong>Desactivar/Reactivar:</strong> usa el botón de alternancia (check ✓ / ✕).</li>
-    <li><strong>Eliminar:</strong> haz clic en la papelera 🗑️ y confirma la eliminación.</li>
+<li>Selecciona el tipo de catálogo en las pestañas superiores.</li>
+<li>Verás la lista de registros con su estado (activo/inactivo).</li>
+<li>Para <strong>agregar</strong>: haz clic en "Nuevo [nombre del catálogo]".</li>
+<li>Para <strong>editar</strong>: haz clic en el lápiz junto al registro.</li>
+<li>Para <strong>desactivar/reactivar</strong>: usa el botón de alternancia.</li>
+<li>Para <strong>eliminar</strong>: haz clic en la papelera y confirma.</li>
 </ol>
-
-<div class="peligro">
-    <strong>Precaución:</strong> Al eliminar un registro que esté siendo usado en atenciones, podrías perder referencias. Es mejor <strong>desactivarlo</strong> en lugar de eliminarlo.
-</div>
-
-<h2 id="sec4-5">4.5 Inventario</h2>
-
+<div class="advertencia">⚠️ <strong>Precaución:</strong> Al eliminar un registro que esté siendo usado en atenciones, podrías perder referencias. Es mejor desactivarlo en lugar de eliminarlo.</div>
+<hr>
+<h3>5.5 Inventario Médico</h3>
 <p><strong>Menú:</strong> Médico → Inventario</p>
-
-<p>Control de medicinas e insumos del dispensario médico con sistema de Kardex.</p>
-
-<h3>Registrar un nuevo producto</h3>
-<ol>
-    <li>Haz clic en <strong>Nuevo producto</strong>.</li>
-    <li>Selecciona el <strong>tipo</strong>: Medicina o Insumo.</li>
-    <li>Escribe el <strong>nombre</strong> del producto (se normaliza a mayúsculas automáticamente).</li>
-    <li>Opcionalmente completa:
-        <ul>
-            <li><strong>Stock mínimo:</strong> cantidad mínima antes de alertar reposición.</li>
-            <li><strong>Stock inicial:</strong> cantidad inicial si es un producto nuevo.</li>
-            <li><strong>Fecha de caducidad:</strong> para control de vencimientos.</li>
-        </ul>
-    </li>
-    <li>Haz clic en <strong>Guardar</strong>.</li>
-</ol>
-
-<div class="nota">
-    <strong>Sincronización automática:</strong> Al crear un producto de tipo "Medicina", el sistema lo vincula automáticamente con el catálogo de medicamentos. Si el medicamento ya existe por nombre, lo asocia; si no, lo crea.
-</div>
-
-<h3>Registrar un movimiento de inventario</h3>
-<ol>
-    <li>En la tabla de productos, haz clic en el producto que deseas modificar.</li>
-    <li>En el panel de "Registrar movimiento":
-        <ul>
-            <li><strong>Tipo:</strong> <em>Ingreso</em> (llega mercadería), <em>Salida</em> (se consume o dispensa), <em>Ajuste</em> (corrección de stock).</li>
-            <li><strong>Cantidad:</strong> ingresa la cantidad (positiva para ingresos y salidas, positiva o negativa para ajustes).</li>
-            <li><strong>Responsable:</strong> nombre de quien realiza el movimiento (opcional).</li>
-            <li><strong>Observación:</strong> nota adicional (opcional).</li>
-        </ul>
-    </li>
-    <li>Haz clic en <strong>Guardar movimiento</strong>.</li>
-</ol>
-
-<h3>Ver detalle de producto</h3>
-<p>Haz clic en un producto de la lista para ver:</p>
+<p>Control de medicinas e insumos del dispensario médico.</p>
+<p><strong>Productos</strong></p>
+<p>La tabla principal muestra:</p>
 <ul>
-    <li>Saldo actual disponible.</li>
-    <li>Stock mínimo configurado.</li>
-    <li>Fecha de caducidad (si aplica).</li>
-    <li>Últimos 20 movimientos registrados.</li>
+<li>Nombre del producto</li>
+<li>Tipo (medicina / insumo)</li>
+<li>Saldo actual</li>
+<li>Stock mínimo</li>
+<li>Estado</li>
 </ul>
+<p><strong>Registrar un nuevo producto</strong></p>
+<ol>
+<li>Haz clic en <strong>Nuevo producto</strong>.</li>
+<li>Selecciona el <strong>tipo</strong>: Medicina o Insumo.</li>
+<li>Escribe el <strong>nombre</strong> (se normaliza a mayúsculas automáticamente).</li>
+<li>Opcional: stock mínimo, stock inicial (si es nuevo), fecha de caducidad.</li>
+<li>Haz clic en <strong>Guardar</strong>.</li>
+<li>El sistema sincroniza automáticamente el producto con el catálogo de medicamentos.</li>
+</ol>
+<p><strong>Registrar un movimiento</strong></p>
+<ol>
+<li>Selecciona un producto de la lista.</li>
+<li>En el panel de <strong>Registrar movimiento</strong>:</li>
+   - **Tipo**: Ingreso (llega mercadería), Salida (se consume/dispensa), Ajuste (corrección).
 
-<h3>Stock bajo</h3>
-<p>El contador "Stock bajo" en la parte superior muestra cuántos productos tienen un saldo igual o menor al stock mínimo configurado. Útil para identificar rápidamente qué necesita reposición.</p>
+   - **Cantidad**: usa positivo para ingresos, negativo para ajustes a la baja.
 
-<h3>Filtros del inventario</h3>
+   - **Responsable** y **Observación** (opcional).
+
+<li>Haz clic en <strong>Guardar movimiento</strong>.</li>
+</ol>
+<p><strong>Ver detalle de producto</strong></p>
+<p>Haz clic en un producto para ver:</p>
+<ul>
+<li>Saldo actual</li>
+<li>Stock mínimo</li>
+<li>Fecha de caducidad</li>
+<li>Últimos 20 movimientos</li>
+</ul>
+<p><strong>Filtros</strong></p>
+<ul>
+<li><strong>Buscar</strong>: por nombre del producto.</li>
+<li><strong>Tipo</strong>: todos, medicinas o insumos.</li>
+<li><strong>Estado</strong>: activos, inactivos o todos.</li>
+</ul>
+<p><strong>Stock bajo</strong></p>
+<p>El contador "Stock bajo" muestra cuántos productos tienen saldo igual o menor al mínimo configurado.</p>
+<hr>
+<h3>5.6 Kardex Mensual</h3>
+<p><strong>Menú:</strong> Médico → Kardex mensual</p>
+<div class="nota"><strong>Nota:</strong> El Kardex mensual se encuentra integrado en la página de Reportes Médico.</div>
+<p>Consulta el detalle en la sección [6.2 Reportes Médico](#62-reportes-médico).</p>
+<hr>
+<h2>6. Reportes</h2>
+<h3>6.1 Reportes de Cocina</h3>
+<div class="nota"><strong>Navegación:</strong> Los reportes de cocina ya no tienen una entrada en el menú lateral. Accede a ellos desde el Dashboard de Cocina.</div>
+<p><strong>Reportes descargables</strong></p>
 <table>
-<tr><th>Filtro</th><th>Descripción</th></tr>
-<tr><td>Buscar</td><td>Por nombre del producto</td></tr>
-<tr><td>Tipo</td><td>Todos, solo medicinas o solo insumos</td></tr>
-<tr><td>Estado</td><td>Activos, inactivos o todos</td></tr>
+<tr><th>Reporte</th><th>Contenido</th><th>Formato</th></tr>
+<tr><td>Consumo por día</td><td>Producto, unidad, cantidad</td><td>Excel (.xlsx)</td></tr>
+<tr><td>Consumo por rango</td><td>Fecha, producto, unidad, cantidad</td><td>Excel (.xlsx)</td></tr>
+<tr><td>Consumo general</td><td>Todos los registros</td><td>Excel (.xlsx)</td></tr>
 </table>
-
-<h2 id="sec4-6">4.6 Reportes Médico</h2>
-
+<p><strong>Cómo descargar</strong></p>
+<ol>
+<li>Para <strong>un día específico</strong>: busca la fecha en el calendario y haz clic en <strong>Descargar</strong>.</li>
+<li>Para <strong>un rango</strong>: selecciona fecha inicio y fin, luego haz clic en <strong>Descargar rango</strong>.</li>
+<li>Para <strong>todo</strong>: haz clic en <strong>Descargar todo</strong>.</li>
+</ol>
+<p><strong>Resumen semanal</strong></p>
+<p>La tabla "Semanas consumidas" te da una vista rápida de cada semana: inicio, fin, total registros y productos.</p>
+<hr>
+<h3>6.2 Reportes Médico</h3>
 <p><strong>Menú:</strong> Médico → Reportes</p>
-
-<h3>Reportes descargables</h3>
-
+<p><strong>Reportes descargables</strong></p>
 <table>
-<tr><th>Reporte</th><th>Contenido</th><th>Cómo descargarlo</th></tr>
-<tr><td><strong>Parte diario por día</strong></td><td>Atenciones de una fecha específica (7 columnas)</td><td>Selecciona la fecha y haz clic en "Descargar día"</td></tr>
-<tr><td><strong>Parte diario por rango</strong></td><td>Atenciones entre dos fechas (16 columnas completo)</td><td>Elige fecha inicio-fin y haz clic en "Descargar rango"</td></tr>
-<tr><td><strong>Parte diario general</strong></td><td>Todas las atenciones registradas</td><td>Haz clic en "Descargar todo"</td></tr>
-<tr><td><strong>Kardex completo</strong></td><td>Saldos de todos los productos</td><td>Haz clic en "Descargar Kardex"</td></tr>
-<tr><td><strong>Kardex + movimientos</strong></td><td>Resumen de saldos + hoja de movimientos detallados</td><td>Haz clic en "Descargar Kardex con movimientos"</td></tr>
-<tr><td><strong>Kardex mensual</strong></td><td>Un libro por mes con estadísticas completas</td><td>Haz clic en "Descargar Kardex mensual"</td></tr>
+<tr><th>Reporte</th><th>Contenido</th><th>Formato</th></tr>
+<tr><td>Parte diario por día</td><td>Nombres, área, cargo, causa, diagnóstico, certificado, medicación</td><td>Excel (.xlsx)</td></tr>
+<tr><td>Parte diario por rango</td><td>Todos los campos completos (16 columnas)</td><td>Excel (.xlsx)</td></tr>
+<tr><td>Parte diario general</td><td>Todas las atenciones</td><td>Excel (.xlsx)</td></tr>
+<tr><td>Kardex completo</td><td>Periodo, tipo, nombre, saldos, caducidad</td><td>Excel (.xlsx)</td></tr>
+<tr><td>Kardex + movimientos</td><td>Resumen + hoja de movimientos detallados</td><td>Excel (.xlsx, 2 hojas)</td></tr>
+<tr><td>Kardex mensual</td><td>Un libro por mes con estadísticas</td><td>Excel (.xlsx, varias hojas)</td></tr>
 </table>
-
-<h3>Generar Kardex mensual en pantalla</h3>
+<p><strong>Generar Kardex mensual en pantalla</strong></p>
 <ol>
-    <li>En la sección "Kardex mensual", selecciona un <strong>mes</strong> o define un rango de fechas.</li>
-    <li>Haz clic en <strong>Generar Kardex</strong>.</li>
-    <li>El sistema mostrará en pantalla: producto, saldo anterior, ingresos, egresos, total y fecha de caducidad.</li>
-    <li>Puedes <strong>Cerrar</strong> el kardex para congelar los datos visualmente.</li>
-    <li>Haz clic en <strong>Exportar a Excel</strong> para descargar el kardex generado.</li>
+<li>En la sección <strong>Kardex mensual</strong>:</li>
+   - Selecciona un mes o define un rango de fechas.
+
+   - Haz clic en **Generar Kardex**.
+
+<li>El sistema calculará en pantalla: producto, saldo anterior, ingresos, egresos, total.</li>
+<li>Puedes <strong>Cerrar</strong> el kardex para evitar modificaciones accidentales.</li>
+<li>Haz clic en <strong>Exportar a Excel</strong> para descargarlo.</li>
 </ol>
-
-<h3>Historial de Kardex mensual</h3>
-<p>La tabla "Meses disponibles" muestra un resumen estadístico por mes:</p>
+<p><strong>Historial de Kardex</strong></p>
 <ul>
-    <li>Atenciones realizadas.</li>
-    <li>Pacientes distintos atendidos.</li>
-    <li>Atenciones con y sin certificado.</li>
-    <li>Causa principal del mes.</li>
-    <li>Área principal que más atenciones solicitó.</li>
-    <li>Cantidad de medicamentos distintos usados.</li>
+<li>La tabla "Meses disponibles" muestra un resumen por mes: atenciones, pacientes, certificados, causa principal, área principal, medicamentos usados.</li>
+<li>Haz clic en un mes para cargarlo en el generador.</li>
 </ul>
-<p>Haz clic en un mes para cargarlo automáticamente en el generador de Kardex.</p>
-
-<!-- ============================================================
-     5. PREGUNTAS FRECUENTES
-     ============================================================ -->
-<h1 id="sec5">5. Preguntas frecuentes</h1>
-
+<p><strong>Cómo descargar un reporte</strong></p>
+<ol>
+<li>Selecciona el tipo de reporte (día, rango, kardex, etc.).</li>
+<li>Para reportes por rango: elige fecha inicio y fin.</li>
+<li>Haz clic en el botón de descarga correspondiente.</li>
+<li>El archivo Excel se descargará automáticamente.</li>
+</ol>
+<hr>
+<h2>7. Solución de problemas</h2>
+<h3>7.1 No puedo iniciar sesión</h3>
+<table>
+<tr><th>Posible causa</th><th>Solución</th></tr>
+<tr><td>Credenciales incorrectas</td><td>Verifica que el correo y contraseña sean correctos</td></tr>
+<tr><td>Sesión expirada</td><td>Cierra el navegador y vuelve a abrir</td></tr>
+<tr><td>Cuenta bloqueada</td><td>Contacta al administrador</td></tr>
+</table>
+<h3>7.2 No veo datos en los dashboards</h3>
+<table>
+<tr><th>Posible causa</th><th>Solución</th></tr>
+<tr><td>No hay datos cargados</td><td>Primero debes importar archivos (Cocina) o registrar atenciones (Médico)</td></tr>
+<tr><td>Filtro incorrecto</td><td>Revisa que la fecha/mes seleccionado tenga datos. En Cocina, verifica que el archivo fuente seleccionado sea el correcto.</td></tr>
+<tr><td>Permisos insuficientes</td><td>Contacta al administrador</td></tr>
+</table>
+<h3>7.3 Error al subir un archivo de Cocina</h3>
+<table>
+<tr><th>Error</th><th>Solución</th></tr>
+<tr><td>"Archivo muy grande"</td><td>El máximo es 10 MB. Reduce el tamaño o divide en varios archivos</td></tr>
+<tr><td>"Formato no soportado"</td><td>Usa archivos .xlsx, .xls o .csv</td></tr>
+<tr><td>"No se encontraron encabezados"</td><td>Asegúrate de que el Excel tenga filas con "Fecha" y "Cantidad"</td></tr>
+<tr><td>Errores por fila</td><td>Revisa que las fechas sean válidas y los productos tengan nombre</td></tr>
+</table>
+<h3>7.4 Error al guardar una atención médica</h3>
+<table>
+<tr><th>Error</th><th>Solución</th></tr>
+<tr><td>"La causa es obligatoria"</td><td>Selecciona una causa de la lista</td></tr>
+<tr><td>"Cantidad debe ser mayor a 0"</td><td>Verifica las cantidades de medicación</td></tr>
+<tr><td>"La habitación es obligatoria"</td><td>Si el paciente es huésped, debe tener habitación</td></tr>
+</table>
+<h3>7.5 El inventario no se actualiza</h3>
+<table>
+<tr><th>Posible causa</th><th>Solución</th></tr>
+<tr><td>Movimiento no registrado</td><td>Revisa que el movimiento se haya guardado correctamente</td></tr>
+<tr><td>Producto desactivado</td><td>Solo los productos activos aparecen en los listados</td></tr>
+</table>
+<hr>
+<h2>8. Preguntas frecuentes</h2>
 <h3>¿Puedo editar una atención después de guardarla?</h3>
-<p><strong>Sí.</strong> Busca la atención en la lista y haz clic en el botón <strong>Editar</strong> (icono de lápiz). Podrás modificar todos los campos.</p>
-
+<p>Sí. Busca la atención en la lista y haz clic en <strong>Editar</strong>. Podrás modificar todos los campos.</p>
 <h3>¿Qué pasa si elimino una atención?</h3>
-<p>Se elimina el registro de atención y también se <strong>revierten los descuentos de inventario</strong> que se hicieron automáticamente. Es decir, los medicamentos vuelven al stock.</p>
-
-<h3>¿Los productos de inventario y los medicamentos del catálogo son lo mismo?</h3>
-<p>Están <strong>sincronizados automáticamente</strong>. Cuando creas un producto de tipo "medicina" en el inventario, el sistema busca un medicamento con el mismo nombre en el catálogo clínico y lo vincula. Si no existe, lo crea automáticamente.</p>
-
+<p>Se elimina el registro de atención y también se revierten los descuentos de inventario que se hicieron automáticamente.</p>
+<h3>¿Los productos de inventario y los medicamentos son lo mismo?</h3>
+<p>Están sincronizados. Cuando creas un producto de tipo "medicina" en el inventario, automáticamente se crea o vincula con un registro en el catálogo de medicamentos.</p>
+<h3>¿Puedo tener un producto con diferentes nombres?</h3>
+<p>Sí. El sistema permite crear <strong>alias</strong> para productos (a través de <code>MedicoProductoAlias</code>), lo que facilita la búsqueda por nombres alternativos.</p>
 <h3>¿Cómo sé qué medicamentos necesitan reposición?</h3>
-<p>El <strong>Dashboard Médico</strong> muestra una sección de "Alertas de stock" con los productos cuyo saldo es ≤ 2 unidades. Además, en la página de <strong>Inventario</strong> verás el contador de "Stock bajo" que te indica cuántos productos están por debajo del mínimo configurado.</p>
-
+<p>El Dashboard Médico muestra una sección de <strong>Alertas de stock</strong> con los productos cuyo saldo es igual o menor a 2 unidades. También en el Inventario verás el contador de "Stock bajo".</p>
 <h3>¿Los reportes se pueden personalizar?</h3>
-<p>Los reportes se descargan en formato <strong>Excel (.xlsx)</strong>, por lo que puedes editarlos, agregar formato, gráficos y filtros después de descargarlos.</p>
-
+<p>Los reportes se descargan en Excel (.xlsx), por lo que puedes editarlos y darles formato después de descargarlos.</p>
 <h3>¿El sistema funciona en dispositivos móviles?</h3>
-<p>Sí. El panel es <strong>responsivo</strong> y se adapta a pantallas de diferentes tamaños (teléfonos, tablets y computadoras). Sin embargo, está optimizado para uso en computadoras de escritorio.</p>
-
+<p>Sí. El panel es responsivo y se adapta a pantallas de diferentes tamaños, aunque está optimizado para uso en computadoras.</p>
 <h3>¿Cada cuánto debo subir datos de cocina?</h3>
-<p>Depende del flujo de trabajo del departamento. Puedes subir un archivo por día o acumular varios y subirlos juntos. El sistema maneja <strong>deduplicación automática</strong> para evitar registros repetidos.</p>
-
-<h3>¿Puedo desactivar un paciente sin eliminarlo?</h3>
-<p><strong>Sí.</strong> En la página de Pacientes, usa el botón de alternancia (check/tachado) para desactivar un paciente. Los pacientes inactivos no aparecen en los buscadores pero su historial se conserva.</p>
-
-<h3>¿Qué hago si el sistema no me deja guardar una atención?</h3>
-<p>Verifica los siguientes puntos:</p>
-<ul>
-    <li>La <strong>causa</strong> es obligatoria &mdash; asegúrate de seleccionar una.</li>
-    <li>Las cantidades de medicación deben ser <strong>mayores a 0</strong>.</li>
-    <li>Si el paciente es <strong>huésped</strong>, el número de habitación es obligatorio.</li>
-    <li>La fecha debe tener un formato válido.</li>
-</ul>
-
-<h3>¿Cómo recupero mi contraseña si la olvido?</h3>
-<p>Contacta al <strong>administrador del sistema</strong> para restablecer tu contraseña.</p>
-
-<!-- ============================================================
-     6. GLOSARIO
-     ============================================================ -->
-<h1 id="sec6">6. Glosario</h1>
-
+<p>Depende del flujo de trabajo del departamento. Puedes subir un archivo por día o acumular varios y subirlos juntos. El sistema maneja deduplicación automática y forward-fill de fechas para facilitar la carga.</p>
+<h3>¿Qué es el archivo fuente en el Dashboard de Cocina?</h3>
+<p>El dashboard ahora permite seleccionar qué archivo importado usar como fuente de datos. Esto es útil cuando tienes datos de diferentes períodos o pruebas, y quieres enfocarte en un conjunto específico.</p>
+<h3>¿Qué significa "forward-fill" de fechas?</h3>
+<p>Cuando el Excel tiene la fecha escrita una sola vez para un grupo de filas (común en reportes de cocina), el sistema rellena automáticamente las filas siguientes con esa misma fecha. Así no necesitas repetir la fecha en cada fila.</p>
+<hr>
+<h2>Apéndice: Glosario</h2>
 <table>
 <tr><th>Término</th><th>Significado</th></tr>
-<tr><td><strong>Parte diario</strong></td><td>Registro individual de una atención médica realizada a un paciente.</td></tr>
-<tr><td><strong>Kardex</strong></td><td>Sistema de control de inventario que registra los saldos mensuales de cada producto, con sus ingresos, egresos y saldo actual.</td></tr>
-<tr><td><strong>Certificado médico</strong></td><td>Documento que justifica la ausencia del colaborador por razones de salud. Puede ser reposo, subsidio o alta médica.</td></tr>
-<tr><td><strong>Tipo de salida</strong></td><td>Indica cómo terminó la atención médica: alta, reposo, derivación a especialista, observación u hospitalización.</td></tr>
-<tr><td><strong>Incidente</strong></td><td>Evento específico que motivó la atención, como caída, corte, quemadura o accidente de tránsito.</td></tr>
-<tr><td><strong>Insumo</strong></td><td>Producto no farmacológico del inventario, como gasas, vendas, jeringas, alcohol, etc.</td></tr>
-<tr><td><strong>Stock mínimo</strong></td><td>Cantidad definida para cada producto, por debajo de la cual se considera que necesita reposición urgente.</td></tr>
-<tr><td><strong>Huésped</strong></td><td>Paciente que es huésped del hotel (no es colaborador ni empleado).</td></tr>
-<tr><td><strong>Colaborador</strong></td><td>Empleado del hotel que recibe atención médica.</td></tr>
-<tr><td><strong>Examen ocupacional</strong></td><td>Examen médico periódico que se realiza a los colaboradores: espirometría (pulmones), audiometría (oído), optometría (vista) y ecografía.</td></tr>
-<tr><td><strong>Deduplicación</strong></td><td>Mecanismo automático que evita registrar la misma información dos veces, comparando el contenido de los archivos.</td></tr>
-<tr><td><strong>Dashboard</strong></td><td>Panel o tablero visual que muestra indicadores y estadísticas clave de un módulo.</td></tr>
-<tr><td><strong>Hash</strong></td><td>Código único generado a partir del contenido de un archivo para identificar si es duplicado de otro.</td></tr>
+<tr><td><strong>Parte diario</strong></td><td>Registro de atención médica individual</td></tr>
+<tr><td><strong>Kardex</strong></td><td>Sistema de control de inventario con saldos mensuales</td></tr>
+<tr><td><strong>Certificado médico</strong></td><td>Documento que justifica la ausencia del colaborador</td></tr>
+<tr><td><strong>Tipo de salida</strong></td><td>Cómo terminó la atención (alta, reposo, etc.)</td></tr>
+<tr><td><strong>Insumo</strong></td><td>Producto no farmacológico (gasas, vendas, etc.)</td></tr>
+<tr><td><strong>Stock mínimo</strong></td><td>Cantidad a partir de la cual se considera que un producto necesita reposición</td></tr>
+<tr><td><strong>Huésped</strong></td><td>Paciente que es huésped del hotel (no colaborador)</td></tr>
+<tr><td><strong>Colaborador</strong></td><td>Empleado del hotel</td></tr>
+<tr><td><strong>Examen ocupacional</strong></td><td>Examen médico periódico (espirometría, audiometría, etc.)</td></tr>
+<tr><td><strong>Deduplicación</strong></td><td>Mecanismo que evita registrar la misma información dos veces</td></tr>
+<tr><td><strong>Forward-fill</strong></td><td>Relleno automático de fechas hacia filas siguientes</td></tr>
 </table>
+<hr>
+<div class="nota"><strong>¿Necesitas ayuda adicional?</strong> Contacta al administrador del sistema o al equipo de soporte técnico.</div>
+<div class="nota"><em>Documentación generada en julio 2026 para el Sistema de Gestión Hotelera Wyndham Manta.</em></div>
 
 <hr>
-
 <div class="footer">
-    <p>Manual de Usuario — Sistema de Gestión Hotelera Wyndham Manta v1.0.0</p>
-    <p>Julio 2026 &mdash; Documento confidencial de uso interno &mdash; Hotel Wyndham Manta</p>
-    <p><em>Para soporte técnico, contacta al administrador del sistema.</em></p>
+    <p>Manual de Usuario — Sistema de Gestión Hotelera Wyndham Manta v1.1.0</p>
+    <p>Generado en julio 2026 &mdash; Documento confidencial de uso interno</p>
 </div>
 
 </body>

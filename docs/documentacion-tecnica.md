@@ -1,6 +1,6 @@
 # Documentación Técnica — Sistema de Gestión Hotelera Wyndham Manta
 
-**Versión:** 1.0.0  
+**Versión:** 1.1.0  
 **Última actualización:** Julio 2026  
 **Sistema:** Panel de Administración Médico y Cocina  
 **Hotel:** Wyndham Manta
@@ -177,13 +177,16 @@ El sistema está completamente localizado al español. La UI es responsiva y sop
 │       └── MedicoKardexSeeder.php
 ├── resources/
 │   ├── css/filament/admin/theme.css    # Tema personalizado
-│   └── views/filament/pages/           # Vistas Blade (10 archivos)
+│   └── views/filament/pages/           # Vistas Blade (11 archivos)
+│       └── components/cocina/          # Componentes Blade
+│           └── date-picker.blade.php   # Calendario reactivo
 ├── config/
 │   ├── app.php, auth.php, database.php
 │   ├── permission.php                  # Config Spatie
 │   └── filament.php                    # Config Filament (implícita)
 ├── assets/
-│   └── DEPARTAMENTO_MEDICO.xlsx        # Datos semilla del seeder
+│   ├── DEPARTAMENTO_MEDICO.xlsx        # Datos semilla del seeder médico
+│   └── INFORM DESA.xlsx                # Muestra de datos de consumo cocina
 ├── public/
 │   └── images/                         # Logo, portada, favicon
 ├── routes/
@@ -264,7 +267,9 @@ medico_partes_diarios
   ├── cargo_id → cargos
   ├── causa_id → causas
   ├── diagnostico_id → diagnosticos
-  └── entidad_certificado_id → entidad_certificados
+  ├── tipo_certificado (string)
+  ├── tipo_salida (string)
+  └── incidente (string)
 
 medico_parte_medicamentos
   ├── parte_diario_id → medico_partes_diarios
@@ -301,14 +306,19 @@ cocina_importacion_errores
 
 Panel principal con:
 
-- **Selector de fecha**: filtra el consumo del día seleccionado
-- **Stat cards**: registros última fecha, productos usados, fechas registradas, total registros, productos catalogados, archivos importados
-- **Consumo del día**: tabla agrupada por unidad de medida (kilo, litro, porción, gramo, unidad)
-- **Top 10 productos más consumidos**: ranking histórico
-- **Recomendación**: calcula cantidades sugeridas para un número objetivo de huéspedes basado en un día de referencia
-- **Widgets**: 
-  - `CocinaProductosChartWidget`: gráfico de barras con top 10 productos
-  - `CocinaConsumoDiarioWidget`: consumo por servicio (desayuno/almuerzo/cena)
+- **Selector de fecha**: filtra el consumo del día seleccionado, con calendario reactivo que solo muestra fechas disponibles del documento activo.
+- **Selector de archivo fuente**: modal que permite elegir qué archivo importado usar como fuente de datos. El dashboard filtra todos los consumos al archivo seleccionado.
+- **Subida rápida desde dashboard**: posibilidad de subir un Excel directamente desde el dashboard sin necesidad de ir a la página de Subir Datos.
+- **Stat cards**: registros última fecha, productos usados, fechas registradas, total registros, productos disponibles, archivos importados, producto top (producto más consumido históricamente con total y unidad).
+- **Consumo del día**: tabla agrupada por unidad de medida (kilo, litro, porción, gramo, unidad).
+- **Top 10 productos más consumidos**: ranking histórico.
+- **Recomendación**: calcula la **ración por huésped** basada en un día de referencia. Ya no requiere un número objetivo de huéspedes — ahora muestra el ratio `cantidad / huéspedes` de cada producto (útil para planificación por persona en lugar de por evento).
+
+  > **Cambio:** Se eliminó el campo `huespedesObjetivo`. La recomendación ahora muestra consumo por huésped.
+
+- **Widgets**:
+  - `CocinaProductosChartWidget`: gráfico de barras con top 10 productos. Filtra por archivo activo y escucha el evento `cocina-archivo-cambio`.
+  - `CocinaConsumoDiarioWidget`: evolución diaria del consumo. Soporta filtro por producto individual (línea) o top 5 apilado. Configuración mejorada de tooltips interactivos, stacked chart, colores sólidos semi-transparentes y puntos invisibles con hit radius aumentado. También filtra por archivo activo.
 
 ### 6.2 Subir Datos (`ReporteCocina.php`)
 
@@ -319,18 +329,24 @@ Panel principal con:
 - Almacenamiento en `storage/importaciones/cocina/`
 - Previsualización de contenido antes de procesar
 - Procesamiento con detección dinámica de encabezados
-- Historial de archivos subidos con estado
+- **Eliminación individual**: botón para eliminar un archivo y todos sus consumos y errores asociados, con confirmación modal.
+- **Eliminación masiva**: botón "Eliminar todo" que borra todos los archivos, consumos y errores de cocina. Incluye confirmación modal.
+- **Resumen detallado de errores**: al procesar un archivo, el resumen incluye desglose por motivo de error entre paréntesis (ej: "Errores: 3 (2 fecha inválida, 1 producto vacío).").
+- Historial de archivos subidos con estado (recibido, procesado, procesado_con_errores).
+- **Reportes descargados**: sección al final de la página con un placeholder visual para futuros reportes de consumo. Actualmente muestra el mensaje "Reportes en desarrollo" indicando que los reportes descargables desde esta página estarán disponibles próximamente.
 
 ### 6.3 Reportes de Cocina (`ReportesCocina.php`)
 
 **Ruta:** `/admin/cocina/reportes`  
 **Vista:** `reportes-cocina.blade.php`
 
-- **Descarga por día**: Excel con productos y cantidades
+> **Nota de navegación:** Esta página ya no aparece en el menú lateral de navegación (`shouldRegisterNavigation = false`). Se accede exclusivamente desde el Dashboard de Cocina.
+
+- **Descarga por día**: Excel con productos y cantidades de una fecha específica
 - **Descarga por rango**: Excel filtrado por fechas
 - **Descarga general**: Excel completo
-- **Semanas consumidas**: tabla con resumen semanal
-- **Errores de importación**: listado de errores
+- **Semanas consumidas**: tabla con resumen semanal. El cálculo ahora genera las semanas de forma programática desde la primera hasta la última fecha disponible (en lugar de usar la función SQLite `strftime('%Y-%W')`), lo que garantiza compatibilidad con MySQL en producción.
+- **Errores de importación**: listado de errores con motivo agrupado
 
 ### 6.4 Modelos
 
@@ -363,7 +379,7 @@ Panel principal con:
 - **Insumos**: saldos de insumos
 - **Movimientos recientes**: últimos 20 movimientos del kardex
 - **Widgets**:
-  - `MedicoAtencionesDiariasWidget`: línea temporal mensual
+  - `MedicoAtencionesDiariasWidget`: línea temporal mensual. Se eliminó la altura máxima fija y el `maintainAspectRatio: false` para mejor adaptación.
   - `MedicoCausasChartWidget`: distribución de causas
   - `MedicoAreasChartWidget`: atenciones por área
   - `MedicoMedicamentosChartWidget`: top medicamentos
@@ -391,6 +407,10 @@ Panel principal con:
 | **Filtros** | Fecha, área, causa, tipo paciente, estado certificado, búsqueda texto |
 | **Paginación** | 15 registros por página |
 | **Integración inventario** | Al guardar, registra salidas de inventario automáticas |
+
+#### Nota sobre catálogos como strings
+
+Los campos `tipo_certificado`, `tipo_salida` e `incidente` en `medico_partes_diarios` se almacenan como strings (varchar) en lugar de foreign keys. Esto permite flexibilidad sin depender de tablas de catálogo para estos valores.
 
 #### Flujo de guardado
 
@@ -543,13 +563,21 @@ mesesDisponibles(): Collection
 **Propósito:** Procesa archivos Excel/CSV del módulo Cocina.
 
 **Flujo:**
-1. Lee el archivo con PhpSpreadsheet
+1. Lee el archivo con PhpSpreadsheet (`toArray` con `formatData=false` para obtener valores crudos)
 2. Detecta encabezados dinámicamente (fecha, producto, cantidad)
-3. Normaliza fechas (múltiples formatos)
-4. Resuelve o crea productos
-5. Deduplica por hash SHA-256
-6. Crea registros en `cocina_consumos`
-7. Reporta errores por fila
+3. Normaliza fechas (múltiples formatos, números seriales de Excel con corrección 1900/1904)
+4. **Forward-fill de fechas**: si una fila no tiene fecha (celda vacía en reportes con fecha combinada), hereda la última fecha válida de filas anteriores
+5. Resuelve o crea productos
+6. Deduplica por hash SHA-256
+7. Crea registros en `cocina_consumos`
+8. Reporta errores por fila con **resumen agrupado por motivo** (fecha inválida, producto vacío, unidad vacía, cantidad inválida)
+
+**Mejoras de parseo de fechas:**
+- Validación de límites: solo acepta años entre 2000 y el año actual
+- Corrección serial Excel: detecta fechas con desfase 1900 vs 1904 y las ajusta (+1462 días cuando corresponde)
+- Rechazo de años sueltos: un número de 1-4 dígitos (ej. "2027") no se interpreta como fecha
+- Prioridad de formato `d/m/Y` sobre `m/d/Y` para evitar inversión de fechas ambiguas
+- Resumen de valores inválidos truncado a 40 caracteres
 
 ### 9.2 `InventarioMedicoService`
 
@@ -591,13 +619,18 @@ La página de login tiene:
 - Tarjeta glassmorphism con blur
 - Barra decorativa superior con gradiente (azul → celeste → amarillo → coral)
 - Animación de entrada
-- Adaptación responsiva y modo oscuro
+- **Forzado de modo claro**: un script JavaScript en el `AdminPanelProvider` fuerza el modo claro exclusivamente en la pantalla de login, para que siempre se vea con fondo blanco independientemente del tema que tenga el usuario guardado.
+- Adaptación responsiva
 
 ### 10.4 Barra superior personalizada
 
-- Reloj en vivo con fecha
-- Botón de alternancia modo oscuro/claro
+- Reloj en vivo con fecha y hora actualizándose cada segundo
+- Diseño compacto sin bordes ni fondo (estilo minimalista)
+- Botón de alternancia modo oscuro/claro más pequeño (10×10 en lugar de 14×14) con iconos de 5×5
+- Animaciones de transición al alternar (rotación + fade + sombra)
 - Botón de cerrar sesión con modal de confirmación
+
+> **Cambio visual:** El reloj pasó de tener fondo blanco/oscuro con borde y sombra (`shadow-sm backdrop-blur-md border`) a un diseño transparente sin bordes. El botón de tema se redujo y los iconos (luna/sol) pasaron de 8×8 a 5×5.
 
 ---
 
@@ -652,6 +685,8 @@ php artisan migrate:fresh --seed
 - Almacenamiento: `storage/importaciones/cocina/`
 - Deduplicación: hash SHA-256 por archivo+fila
 - Detección dinámica de encabezados (flexible ante variaciones de nombre de columnas)
+- **Forward-fill**: filas sin fecha heredan la última fecha válida del grupo
+- **Resumen de errores**: notificación incluye desglose por motivo (fecha inválida, producto vacío, unidad vacía, cantidad inválida)
 
 ---
 
@@ -694,6 +729,10 @@ composer dev
 | `DB_DATABASE` | Ruta/nombre BD | `database/database.sqlite` | `wyndham_reportes` |
 | `SESSION_DRIVER` | Driver sesión | `file` | `database` |
 | `QUEUE_CONNECTION` | Driver cola | `sync` | `database` |
+
+### 13.4 Configuración regional
+
+La zona horaria del sistema está configurada como `America/Guayaquil` en `config/app.php`, lo que garantiza que todas las fechas y horas se manejen en la zona horaria de Ecuador.
 
 ---
 
@@ -759,8 +798,15 @@ TARGET_DB_PASSWORD=            # Contraseña
 | `medico-catalogos.blade.php` | CRUD Catálogos |
 | `medico-inventario.blade.php` | Inventario |
 | `reporte-cocina.blade.php` | Subir datos Cocina |
-| `reportes-cocina.blade.php` | Reportes Cocina |
+| `reportes-cocina.blade.php` | Reportes Cocina (oculto de navegación) |
 | `reportes-medico.blade.php` | Reportes Médico |
+| `components/cocina/date-picker.blade.php` | Componente calendario reactivo |
+
+## Apéndice C: Configuración del proyecto
+
+| Archivo | Cambio relevante |
+|---------|------------------|
+| `config/app.php` | `'timezone' => 'America/Guayaquil'` (antes `'UTC'`) |
 
 ---
 
