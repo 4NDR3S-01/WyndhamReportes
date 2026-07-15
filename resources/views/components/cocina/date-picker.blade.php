@@ -82,27 +82,32 @@ function cocinaDatePicker(field, available) {
         viewYear: 0,
         viewMonth: 0,
         init() {
-            this.syncAvailable();
-            const sel = this.$wire[field];
-            if (sel && available.includes(sel)) {
-                this.selected = sel;
-                const d = new Date(sel + 'T00:00:00');
+            const wireVal = this.$wire[this.field];
+            const dates = this.available.length ? this.available : available;
+            if (wireVal && dates.includes(wireVal)) {
+                this.selected = wireVal;
+                const d = new Date(wireVal + 'T00:00:00');
                 this.viewYear = d.getFullYear();
                 this.viewMonth = d.getMonth();
-            } else if (available.length > 0) {
-                const first = available[0];
+            } else if (dates.length > 0) {
+                const first = dates[0];
                 const d = new Date(first + 'T00:00:00');
                 this.viewYear = d.getFullYear();
                 this.viewMonth = d.getMonth();
-                if (!sel) {
+                if (!wireVal) {
                     this.selected = first;
-                    this.$wire.call('setFecha', field, first);
+                    this.$wire.call('setFecha', this.field, first);
                 }
             }
         },
         syncAvailable() {
             if (this.$wire && this.$wire.fechasDisponiblesRaw && Array.isArray(this.$wire.fechasDisponiblesRaw)) {
                 this.available = this.$wire.fechasDisponiblesRaw;
+            }
+            // Mantener selected sincronizado con Livewire (cubre cambios desde otro date‑picker)
+            const wireVal = this.$wire[this.field];
+            if (wireVal && this.available.includes(wireVal)) {
+                this.selected = wireVal;
             }
         },
         toggle() {
