@@ -70,23 +70,6 @@ class ProcesadorArchivoConsumo
 
                 $hash = CocinaConsumo::generarHash($archivo->id, $numeroFila);
 
-                if (CocinaConsumo::query()->where('hash_unico', $hash)->exists()) {
-                    $duplicadas++;
-                    continue;
-                }
-
-                $yaExiste = CocinaConsumo::query()
-                    ->where('fecha', $datos['fecha'])
-                    ->where('producto_id', $producto->id)
-                    ->where('servicio', $datos['servicio'])
-                    ->where('concepto', $datos['concepto'])
-                    ->exists();
-
-                if ($yaExiste) {
-                    $duplicadas++;
-                    continue;
-                }
-
                 CocinaConsumo::query()->create([
                     'archivo_importado_id' => $archivo->id,
                     'producto_id' => $producto->id,
