@@ -58,7 +58,7 @@ class ReporteCocina extends Page
 
     public int $previewTotalFilas = 0;
 
-    public function subirDatos(): void
+    private function guardarArchivo()
     {
         $this->validate([
             'archivo' => ['required', 'file', 'mimes:xlsx,xls,csv', 'max:10240'],
@@ -78,7 +78,7 @@ class ReporteCocina extends Page
         $this->rutaArchivoSubido = $this->archivo->storeAs('importaciones/cocina', $nombreSeguro);
         $this->nombreArchivoSubido = $nombreOriginal;
 
-        CocinaArchivoImportado::query()->create([
+        $archivoRecord = CocinaArchivoImportado::query()->create([
             'usuario_id' => auth()->id(),
             'nombre_original' => $nombreOriginal,
             'nombre_guardado' => $nombreSeguro,
@@ -97,6 +97,21 @@ class ReporteCocina extends Page
             ->body('El archivo quedo guardado para la futura importacion de datos.')
             ->success()
             ->send();
+
+        return $archivoRecord;
+    }
+
+    public function subirDatos(): void
+    {
+        $this->guardarArchivo();
+    }
+
+    public function subirYPrevisualizar(): void
+    {
+        $archivoRecord = $this->guardarArchivo();
+        if ($archivoRecord) {
+            $this->previsualizarArchivo($archivoRecord->id);
+        }
     }
 
     public function previsualizarArchivo(int $archivoId): void

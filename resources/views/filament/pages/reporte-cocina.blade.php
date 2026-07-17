@@ -53,8 +53,8 @@
                         </label>
 
                         {{-- Loading indicator --}}
-                        <div wire:loading wire:target="archivo"
-                            class="flex items-center gap-3 rounded-2xl border border-ocean-200 bg-ocean-50 p-4 dark:border-ocean-900 dark:bg-ocean-950/30">
+                        <div wire:loading.flex wire:target="archivo"
+                            class="items-center gap-3 rounded-2xl border border-ocean-200 bg-ocean-50 p-4 dark:border-ocean-900 dark:bg-ocean-950/30">
                             <svg class="h-5 w-5 animate-spin text-ocean-600 dark:text-ocean-400" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
@@ -101,24 +101,46 @@
                                 Al subirlo, el archivo queda almacenado de forma interna para su procesamiento posterior.
                             </p>
 
-                            <button
-                                type="submit"
-                                wire:loading.attr="disabled"
-                                wire:target="subirDatos,archivo"
-                                class="btn-primary"
-                            >
-                                <span wire:loading.remove wire:target="subirDatos">
-                                    <x-heroicon-o-cloud-arrow-up class="h-4 w-4" />
-                                    Guardar archivo
-                                </span>
-                                <span wire:loading wire:target="subirDatos">
-                                    <svg class="-ml-1 h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                                    </svg>
-                                    Guardando...
-                                </span>
-                            </button>
+                            <div class="flex items-center gap-3">
+                                <button
+                                    type="button"
+                                    wire:click="subirYPrevisualizar"
+                                    wire:loading.attr="disabled"
+                                    wire:target="subirYPrevisualizar,archivo"
+                                    @if (! $archivo) disabled @endif
+                                    class="btn-outline @if(! $archivo) opacity-50 cursor-not-allowed @endif"
+                                >
+                                    <span wire:loading.remove wire:target="subirYPrevisualizar" class="flex items-center justify-center">
+                                        Ver previa
+                                    </span>
+                                    <span wire:loading.flex wire:target="subirYPrevisualizar" class="items-center gap-2">
+                                        <svg class="-ml-1 h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                        </svg>
+                                        Procesando...
+                                    </span>
+                                </button>
+
+                                <button
+                                    type="submit"
+                                    wire:loading.attr="disabled"
+                                    wire:target="subirDatos,subirYPrevisualizar,archivo"
+                                    class="btn-primary"
+                                >
+                                    <span wire:loading.remove wire:target="subirDatos" class="flex items-center gap-2">
+                                        <x-heroicon-o-cloud-arrow-up class="h-4 w-4" />
+                                        Guardar archivo
+                                    </span>
+                                    <span wire:loading.flex wire:target="subirDatos" class="items-center gap-2">
+                                        <svg class="-ml-1 h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                        </svg>
+                                        Guardando...
+                                    </span>
+                                </button>
+                            </div>
                         </div>
                     </form>
 
@@ -139,246 +161,101 @@
                     @endif
                 </div>
 
-                {{-- File preview --}}
+                {{-- File preview modal --}}
                 @if ($archivoEnPreview && count($previewEncabezados) > 0)
-                    <section class="card">
-                        <div class="card-header">
-                            <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                                <div class="flex items-center gap-3">
-                                    <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-ocean-100 text-ocean-600 dark:bg-ocean-900/60 dark:text-ocean-400">
-                                        <x-heroicon-o-eye class="h-5 w-5" />
+                    <style>
+                        body {
+                            overflow: hidden !important;
+                        }
+                    </style>
+                    <div class="fixed inset-0 z-[99] flex items-center justify-center p-4 sm:p-6 bg-gray-950/60 backdrop-blur-sm"
+                         wire:click.self="cerrarPreview"
+                         x-data
+                         x-on:keydown.escape.window="$wire.cerrarPreview()"
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0"
+                         x-transition:enter-end="opacity-100"
+                         x-transition:leave="transition ease-in duration-200"
+                         x-transition:leave-start="opacity-100"
+                         x-transition:leave-end="opacity-0">
+                        
+                        <div class="flex flex-col bg-white dark:bg-gray-900 rounded-2xl shadow-2xl ring-1 ring-gray-200 dark:ring-gray-800 w-full max-w-5xl max-h-full overflow-hidden">
+                            
+                            {{-- Modal Header --}}
+                            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-800 shrink-0">
+                                <div class="flex items-center gap-4">
+                                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-ocean-50 text-ocean-600 dark:bg-ocean-900/50 dark:text-ocean-400">
+                                        <x-heroicon-o-eye class="h-6 w-6" />
                                     </div>
                                     <div>
-                                        <h3 class="text-lg font-semibold text-gray-950 dark:text-white">Vista previa del archivo</h3>
+                                        <h3 class="text-lg font-bold text-gray-950 dark:text-white">Vista previa del archivo</h3>
                                         <p class="mt-0.5 text-sm text-gray-500 dark:text-gray-400">{{ $previewTotalFilas }} filas detectadas. Mostrando primeras {{ count($previewFilas) }}.</p>
                                     </div>
                                 </div>
-                                <button type="button" wire:click="cerrarPreview" class="btn-outline">
-                                    <x-heroicon-o-x-mark class="h-4 w-4" />
-                                    Cerrar previa
+                                <button type="button" wire:click="cerrarPreview" class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
+                                    <x-heroicon-o-x-mark class="h-5 w-5" />
                                 </button>
                             </div>
-                        </div>
 
-                        <div class="scroll-thin overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-100 dark:divide-gray-800">
-                                <thead class="bg-ocean-50 dark:bg-ocean-950/30">
-                                    <tr>
-                                        @foreach ($previewEncabezados as $encabezado)
-                                            <th class="table-header-cell">{{ $encabezado }}</th>
-                                        @endforeach
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
-                                    @foreach ($previewFilas as $index => $fila)
-                                        @php
-                                            $bgClass = $index % 2 === 0 ? 'bg-white dark:bg-gray-900' : 'bg-gray-50 dark:bg-gray-950/40';
-                                        @endphp
-                                        <tr class="table-row {{ $bgClass }}">
-                                            @foreach ($fila as $celda)
-                                                <td class="table-cell text-gray-700 dark:text-gray-300">{{ $celda !== null ? $celda : '-' }}</td>
+                            {{-- Modal Body (Scrollable Table) --}}
+                            <div class="flex-1 overflow-auto scroll-thin bg-gray-50/50 dark:bg-gray-950/20">
+                                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-800 relative">
+                                    <thead class="bg-gray-100 dark:bg-gray-900 sticky top-0 z-10 shadow-sm">
+                                        <tr>
+                                            @foreach ($previewEncabezados as $encabezado)
+                                                <th class="px-6 py-3 text-left text-xs font-bold tracking-widest text-gray-500 uppercase dark:text-gray-400">{{ $encabezado }}</th>
                                             @endforeach
                                         </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </section>
-                @endif
-
-                {{-- File history --}}
-                <section class="card">
-                    <div class="card-header">
-                        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                            <div class="flex items-center gap-3">
-                                <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-ocean-100 text-ocean-600 dark:bg-ocean-900/60 dark:text-ocean-400">
-                                    <x-heroicon-o-archive-box class="h-5 w-5" />
-                                </div>
-                                <div>
-                                    <h3 class="text-lg font-semibold text-gray-950 dark:text-white">Historial de archivos subidos</h3>
-                                    <p class="mt-0.5 text-sm text-gray-500 dark:text-gray-400">Registro reciente de documentos cargados al modulo de cocina.</p>
-                                </div>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-100 dark:divide-gray-800/60 bg-white dark:bg-gray-900">
+                                        @foreach ($previewFilas as $index => $fila)
+                                            <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition">
+                                                @foreach ($fila as $celda)
+                                                    <td class="px-6 py-3 text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">{{ $celda !== null ? $celda : '-' }}</td>
+                                                @endforeach
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
                             </div>
 
-                            <div class="flex items-center gap-2">
-                                <span class="chip bg-ocean-50 text-ocean-700 ring-1 ring-ocean-100 dark:bg-ocean-950/40 dark:text-ocean-300 dark:ring-ocean-900">
-                                    {{ $this->historialArchivos->count() }} registros recientes
-                                </span>
-                                <button
-                                    type="button"
-                                    wire:click="solicitarEliminarTodo"
-                                    @if ($this->totalArchivos === 0) disabled @endif
-                                    class="btn-danger-ghost disabled:cursor-not-allowed disabled:opacity-50"
-                                >
-                                    <x-heroicon-o-trash class="h-4 w-4" />
-                                    Eliminar todo
+                            {{-- Modal Footer --}}
+                            <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50/80 dark:bg-gray-900/80 shrink-0">
+                                <button type="button" wire:click="cerrarPreview" class="btn-outline">
+                                    Cancelar
+                                </button>
+                                <button type="button" wire:click="procesarArchivo({{ $archivoEnPreview }})" class="btn-primary">
+                                    <x-heroicon-o-arrow-up-tray class="h-4 w-4" />
+                                    Importar datos
                                 </button>
                             </div>
+
                         </div>
                     </div>
+                @endif
 
-                    @if ($this->historialArchivos->isNotEmpty())
-                        <div class="scroll-thin overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-100 dark:divide-gray-800">
-                                <thead class="bg-gray-50 dark:bg-gray-950/40">
-                                    <tr>
-                                        <th class="table-header-cell">Archivo</th>
-                                        <th class="table-header-cell">Estado</th>
-                                        <th class="table-header-cell hidden sm:table-cell">Usuario</th>
-                                        <th class="table-header-cell hidden md:table-cell">Tamano</th>
-                                        <th class="table-header-cell hidden md:table-cell">Fecha</th>
-                                        <th class="table-header-cell">Resultado</th>
-                                        <th class="table-header-cell text-right">Accion</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
-                                    @foreach ($this->historialArchivos as $archivoHistorial)
-                                        <tr class="table-row">
-                                            <td class="table-cell">
-                                                <div class="flex items-start gap-3">
-                                                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ocean-100 text-xs font-bold uppercase text-ocean-700 dark:bg-ocean-950 dark:text-ocean-300">
-                                                        {{ $archivoHistorial->extension ?: 'doc' }}
-                                                    </div>
-                                                    <div class="min-w-0">
-                                                        <p class="truncate text-sm font-semibold text-gray-950 dark:text-white max-w-[160px] sm:max-w-xs">{{ $archivoHistorial->nombre_original }}</p>
-                                                        <p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400 truncate max-w-[160px] sm:max-w-xs">{{ $archivoHistorial->ruta }}</p>
-                                                        {{-- Mobile-only meta row --}}
-                                                        <div class="mt-1.5 flex items-center gap-2 text-xs text-gray-400 sm:hidden">
-                                                            <span>{{ $archivoHistorial->usuario?->name ?? 'Sistema' }}</span>
-                                                            <span>&middot;</span>
-                                                            <span>{{ $this->formatearTamano($archivoHistorial->tamano_bytes) }}</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="table-cell">
-                                                @php
-                                                    $estado = $archivoHistorial->estado;
-                                                    $chipColor = match (true) {
-                                                        str_starts_with($estado, 'procesado') => 'bg-palm-50 text-palm-700 ring-palm-200 dark:bg-palm-950/40 dark:text-palm-300 dark:ring-palm-900',
-                                                        $estado === 'recibido' => 'bg-ocean-50 text-ocean-700 ring-ocean-200 dark:bg-ocean-950/40 dark:text-ocean-300 dark:ring-ocean-900',
-                                                        $estado === 'error' => 'bg-red-50 text-red-700 ring-red-200 dark:bg-red-950/40 dark:text-red-300 dark:ring-red-900',
-                                                        default => 'bg-gray-100 text-gray-600 ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700',
-                                                    };
-                                                    $estadoLabel = match (true) {
-                                                        str_starts_with($estado, 'procesado') => 'Procesado',
-                                                        $estado === 'recibido' => 'Recibido',
-                                                        $estado === 'error' => 'Error',
-                                                        default => ucfirst($estado),
-                                                    };
-                                                @endphp
-                                                <span class="chip {{ $chipColor }}">{{ $estadoLabel }}</span>
-                                            </td>
-                                            <td class="table-cell hidden text-gray-600 dark:text-gray-300 sm:table-cell">
-                                                {{ $archivoHistorial->usuario?->name ?? 'Sistema' }}
-                                            </td>
-                                            <td class="table-cell hidden text-gray-600 dark:text-gray-300 md:table-cell">
-                                                {{ $this->formatearTamano($archivoHistorial->tamano_bytes) }}
-                                            </td>
-                                            <td class="table-cell hidden text-gray-600 dark:text-gray-300 md:table-cell whitespace-nowrap">
-                                                {{ $archivoHistorial->fecha_subida?->format('d/m/Y H:i') ?? $archivoHistorial->created_at?->format('d/m/Y H:i') }}
-                                            </td>
-                                            <td class="table-cell text-gray-600 dark:text-gray-300">
-                                                @if (str_starts_with($archivoHistorial->estado, 'procesado'))
-                                                    <div class="space-y-0.5">
-                                                        <p class="font-semibold text-gray-950 dark:text-white">{{ number_format($archivoHistorial->filas_importadas, 0, ',', '.') }} importadas</p>
-                                                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ number_format($archivoHistorial->filas_con_error, 0, ',', '.') }} con error / {{ number_format($archivoHistorial->total_filas, 0, ',', '.') }} filas</p>
-                                                    </div>
-                                                @elseif ($archivoHistorial->estado === 'error')
-                                                    <div class="flex items-center gap-1.5">
-                                                        <x-heroicon-o-exclamation-triangle class="h-4 w-4 shrink-0 text-red-500" />
-                                                        <p class="max-w-[120px] truncate text-sm text-red-600 dark:text-red-400">{{ $archivoHistorial->observaciones ?: 'Error de procesamiento' }}</p>
-                                                    </div>
-                                                @else
-                                                    <span class="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400">
-                                                        <x-heroicon-o-clock class="h-3.5 w-3.5" />
-                                                        Pendiente de procesar
-                                                    </span>
-                                                @endif
-                                            </td>
-                                            <td class="table-cell text-right">
-                                                <div class="flex items-center justify-end gap-1.5">
-                                                    @if ($archivoHistorial->estado === 'recibido')
-                                                        <button
-                                                            type="button"
-                                                            wire:click="previsualizarArchivo({{ $archivoHistorial->id }})"
-                                                            wire:loading.attr="disabled"
-                                                            wire:target="previsualizarArchivo({{ $archivoHistorial->id }})"
-                                                            class="btn-outline"
-                                                        >
-                                                            <x-heroicon-o-eye class="h-4 w-4" />
-                                                            <span class="hidden sm:inline">Ver previa</span>
-                                                        </button>
-                                                    @endif
-
-                                                    @if (! str_starts_with($archivoHistorial->estado, 'procesado'))
-                                                        <button
-                                                            type="button"
-                                                            wire:click="procesarArchivo({{ $archivoHistorial->id }})"
-                                                            wire:loading.attr="disabled"
-                                                            wire:target="procesarArchivo({{ $archivoHistorial->id }})"
-                                                            class="btn-primary"
-                                                        >
-                                                            <x-heroicon-o-arrow-up-tray class="h-4 w-4" />
-                                                            <span class="hidden sm:inline">Importar</span>
-                                                        </button>
-                                                    @else
-                                                        <span class="chip bg-gray-100 text-gray-500 ring-1 ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700">
-                                                            <x-heroicon-o-check class="h-3 w-3" />
-                                                            Consolidado
-                                                        </span>
-                                                    @endif
-
-                                                    <button
-                                                        type="button"
-                                                        wire:click="solicitarEliminarArchivo({{ $archivoHistorial->id }})"
-                                                        wire:loading.attr="disabled"
-                                                        wire:target="solicitarEliminarArchivo({{ $archivoHistorial->id }})"
-                                                        class="btn-danger-ghost"
-                                                        title="Eliminar archivo"
-                                                    >
-                                                        <x-heroicon-o-trash class="h-4 w-4" />
-                                                        <span class="sr-only">Eliminar</span>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    @else
-                        <div class="px-6 py-12 text-center sm:px-8">
-                            <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400">
-                                <x-heroicon-o-document-text class="h-7 w-7" />
-                            </div>
-                            <h4 class="mt-4 text-sm font-semibold text-gray-950 dark:text-white">Aun no hay archivos registrados</h4>
-                            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Cuando subas un documento, aparecera aqui con su fecha, usuario y estado.</p>
-                        </div>
-                    @endif
-                </section>
             </div>
 
             {{-- Sidebar --}}
             <aside class="space-y-6 xl:sticky xl:top-6">
                 {{-- Requirements --}}
                 <div class="card overflow-hidden">
-                    <div class="flex items-center gap-2.5 border-b border-gray-50 px-5 py-3.5 dark:border-gray-800">
+                    <div class="flex items-center gap-2.5 border-b border-gray-50 px-4 py-3 dark:border-gray-800">
                         <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-ocean-100 text-ocean-700 ring-1 ring-ocean-200 dark:bg-ocean-900/60 dark:text-ocean-300 dark:ring-ocean-800">
                             <x-heroicon-o-list-bullet class="h-4 w-4" />
                         </div>
                         <h3 class="text-sm font-bold text-gray-950 dark:text-white">Requisitos del archivo</h3>
                     </div>
-                    <div class="space-y-3 p-5">
-                        <div class="flex items-start gap-3 rounded-xl bg-ocean-50/50 p-3 dark:bg-ocean-950/20">
+                    <div class="space-y-2 p-4">
+                        <div class="flex items-start gap-3 rounded-xl bg-ocean-50/50 px-3 py-2.5 dark:bg-ocean-950/20">
                             <x-heroicon-o-check-circle class="mt-0.5 h-5 w-5 shrink-0 text-ocean-500" />
                             <p class="text-sm text-gray-700 dark:text-gray-300">Debe provenir del reporte de consumo del sistema actual.</p>
                         </div>
-                        <div class="flex items-start gap-3 rounded-xl bg-ocean-50/50 p-3 dark:bg-ocean-950/20">
+                        <div class="flex items-start gap-3 rounded-xl bg-ocean-50/50 px-3 py-2.5 dark:bg-ocean-950/20">
                             <x-heroicon-o-check-circle class="mt-0.5 h-5 w-5 shrink-0 text-ocean-500" />
                             <p class="text-sm text-gray-700 dark:text-gray-300">Formatos permitidos: <span class="font-semibold text-ocean-600 dark:text-ocean-400">Excel</span> o <span class="font-semibold text-ocean-600 dark:text-ocean-400">CSV</span>.</p>
                         </div>
-                        <div class="flex items-start gap-3 rounded-xl bg-ocean-50/50 p-3 dark:bg-ocean-950/20">
+                        <div class="flex items-start gap-3 rounded-xl bg-ocean-50/50 px-3 py-2.5 dark:bg-ocean-950/20">
                             <x-heroicon-o-check-circle class="mt-0.5 h-5 w-5 shrink-0 text-ocean-500" />
                             <p class="text-sm text-gray-700 dark:text-gray-300">Columnas esperadas: <span class="font-semibold">fecha</span>, <span class="font-semibold">articulo</span>, <span class="font-semibold">presentacion</span>, <span class="font-semibold">cantidad</span> y <span class="font-semibold">concepto</span>.</p>
                         </div>
@@ -393,36 +270,36 @@
                         ->first();
                 @endphp
                 <div class="card overflow-hidden">
-                    <div class="flex items-center gap-2.5 border-b border-gray-50 px-5 py-3.5 dark:border-gray-800">
+                    <div class="flex items-center gap-2.5 border-b border-gray-50 px-4 py-3 dark:border-gray-800">
                         <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-ocean-100 text-ocean-700 ring-1 ring-ocean-200 dark:bg-ocean-900/60 dark:text-ocean-300 dark:ring-ocean-800">
                             <x-heroicon-o-clock class="h-4 w-4" />
                         </div>
                         <h3 class="text-sm font-bold text-gray-950 dark:text-white">Ultimo procesamiento</h3>
                     </div>
                     @if ($ultimo)
-                        <div class="space-y-4 p-5">
+                        <div class="space-y-3 p-4">
                             {{-- File name --}}
                             <div class="flex items-center gap-3">
                                 <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-ocean-100 text-ocean-600 dark:bg-ocean-900/50 dark:text-ocean-400">
                                     <x-heroicon-o-document-text class="h-5 w-5" />
                                 </div>
                                 <div class="min-w-0">
-                                    <p class="text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">Archivo</p>
+                                    <p class="text-[11px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">Archivo</p>
                                     <p class="truncate text-sm font-semibold text-gray-950 dark:text-white">{{ $ultimo->nombre_original }}</p>
                                 </div>
                             </div>
 
                             {{-- Stats grid --}}
-                            <div class="grid grid-cols-2 gap-3">
-                                <div class="rounded-xl border border-palm-100 bg-palm-50/30 p-3.5 dark:border-palm-900 dark:bg-palm-950/20">
-                                    <p class="text-xs font-bold uppercase tracking-widest text-palm-600 dark:text-palm-400">Importadas</p>
-                                    <p class="mt-1 text-2xl font-black tracking-tight tabular-nums text-gray-950 dark:text-white">
+                            <div class="grid grid-cols-2 gap-2">
+                                <div class="rounded-xl border border-palm-100 bg-palm-50/30 p-3 dark:border-palm-900 dark:bg-palm-950/20">
+                                    <p class="text-[11px] font-bold uppercase tracking-widest text-palm-600 dark:text-palm-400">Importadas</p>
+                                    <p class="mt-0.5 text-xl font-black tracking-tight tabular-nums text-gray-950 dark:text-white">
                                         {{ number_format($ultimo->filas_importadas, 0, ',', '.') }}
                                     </p>
                                 </div>
-                                <div class="rounded-xl border border-red-100 bg-red-50/30 p-3.5 dark:border-red-900 dark:bg-red-950/20">
-                                    <p class="text-xs font-bold uppercase tracking-widest text-red-500 dark:text-red-400">Con error</p>
-                                    <p class="mt-1 text-2xl font-black tracking-tight tabular-nums text-gray-950 dark:text-white {{ $ultimo->filas_con_error > 0 ? 'text-red-600 dark:text-red-400' : '' }}">
+                                <div class="rounded-xl border border-red-100 bg-red-50/30 p-3 dark:border-red-900 dark:bg-red-950/20">
+                                    <p class="text-[11px] font-bold uppercase tracking-widest text-red-500 dark:text-red-400">Con error</p>
+                                    <p class="mt-0.5 text-xl font-black tracking-tight tabular-nums text-gray-950 dark:text-white {{ $ultimo->filas_con_error > 0 ? 'text-red-600 dark:text-red-400' : '' }}">
                                         {{ number_format($ultimo->filas_con_error, 0, ',', '.') }}
                                     </p>
                                 </div>
@@ -445,6 +322,178 @@
                     @endif
                 </div>
             </aside>
+        </section>
+
+        {{-- File history --}}
+        <section class="card">
+            <div class="card-header">
+                <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-ocean-100 text-ocean-600 dark:bg-ocean-900/60 dark:text-ocean-400">
+                            <x-heroicon-o-archive-box class="h-5 w-5" />
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-950 dark:text-white">Historial de archivos subidos</h3>
+                            <p class="mt-0.5 text-sm text-gray-500 dark:text-gray-400">Registro reciente de documentos cargados al modulo de cocina.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <span class="chip bg-ocean-50 text-ocean-700 ring-1 ring-ocean-100 dark:bg-ocean-950/40 dark:text-ocean-300 dark:ring-ocean-900">
+                            {{ $this->historialArchivos->count() }} registros recientes
+                        </span>
+                        <button
+                            type="button"
+                            wire:click="solicitarEliminarTodo"
+                            @if ($this->totalArchivos === 0) disabled @endif
+                            class="btn-danger-ghost disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                            <x-heroicon-o-trash class="h-4 w-4" />
+                            Eliminar todo
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            @if ($this->historialArchivos->isNotEmpty())
+                <div class="scroll-thin overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-100 dark:divide-gray-800">
+                        <thead class="bg-gray-50 dark:bg-gray-950/40">
+                            <tr>
+                                <th class="table-header-cell">Archivo</th>
+                                <th class="table-header-cell">Estado</th>
+                                <th class="table-header-cell hidden sm:table-cell">Usuario</th>
+                                <th class="table-header-cell hidden md:table-cell">Tamano</th>
+                                <th class="table-header-cell hidden md:table-cell">Fecha</th>
+                                <th class="table-header-cell">Resultado</th>
+                                <th class="table-header-cell text-right">Accion</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+                            @foreach ($this->historialArchivos as $archivoHistorial)
+                                <tr class="table-row">
+                                    <td class="table-cell">
+                                        <div class="flex items-start gap-3">
+                                            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ocean-100 text-xs font-bold uppercase text-ocean-700 dark:bg-ocean-950 dark:text-ocean-300">
+                                                {{ $archivoHistorial->extension ?: 'doc' }}
+                                            </div>
+                                            <div class="min-w-0">
+                                                <p class="truncate text-sm font-semibold text-gray-950 dark:text-white max-w-[160px] sm:max-w-xs">{{ $archivoHistorial->nombre_original }}</p>
+                                                <p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400 truncate max-w-[160px] sm:max-w-xs">{{ $archivoHistorial->ruta }}</p>
+                                                {{-- Mobile-only meta row --}}
+                                                <div class="mt-1.5 flex items-center gap-2 text-xs text-gray-400 sm:hidden">
+                                                    <span>{{ $archivoHistorial->usuario?->name ?? 'Sistema' }}</span>
+                                                    <span>&middot;</span>
+                                                    <span>{{ $this->formatearTamano($archivoHistorial->tamano_bytes) }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="table-cell">
+                                        @php
+                                            $estado = $archivoHistorial->estado;
+                                            $chipColor = match (true) {
+                                                str_starts_with($estado, 'procesado') => 'bg-palm-50 text-palm-700 ring-palm-200 dark:bg-palm-950/40 dark:text-palm-300 dark:ring-palm-900',
+                                                $estado === 'recibido' => 'bg-ocean-50 text-ocean-700 ring-ocean-200 dark:bg-ocean-950/40 dark:text-ocean-300 dark:ring-ocean-900',
+                                                $estado === 'error' => 'bg-red-50 text-red-700 ring-red-200 dark:bg-red-950/40 dark:text-red-300 dark:ring-red-900',
+                                                default => 'bg-gray-100 text-gray-600 ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700',
+                                            };
+                                            $estadoLabel = match (true) {
+                                                str_starts_with($estado, 'procesado') => 'Procesado',
+                                                $estado === 'recibido' => 'Recibido',
+                                                $estado === 'error' => 'Error',
+                                                default => ucfirst($estado),
+                                            };
+                                        @endphp
+                                        <span class="chip {{ $chipColor }}">{{ $estadoLabel }}</span>
+                                    </td>
+                                    <td class="table-cell hidden text-gray-600 dark:text-gray-300 sm:table-cell">
+                                        {{ $archivoHistorial->usuario?->name ?? 'Sistema' }}
+                                    </td>
+                                    <td class="table-cell hidden text-gray-600 dark:text-gray-300 md:table-cell">
+                                        {{ $this->formatearTamano($archivoHistorial->tamano_bytes) }}
+                                    </td>
+                                    <td class="table-cell hidden text-gray-600 dark:text-gray-300 md:table-cell whitespace-nowrap">
+                                        {{ $archivoHistorial->fecha_subida?->format('d/m/Y H:i') ?? $archivoHistorial->created_at?->format('d/m/Y H:i') }}
+                                    </td>
+                                    <td class="table-cell text-gray-600 dark:text-gray-300">
+                                        @if (str_starts_with($archivoHistorial->estado, 'procesado'))
+                                            <div class="space-y-0.5">
+                                                <p class="font-semibold text-gray-950 dark:text-white">{{ number_format($archivoHistorial->filas_importadas, 0, ',', '.') }} importadas</p>
+                                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ number_format($archivoHistorial->filas_con_error, 0, ',', '.') }} con error / {{ number_format($archivoHistorial->total_filas, 0, ',', '.') }} filas</p>
+                                            </div>
+                                        @elseif ($archivoHistorial->estado === 'error')
+                                            <div class="flex items-center gap-1.5">
+                                                <x-heroicon-o-exclamation-triangle class="h-4 w-4 shrink-0 text-red-500" />
+                                                <p class="max-w-[120px] truncate text-sm text-red-600 dark:text-red-400">{{ $archivoHistorial->observaciones ?: 'Error de procesamiento' }}</p>
+                                            </div>
+                                        @else
+                                            <span class="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400">
+                                                <x-heroicon-o-clock class="h-3.5 w-3.5" />
+                                                Pendiente de procesar
+                                            </span>
+                                        @endif
+                                    </td>
+                                    <td class="table-cell text-right">
+                                        <div class="flex items-center justify-end gap-1.5">
+                                            @if ($archivoHistorial->estado === 'recibido')
+                                                <button
+                                                    type="button"
+                                                    wire:click="previsualizarArchivo({{ $archivoHistorial->id }})"
+                                                    wire:loading.attr="disabled"
+                                                    wire:target="previsualizarArchivo({{ $archivoHistorial->id }})"
+                                                    class="btn-outline"
+                                                >
+                                                    <x-heroicon-o-eye class="h-4 w-4" />
+                                                    <span class="hidden sm:inline">Ver previa</span>
+                                                </button>
+                                            @endif
+
+                                            @if (! str_starts_with($archivoHistorial->estado, 'procesado'))
+                                                <button
+                                                    type="button"
+                                                    wire:click="procesarArchivo({{ $archivoHistorial->id }})"
+                                                    wire:loading.attr="disabled"
+                                                    wire:target="procesarArchivo({{ $archivoHistorial->id }})"
+                                                    class="btn-primary"
+                                                >
+                                                    <x-heroicon-o-arrow-up-tray class="h-4 w-4" />
+                                                    <span class="hidden sm:inline">Importar</span>
+                                                </button>
+                                            @else
+                                                <span class="chip bg-gray-100 text-gray-500 ring-1 ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700">
+                                                    <x-heroicon-o-check class="h-3 w-3" />
+                                                    Consolidado
+                                                </span>
+                                            @endif
+
+                                            <button
+                                                type="button"
+                                                wire:click="solicitarEliminarArchivo({{ $archivoHistorial->id }})"
+                                                wire:loading.attr="disabled"
+                                                wire:target="solicitarEliminarArchivo({{ $archivoHistorial->id }})"
+                                                class="btn-danger-ghost"
+                                                title="Eliminar archivo"
+                                            >
+                                                <x-heroicon-o-trash class="h-4 w-4" />
+                                                <span class="sr-only">Eliminar</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @else
+                <div class="px-6 py-12 text-center sm:px-8">
+                    <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+                        <x-heroicon-o-document-text class="h-7 w-7" />
+                    </div>
+                    <h4 class="mt-4 text-sm font-semibold text-gray-950 dark:text-white">Aun no hay archivos registrados</h4>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Cuando subas un documento, aparecera aqui con su fecha, usuario y estado.</p>
+                </div>
+            @endif
         </section>
 
     </div>
