@@ -9,9 +9,13 @@ use Livewire\Attributes\On;
 
 class CocinaProductosChartWidget extends ChartWidget
 {
+    protected static bool $isLazy = false;
+
     protected static ?int $sort = 2;
 
     protected int|string|array $columnSpan = 1;
+
+    protected string $view = 'filament.widgets.skeleton-chart';
 
     /** @var int|null Documento fuente activo en el dashboard */
     public ?int $archivoId = null;
@@ -35,7 +39,12 @@ class CocinaProductosChartWidget extends ChartWidget
 
     public function getHeading(): ?string
     {
-        return 'Productos mas consumidos';
+        return 'Top 10 productos más consumidos';
+    }
+
+    public function getDescription(): ?string
+    {
+        return 'Total acumulado por producto en el documento seleccionado.';
     }
 
     protected function getData(): array

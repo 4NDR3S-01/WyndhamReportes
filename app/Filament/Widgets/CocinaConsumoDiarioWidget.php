@@ -11,9 +11,13 @@ use Livewire\Attributes\On;
 
 class CocinaConsumoDiarioWidget extends ChartWidget
 {
+    protected static bool $isLazy = false;
+
     protected static ?int $sort = 3;
 
     protected int|string|array $columnSpan = 1;
+
+    protected string $view = 'filament.widgets.skeleton-chart';
 
     /** @var int|null Documento fuente activo en el dashboard */
     public ?int $archivoId = null;
@@ -37,12 +41,12 @@ class CocinaConsumoDiarioWidget extends ChartWidget
 
     public function getHeading(): ?string
     {
-        return 'Consumo diario';
+        return 'Evolución del consumo diario';
     }
 
     public function getDescription(): ?string
     {
-        return 'Total consumido por día, desglosado por producto.';
+        return 'Total consumido por día, desglosado por producto en el documento seleccionado.';
     }
 
     protected function getFilters(): ?array

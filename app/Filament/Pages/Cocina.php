@@ -437,6 +437,7 @@ class Cocina extends Page
                 // Unidades/porciones: redondeo hacia arriba (no se puede servir media unidad).
                 // Kilos, litros, gramos: 2 decimales, suficiente para cocina.
                 $porHuesped = $esEntero ? ceil($porHuesped) : round($porHuesped, 2);
+                $esTraza = ! $esEntero && $c->total_cantidad > 0 && $porHuesped < 0.01;
 
                 return (object) [
                     'nombre' => $c->producto?->nombre ?? 'Sin nombre',
@@ -444,9 +445,9 @@ class Cocina extends Page
                     'consumoBase' => $c->total_cantidad,
                     'sugerido' => $porHuesped,
                     'esEntero' => $esEntero,
+                    'esTraza' => $esTraza,
                 ];
             })
-            ->filter(fn ($r) => $r->sugerido > 0)
             ->values();
     }
 

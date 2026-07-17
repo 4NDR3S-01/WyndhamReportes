@@ -1,6 +1,6 @@
 @props([
     'field' => 'fechaSeleccionada',
-    'label' => 'Fecha',
+    'label' => '',
     'placeholder' => 'Selecciona una fecha',
     'available' => [],
     'align' => 'right',
@@ -17,17 +17,19 @@
     class="relative"
     x-cloak
 >
-    <label class="text-xs font-medium text-gray-700 dark:text-gray-300">{{ $label }}</label>
+    @if ($label)
+        <label class="text-sm font-semibold text-gray-700 dark:text-gray-300">{{ $label }}</label>
+    @endif
 
     <button
         type="button"
         @click="toggle()"
-        class="input mt-1 flex w-full items-center justify-between gap-2 text-left"
+        class="input mt-1 flex w-full items-center justify-between gap-2 rounded-2xl py-3 text-left"
         :class="open ? 'ring-2 ring-ocean-200 dark:ring-ocean-700' : ''"
     >
-        <span x-show="!selected" class="text-gray-400 dark:text-gray-500">{{ $placeholder }}</span>
-        <span x-show="selected" class="font-medium text-gray-900 dark:text-white" x-text="selected ? formatDisplay(selected) : ''"></span>
-        <svg class="h-4 w-4 shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 13.5h13.5A2.25 2.25 0 0 1 21 18.75"/></svg>
+        <span x-show="!selected" class="text-sm text-gray-400 dark:text-gray-500">{{ $placeholder }}</span>
+        <span x-show="selected" class="text-base font-bold text-gray-900 dark:text-white" x-text="selected ? formatDisplay(selected) : ''"></span>
+        <svg class="h-5 w-5 shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 13.5h13.5A2.25 2.25 0 0 1 21 18.75"/></svg>
     </button>
 
     <div

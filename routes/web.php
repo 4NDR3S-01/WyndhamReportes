@@ -27,3 +27,17 @@ Route::get('/ver/{file}', function (string $file) {
 
     return response()->file($path, ['Content-Type' => 'text/html'])->deleteFileAfterSend();
 })->middleware(['auth'])->name('ver.temp');
+
+// Descarga del documento original subido al módulo de cocina
+Route::get('/cocina/documento/{id}/descargar', function (int $id) {
+    $archivo = \App\Models\CocinaArchivoImportado::query()->findOrFail($id);
+
+    if (! $archivo->ruta || ! \Illuminate\Support\Facades\Storage::exists($archivo->ruta)) {
+        abort(404, 'El archivo físico no se encuentra en el almacenamiento.');
+    }
+
+    return response()->download(
+        \Illuminate\Support\Facades\Storage::path($archivo->ruta),
+        $archivo->nombre_original
+    );
+})->middleware(['auth'])->name('cocina.descargar.documento');

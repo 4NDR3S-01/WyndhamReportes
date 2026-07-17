@@ -14,25 +14,33 @@
     {{-- Barra de documento fuente activo --}}
     <div class="page-enter">
         <section class="card">
-            <div class="card-header">
-                <div class="flex min-w-0 items-center gap-3">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Documento activo</span>
+            <div class="card-header flex-wrap gap-3">
+                <div class="flex min-w-0 items-center gap-4">
+                    <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></svg>
+                        <span>Documento activo</span>
+                    </div>
                     @if ($this->archivoSeleccionado)
-                        <span class="chip bg-ocean-50 text-ocean-700 ring-1 ring-ocean-100 dark:bg-ocean-950/50 dark:text-ocean-300 dark:ring-ocean-900">
-                            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></svg>
-                            {{ \Illuminate\Support\Str::limit($this->archivoSeleccionado->nombre_original, 48) }}
-                        </span>
-                        <span class="chip-sm bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300">
-                            {{ $this->archivoSeleccionado->fecha_subida->format('d/m/Y H:i') }}
-                        </span>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="inline-flex items-center gap-2 rounded-2xl bg-ocean-50 px-4 py-2 text-sm font-bold text-ocean-700 ring-1 ring-ocean-100 dark:bg-ocean-950/50 dark:text-ocean-300 dark:ring-ocean-900">
+                                {{ \Illuminate\Support\Str::limit($this->archivoSeleccionado->nombre_original, 48) }}
+                            </span>
+                            <span class="inline-flex items-center gap-1.5 rounded-2xl bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-300">
+                                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"/></svg>
+                                {{ $this->archivoSeleccionado->fecha_subida->format('d/m/Y H:i') }}
+                            </span>
+                        </div>
                     @else
-                        <span class="chip bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400">Sin documento</span>
+                        <span class="inline-flex items-center gap-2 rounded-2xl bg-gray-100 px-4 py-2 text-sm font-medium text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"/></svg>
+                            Sin documento
+                        </span>
                     @endif
                 </div>
-                <button wire:click="abrirModalArchivo" class="btn-outline shrink-0">
-                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
-                    Cambiar documento
-                </button>
+                <button wire:click="abrirModalArchivo" class="btn-outline shrink-0 gap-2 px-5 py-2.5 text-sm font-semibold">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
+                        Cambiar documento
+                    </button>
             </div>
         </section>
     </div>
@@ -83,39 +91,44 @@
 
         @if ($this->total > 0 && $this->fechasDisponibles->isNotEmpty())
             <section class="card page-enter">
-                <div class="card-header">
-                    <div class="flex items-center gap-2">
-                        <span class="flex h-6 w-6 items-center justify-center rounded-lg bg-ocean-50 text-ocean-600 dark:bg-ocean-950/50 dark:text-ocean-300">
-                            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5"/></svg>
+                <div class="card-header flex-wrap gap-3">
+                    <div class="flex items-center gap-3">
+                        <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-ocean-50 text-ocean-600 shadow-sm ring-1 ring-ocean-100 dark:bg-ocean-950/50 dark:text-ocean-300 dark:ring-ocean-900">
+                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5"/></svg>
                         </span>
-                        <span class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Consumo del día</span>
+                        <div>
+                            <h2 class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">Consumo del día</h2>
+                            <p class="text-xs font-medium text-gray-400 dark:text-gray-500">Productos agrupados por unidad de medida</p>
+                        </div>
                     </div>
                     <x-cocina.date-picker
                         field="fechaSeleccionada"
-                        label="Fecha"
                         :available="$this->fechasDisponiblesRaw"
                     />
                 </div>
 
                 @if ($this->fechaSeleccionada && count($this->consumoDelDia) > 0)
-                    <div class="border-t border-gray-100 px-5 pb-4 dark:border-gray-800">
+                    <div class="border-t border-gray-100 px-5 pb-5 dark:border-gray-800">
                         @foreach ($this->consumoDelDia as $u => $items)
-                            <div class="mt-3 first:mt-0">
-                                <div class="mb-2 flex items-center gap-2">
-                                    <span class="chip bg-ocean-50 text-ocean-700 ring-1 ring-ocean-100 dark:bg-ocean-950/50 dark:text-ocean-300 dark:ring-ocean-900">
-                                        {{ match($u) { 'kilo' => 'Kilos', 'litro' => 'Litros', 'porcion' => 'Porciones', 'gramo' => 'Gramos', default => 'Unidades' } }}
-                                    </span>
-                                    <span class="text-[11px] font-medium text-gray-400 dark:text-gray-500">{{ $this->formatoSegunUnidad($this->totalesPorUnidad[$u] ?? 0, $u) }} total</span>
+                            <div class="mt-4 first:mt-0">
+                                <div class="mb-3 flex items-center gap-3">
+                                    <div class="flex items-center gap-2 rounded-2xl bg-ocean-50 px-4 py-2 ring-1 ring-ocean-100 dark:bg-ocean-950/40 dark:ring-ocean-900">
+                                        <span class="text-sm font-bold text-ocean-700 dark:text-ocean-300">
+                                            {{ match($u) { 'kilo' => 'Kilos', 'litro' => 'Litros', 'porcion' => 'Porciones', 'gramo' => 'Gramos', default => 'Unidades' } }}
+                                        </span>
+                                    </div>
+                                    <span class="text-sm font-semibold text-gray-400 dark:text-gray-500">{{ $this->formatoSegunUnidad($this->totalesPorUnidad[$u] ?? 0, $u) }} total</span>
+                                    <span class="text-xs text-gray-300 dark:text-gray-600">{{ count($items) }} {{ count($items) === 1 ? 'producto' : 'productos' }}</span>
                                 </div>
-                                <div class="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                                <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                                     @foreach ($items as $item)
-                                        <div class="group relative flex items-center justify-between gap-3 overflow-hidden rounded-2xl border border-gray-100 bg-white px-4 py-3 transition duration-200 hover:z-10 hover:-translate-y-0.5 hover:border-ocean-200 hover:shadow-lg dark:border-gray-800 dark:bg-gray-900/50 dark:hover:border-ocean-800">
+                                        <div class="group relative flex items-center justify-between gap-3 overflow-hidden rounded-2xl border border-ocean-100/60 bg-white px-4 py-3.5 transition duration-200 hover:z-10 hover:-translate-y-0.5 hover:border-ocean-200 hover:shadow-lg dark:border-ocean-800/40 dark:bg-gray-900/50 dark:hover:border-ocean-600">
                                             <div class="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-ocean-400 via-ocean-500 to-ocean-400 opacity-0 transition-opacity duration-200 group-hover:opacity-100 dark:from-ocean-500 dark:via-ocean-400 dark:to-ocean-500"></div>
-                                            <div class="flex min-w-0 flex-1 items-center gap-1.5">
-                                                <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-ocean-400/70 dark:bg-ocean-500/60"></span>
-                                                <span class="truncate text-sm font-semibold leading-snug text-gray-900 dark:text-white">{{ $item->producto?->nombre ?? 'Sin nombre' }}</span>
+                                            <div class="flex min-w-0 flex-1 items-center gap-2">
+                                                <span class="h-2 w-2 shrink-0 rounded-full bg-ocean-400/70 dark:bg-ocean-500/60"></span>
+                                                <span class="truncate text-sm font-bold leading-snug text-gray-900 dark:text-white">{{ $item->producto?->nombre ?? 'Sin nombre' }}</span>
                                             </div>
-                                            <span class="shrink-0 rounded-2xl bg-ocean-50 px-2.5 py-1.5 text-base font-bold tabular-nums leading-none text-ocean-700 dark:bg-ocean-950/70 dark:text-ocean-300">{{ $this->formatoSegunUnidad($item->total_cantidad, $u) }}</span>
+                                            <span class="shrink-0 rounded-2xl bg-ocean-100 px-3.5 py-1.5 text-base font-bold tabular-nums leading-none text-ocean-800 ring-1 ring-ocean-200 dark:bg-ocean-900/60 dark:text-ocean-200 dark:ring-ocean-700">{{ $this->formatoSegunUnidad($item->total_cantidad, $u) }}</span>
                                         </div>
                                     @endforeach
                                 </div>
@@ -128,37 +141,39 @@
 
         @if ($this->total > 0)
             <section class="card page-enter">
-                <div class="card-header">
-                    <div class="flex items-center gap-2">
-                        <span class="flex h-6 w-6 items-center justify-center rounded-lg bg-ocean-100 text-ocean-700 dark:bg-ocean-950/50 dark:text-ocean-300">
-                            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 0 0-2.455 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z"/></svg>
+                <div class="card-header flex-wrap gap-3">
+                    <div class="flex items-center gap-3">
+                        <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-ocean-100 text-ocean-700 shadow-sm ring-1 ring-ocean-200 dark:bg-ocean-950/50 dark:text-ocean-300 dark:ring-ocean-900">
+                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 0 0-2.455 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z"/></svg>
                         </span>
-                        <span class="text-xs font-semibold uppercase tracking-wide text-ocean-700 dark:text-ocean-300">Recomendación de producción</span>
-                        @if ($this->fechaReferencia)
-                            <span class="chip-sm bg-ocean-50 text-ocean-600 dark:bg-ocean-950/50 dark:text-ocean-300">{{ \Carbon\Carbon::parse($this->fechaReferencia)->format('d/m/Y') }}</span>
-                        @endif
+                        <div>
+                            <h2 class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">Recomendación de producción</h2>
+                            @if ($this->fechaReferencia)
+                                <p class="text-xs font-medium text-gray-400 dark:text-gray-500">{{ \Carbon\Carbon::parse($this->fechaReferencia)->format('d/m/Y') }}</p>
+                            @endif
+                        </div>
                     </div>
-                    <span class="flex items-center gap-1.5">
+                    <div class="flex items-center gap-2">
                         @if ($this->recomendacion->isNotEmpty())
                             <button wire:click="exportarRecomendacionExcel"
-                                class="chip bg-green-50 text-green-700 ring-1 ring-green-200 hover:bg-green-100 dark:bg-green-950/40 dark:text-green-300 dark:ring-green-800 dark:hover:bg-green-950/60 cursor-pointer transition"
+                                class="btn-outline gap-2 px-5 py-2.5 text-sm font-bold"
                                 title="Descargar Excel">
-                                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
-                                Excel
+                                <x-heroicon-o-arrow-down-tray class="h-5 w-5 text-green-600 dark:text-green-400" />
+                                <span class="text-green-700 dark:text-green-300">Excel</span>
                             </button>
                             <button wire:click="exportarRecomendacionPdf"
-                                class="chip bg-red-50 text-red-700 ring-1 ring-red-200 hover:bg-red-100 dark:bg-red-950/40 dark:text-red-300 dark:ring-red-800 dark:hover:bg-red-950/60 cursor-pointer transition"
+                                class="btn-outline gap-2 px-5 py-2.5 text-sm font-bold"
                                 title="Descargar PDF">
-                                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
-                                PDF
+                                <x-heroicon-o-arrow-down-tray class="h-5 w-5 text-red-600 dark:text-red-400" />
+                                <span class="text-red-700 dark:text-red-300">PDF</span>
                             </button>
                         @endif
-                    </span>
+                    </div>
                 </div>
 
                 <div class="border-t border-gray-100 px-5 pb-5 dark:border-gray-800">
-                    <div class="mt-3 flex flex-wrap items-end gap-3">
-                        <div class="w-48">
+                    <div class="mt-4 flex flex-wrap items-end gap-4">
+                        <div class="w-56">
                             <x-cocina.date-picker
                                 field="fechaReferencia"
                                 label="Fecha"
@@ -166,48 +181,78 @@
                                 :available="$this->fechasDisponiblesRaw"
                             />
                         </div>
-                        <div class="w-36">
-                            <label class="text-xs font-medium text-gray-700 dark:text-gray-300">Huéspedes</label>
-                            <div class="relative mt-1">
+                        <div class="w-48">
+                            <label class="text-sm font-bold uppercase tracking-wider text-gray-600 dark:text-gray-300">Huéspedes</label>
+                            <div class="relative mt-1.5">
                                 <input type="number" min="1" wire:model.live.debounce.400ms="huespedesReferencia" placeholder="120"
-                                    class="input w-full pl-7">
-                                <svg class="absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/></svg>
+                                    class="input w-full rounded-2xl py-3 pl-10 text-lg font-bold tracking-tight">
+                                <svg class="absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/></svg>
                             </div>
                         </div>
                         @if ($this->recomendacion->isNotEmpty())
-                            <div class="flex items-center gap-1 self-end pb-px">
-                                <span class="text-[11px] text-gray-400 dark:text-gray-500">{{ $this->recomendacion->count() }} productos</span>
+                            <div class="flex items-center gap-2.5 self-end rounded-2xl bg-ocean-100 px-5 py-3.5 ring-1 ring-ocean-200 dark:bg-ocean-900/60 dark:ring-ocean-700">
+                                <svg class="h-5 w-5 text-ocean-600 dark:text-ocean-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 6h.008v.008H6V6Z"/></svg>
+                                <span class="text-lg font-bold text-ocean-800 dark:text-ocean-200">{{ $this->recomendacion->count() }}</span>
+                                <span class="text-base font-semibold text-ocean-600 dark:text-ocean-400">{{ $this->recomendacion->count() === 1 ? 'producto' : 'productos' }}</span>
                             </div>
                         @endif
                     </div>
 
                     @if ($this->recomendacion->isNotEmpty())
-                        <div class="mt-4 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                            @foreach ($this->recomendacion as $rec)
-                                <div class="group relative flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white transition duration-200 hover:z-10 hover:-translate-y-0.5 hover:border-ocean-200 hover:shadow-lg dark:border-gray-800 dark:bg-gray-900/60 dark:hover:border-ocean-800">
-                                    {{-- Línea de acento superior, visible solo en hover --}}
-                                    <div class="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-ocean-400 via-ocean-500 to-ocean-400 opacity-0 transition-opacity duration-200 group-hover:opacity-100 dark:from-ocean-500 dark:via-ocean-400 dark:to-ocean-500"></div>
+                        <div class="mt-4 space-y-2">
+                            @php
+                                $trazas = $this->recomendacion->filter(fn ($r) => $r->esTraza)->count();
+                            @endphp
 
-                                    <div class="flex items-start gap-3 px-4 py-3.5">
-                                        {{-- Izquierda: nombre + unidad --}}
-                                        <div class="min-w-0 flex-1">
-                                            <div class="flex items-start gap-1.5">
-                                                <span class="mt-[5px] h-1.5 w-1.5 shrink-0 rounded-full bg-ocean-400/70 dark:bg-ocean-500/60"></span>
-                                                <span class="block truncate text-sm font-semibold leading-snug text-gray-900 dark:text-white">{{ $rec->nombre }}</span>
+                            @if ($trazas > 0)
+                                <div class="rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm leading-relaxed text-amber-800 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-300">
+                                    <span class="font-semibold">{{ $trazas }} {{ $trazas === 1 ? 'producto está por debajo' : 'productos están por debajo' }}</span>
+                                    de 0,01 por persona al repartir entre {{ number_format($this->huespedesReferencia, 0, ',', '.') }} huéspedes. Disminuye el número de huéspedes para ver el valor exacto.
+                                </div>
+                            @endif
+
+                            <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                                @foreach ($this->recomendacion as $rec)
+                                    <div class="group relative flex flex-col overflow-hidden rounded-2xl border transition duration-200 hover:z-10 hover:-translate-y-0.5 hover:shadow-lg
+                                        @if ($rec->esTraza)
+                                            border-amber-200 bg-amber-50/40 hover:border-amber-300 dark:border-amber-800 dark:bg-amber-950/20 dark:hover:border-amber-700
+                                        @else
+                                            border-ocean-100/60 bg-white hover:border-ocean-200 dark:border-ocean-800/40 dark:bg-gray-900/60 dark:hover:border-ocean-600
+                                        @endif
+                                    ">
+                                        <div class="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r opacity-0 transition-opacity duration-200 group-hover:opacity-100
+                                            @if ($rec->esTraza) from-amber-400 via-amber-500 to-amber-400 dark:from-amber-500 dark:via-amber-400 dark:to-amber-500 @else from-ocean-400 via-ocean-500 to-ocean-400 dark:from-ocean-500 dark:via-ocean-400 dark:to-ocean-500 @endif
+                                        "></div>
+
+                                        <div class="flex items-start gap-3 px-4 py-3.5">
+                                            <div class="min-w-0 flex-1">
+                                                <div class="flex items-start gap-2">
+                                                    <span class="mt-[6px] h-2 w-2 shrink-0 rounded-full
+                                                        @if ($rec->esTraza) bg-amber-400/70 dark:bg-amber-500/60 @else bg-ocean-400/70 dark:bg-ocean-500/60 @endif
+                                                    "></span>
+                                                    <span class="block truncate text-sm font-bold leading-snug text-gray-900 dark:text-white">{{ $rec->nombre }}</span>
+                                                </div>
+                                                <span class="mt-2 inline-flex rounded-lg px-2.5 py-1 text-[11px] font-semibold leading-none
+                                                    @if ($rec->esTraza) bg-amber-100 text-amber-600 dark:bg-amber-900/50 dark:text-amber-400 @else bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400 @endif
+                                                ">{{ $rec->unidad }}</span>
                                             </div>
-                                            <span class="mt-1.5 inline-flex rounded-lg bg-gray-100 px-2 py-0.5 text-[11px] font-medium leading-none text-gray-500 dark:bg-gray-800 dark:text-gray-400">{{ $rec->unidad }}</span>
-                                        </div>
 
-                                        {{-- Derecha: valor hero --}}
-                                        <div class="flex shrink-0 flex-col items-end">
-                                            <span class="inline-flex rounded-2xl bg-ocean-50 px-2.5 py-1.5 text-base font-bold tabular-nums leading-none text-ocean-700 dark:bg-ocean-950/70 dark:text-ocean-300">
-                                                {{ $this->formatoValor($rec->sugerido, $rec->esEntero) }}
-                                            </span>
-                                            <span class="mt-1 text-[10px] font-medium leading-none text-gray-400 dark:text-gray-500">/persona</span>
+                                            <div class="flex shrink-0 flex-col items-end gap-0.5">
+                                                @if ($rec->esTraza)
+                                                    <span class="inline-flex rounded-2xl bg-amber-100 px-3.5 py-1.5 text-base font-bold tabular-nums leading-none text-amber-800 ring-1 ring-amber-200 dark:bg-amber-950/50 dark:text-amber-300 dark:ring-amber-700" title="Menos de 0,01 por persona con {{ number_format($this->huespedesReferencia, 0, ',', '.') }} huéspedes. Disminuye los huéspedes para ver el valor exacto.">
+                                                        &lt; 0,01
+                                                    </span>
+                                                @else
+                                                    <span class="inline-flex rounded-2xl bg-ocean-100 px-3.5 py-1.5 text-base font-bold tabular-nums leading-none text-ocean-800 ring-1 ring-ocean-200 dark:bg-ocean-900/60 dark:text-ocean-200 dark:ring-ocean-700">
+                                                        {{ $this->formatoValor($rec->sugerido, $rec->esEntero) }}
+                                                    </span>
+                                                @endif
+                                                <span class="mt-0.5 text-[10px] font-medium leading-none text-gray-400 dark:text-gray-500">/persona</span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            @endforeach
+                                @endforeach
+                            </div>
                         </div>
                     @elseif ($this->fechaReferencia && $this->huespedesReferencia)
                         <div class="mt-4 flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-200 py-8 dark:border-gray-800">
