@@ -107,33 +107,41 @@
                     />
                 </div>
 
-                @if ($this->fechaSeleccionada && count($this->consumoDelDia) > 0)
+                @if ($this->fechaSeleccionada)
                     <div class="border-t border-gray-100 px-5 pb-5 dark:border-gray-800">
-                        @foreach ($this->consumoDelDia as $u => $items)
-                            <div class="mt-4 first:mt-0">
-                                <div class="mb-3 flex items-center gap-3">
-                                    <div class="flex items-center gap-2 rounded-2xl bg-ocean-50 px-4 py-2 ring-1 ring-ocean-100 dark:bg-ocean-950/40 dark:ring-ocean-900">
-                                        <span class="text-sm font-bold text-ocean-700 dark:text-ocean-300">
-                                            {{ match($u) { 'kilo' => 'Kilos', 'litro' => 'Litros', 'porcion' => 'Porciones', 'gramo' => 'Gramos', default => 'Unidades' } }}
-                                        </span>
-                                    </div>
-                                    <span class="text-sm font-semibold text-gray-400 dark:text-gray-500">{{ $this->formatoSegunUnidad($this->totalesPorUnidad[$u] ?? 0, $u) }} total</span>
-                                    <span class="text-xs text-gray-300 dark:text-gray-600">{{ count($items) }} {{ count($items) === 1 ? 'producto' : 'productos' }}</span>
-                                </div>
-                                <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                                    @foreach ($items as $item)
-                                        <div class="group relative flex items-center justify-between gap-3 overflow-hidden rounded-2xl border border-ocean-100/60 bg-white px-4 py-3.5 transition duration-200 hover:z-10 hover:-translate-y-0.5 hover:border-ocean-200 hover:shadow-lg dark:border-ocean-800/40 dark:bg-gray-900/50 dark:hover:border-ocean-600">
-                                            <div class="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-ocean-400 via-ocean-500 to-ocean-400 opacity-0 transition-opacity duration-200 group-hover:opacity-100 dark:from-ocean-500 dark:via-ocean-400 dark:to-ocean-500"></div>
-                                            <div class="flex min-w-0 flex-1 items-center gap-2">
-                                                <span class="h-2 w-2 shrink-0 rounded-full bg-ocean-400/70 dark:bg-ocean-500/60"></span>
-                                                <span class="truncate text-sm font-bold leading-snug text-gray-900 dark:text-white">{{ $item->producto?->nombre ?? 'Sin nombre' }}</span>
-                                            </div>
-                                            <span class="shrink-0 rounded-2xl bg-ocean-100 px-3.5 py-1.5 text-base font-bold tabular-nums leading-none text-ocean-800 ring-1 ring-ocean-200 dark:bg-ocean-900/60 dark:text-ocean-200 dark:ring-ocean-700">{{ $this->formatoSegunUnidad($item->total_cantidad, $u) }}</span>
+                        @if (count($this->consumoDelDia) > 0)
+                            @foreach ($this->consumoDelDia as $u => $items)
+                                <div class="mt-4 first:mt-0">
+                                    <div class="mb-3 flex items-center gap-3">
+                                        <div class="flex items-center gap-2 rounded-2xl bg-ocean-100 px-4 py-2 ring-1 ring-ocean-200 dark:bg-ocean-900/60 dark:ring-ocean-700">
+                                            <span class="text-sm font-bold text-ocean-800 dark:text-ocean-200">
+                                                {{ match($u) { 'kilo' => 'Kilos', 'litro' => 'Litros', 'porcion' => 'Porciones', 'gramo' => 'Gramos', default => 'Unidades' } }}
+                                            </span>
                                         </div>
-                                    @endforeach
+                                        <span class="text-sm font-bold text-gray-500 dark:text-gray-400">{{ $this->formatoSegunUnidad($this->totalesPorUnidad[$u] ?? 0, $u) }}</span>
+                                        <span class="text-xs font-medium text-gray-400 dark:text-gray-500">· {{ count($items) }} {{ count($items) === 1 ? 'producto' : 'productos' }}</span>
+                                    </div>
+                                    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                                        @foreach ($items as $item)
+                                            <div class="group relative flex items-center justify-between gap-3 overflow-hidden rounded-2xl border border-ocean-100/60 bg-white px-4 py-3.5 transition duration-200 hover:z-10 hover:-translate-y-0.5 hover:border-ocean-200 hover:shadow-lg dark:border-ocean-800/40 dark:bg-gray-900/50 dark:hover:border-ocean-600">
+                                                <div class="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-ocean-400 via-ocean-500 to-ocean-400 opacity-0 transition-opacity duration-200 group-hover:opacity-100 dark:from-ocean-500 dark:via-ocean-400 dark:to-ocean-500"></div>
+                                                <div class="flex min-w-0 flex-1 items-center gap-2">
+                                                    <span class="h-2 w-2 shrink-0 rounded-full bg-ocean-400/70 dark:bg-ocean-500/60"></span>
+                                                    <span class="truncate text-sm font-bold leading-snug text-gray-900 dark:text-white">{{ $item->producto?->nombre ?? 'Sin nombre' }}</span>
+                                                </div>
+                                                <span class="shrink-0 rounded-2xl bg-ocean-100 px-3.5 py-1.5 text-base font-bold tabular-nums leading-none text-ocean-800 ring-1 ring-ocean-200 dark:bg-ocean-900/60 dark:text-ocean-200 dark:ring-ocean-700">{{ $this->formatoSegunUnidad($item->total_cantidad, $u) }}</span>
+                                            </div>
+                                        @endforeach
+                                    </div>
                                 </div>
+                            @endforeach
+                        @else
+                            <div class="flex flex-col items-center justify-center py-10">
+                                <x-heroicon-o-inbox class="h-10 w-10 text-gray-300 dark:text-gray-600" />
+                                <p class="mt-3 text-sm font-semibold text-gray-400 dark:text-gray-500">Sin productos en esta fecha</p>
+                                <p class="mt-1 text-xs text-gray-300 dark:text-gray-600">Seleccioná otra fecha del calendario para ver sus productos.</p>
                             </div>
-                        @endforeach
+                        @endif
                     </div>
                 @endif
             </section>
@@ -185,7 +193,7 @@
                             <label class="text-sm font-bold uppercase tracking-wider text-gray-600 dark:text-gray-300">Huéspedes</label>
                             <div class="relative mt-1.5">
                                 <input type="number" min="1" wire:model.live.debounce.400ms="huespedesReferencia" placeholder="120"
-                                    class="input w-full rounded-2xl py-3 pl-10 text-lg font-bold tracking-tight">
+                                    class="input w-full rounded-2xl py-3 pl-10 text-base font-bold">
                                 <svg class="absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/></svg>
                             </div>
                         </div>
@@ -234,7 +242,7 @@
                                                 </div>
                                                 <span class="mt-2 inline-flex rounded-lg px-2.5 py-1 text-[11px] font-semibold leading-none
                                                     @if ($rec->esTraza) bg-amber-100 text-amber-600 dark:bg-amber-900/50 dark:text-amber-400 @else bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400 @endif
-                                                ">{{ $rec->unidad }}</span>
+                                                ">{{ match(mb_strtolower(trim($rec->unidad))) { 'kilo' => 'Kilo', 'kilos' => 'Kilos', 'litro' => 'Litro', 'litros' => 'Litros', 'porcion' => 'Porción', 'porciones' => 'Porciones', 'gramo' => 'Gramo', 'gramos' => 'Gramos', 'unidad' => 'Unidad', default => $rec->unidad } }}</span>
                                             </div>
 
                                             <div class="flex shrink-0 flex-col items-end gap-0.5">
@@ -247,7 +255,7 @@
                                                         {{ $this->formatoValor($rec->sugerido, $rec->esEntero) }}
                                                     </span>
                                                 @endif
-                                                <span class="mt-0.5 text-[10px] font-medium leading-none text-gray-400 dark:text-gray-500">/persona</span>
+                                                <span class="mt-0.5 text-xs font-semibold text-gray-400 dark:text-gray-500">/persona</span>
                                             </div>
                                         </div>
                                     </div>
@@ -255,9 +263,10 @@
                             </div>
                         </div>
                     @elseif ($this->fechaReferencia && $this->huespedesReferencia)
-                        <div class="mt-4 flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-200 py-8 dark:border-gray-800">
-                            <p class="text-sm text-gray-400 dark:text-gray-500">Sin datos de consumo para esta fecha.</p>
-                            <p class="mt-0.5 text-xs text-gray-300 dark:text-gray-600">Probá con otra fecha o verificá el documento cargado.</p>
+                        <div class="mt-4 flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-amber-200 bg-amber-50/30 py-10 dark:border-amber-800 dark:bg-amber-950/10">
+                            <x-heroicon-o-calendar-days class="h-10 w-10 text-amber-400 dark:text-amber-600" />
+                            <p class="mt-3 text-sm font-semibold text-amber-700 dark:text-amber-400">Sin consumo registrado</p>
+                            <p class="mt-1 text-xs text-amber-500 dark:text-amber-500">No hay productos para esta fecha. Elegí otra fecha o verificá el documento cargado.</p>
                         </div>
                     @endif
                 </div>
@@ -315,7 +324,7 @@
                     </div>
 
                     <div class="flex items-center justify-between gap-3 border-t border-gray-100 px-5 py-3.5 dark:border-gray-800">
-                        <p class="text-xs text-gray-400">El dashboard muestra solo este documento.</p>
+                        <p class="text-xs text-gray-400">Los datos del dashboard corresponden al documento seleccionado.</p>
                         <button type="button" x-on:click="subir = true" class="btn-primary">
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"/></svg>
                             Subir nuevo
