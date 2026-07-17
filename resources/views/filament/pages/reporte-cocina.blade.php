@@ -94,15 +94,15 @@
                     <h3 class="text-base font-semibold text-gray-950 dark:text-white">Requisitos del archivo</h3>
                     <div class="mt-5 space-y-4">
                         <div class="flex gap-3">
-                            <span class="mt-1 h-2 w-2 rounded-full bg-ocean-500"></span>
+                            <x-heroicon-o-check-circle class="mt-0.5 h-5 w-5 shrink-0 text-ocean-500" />
                             <p class="text-sm text-gray-600 dark:text-gray-300">Debe provenir del reporte de consumo del sistema actual.</p>
                         </div>
                         <div class="flex gap-3">
-                            <span class="mt-1 h-2 w-2 rounded-full bg-ocean-500"></span>
+                            <x-heroicon-o-check-circle class="mt-0.5 h-5 w-5 shrink-0 text-ocean-500" />
                             <p class="text-sm text-gray-600 dark:text-gray-300">Formatos permitidos: Excel o CSV.</p>
                         </div>
                         <div class="flex gap-3">
-                            <span class="mt-1 h-2 w-2 rounded-full bg-ocean-500"></span>
+                            <x-heroicon-o-check-circle class="mt-0.5 h-5 w-5 shrink-0 text-ocean-500" />
                             <p class="text-sm text-gray-600 dark:text-gray-300">Columnas esperadas: fecha, articulo, presentacion, cantidad y concepto.</p>
                         </div>
                     </div>
