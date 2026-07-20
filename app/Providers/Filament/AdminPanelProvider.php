@@ -463,6 +463,7 @@ HTML
             ])
             ->authMiddleware([
                 Authenticate::class,
+                \App\Http\Middleware\VerificarAccesoDepartamento::class,
             ]);
     }
 }
